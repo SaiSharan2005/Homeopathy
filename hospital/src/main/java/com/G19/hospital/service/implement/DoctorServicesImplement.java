@@ -118,10 +118,11 @@ public class DoctorServicesImplement implements DoctorServices {
          String lastNamePart = doctorRegister.getPhoneNumber().substring(Math.max(doctorRegister.getPhoneNumber().length() - 4, 0));
  
          doctorRegister.setDoctorId("D29"+firstNamePart + lastNamePart);
-         doctorRepository.save(doctorRegister);
+         DoctorRegister doctorRegister2 = doctorRepository.save(doctorRegister);
+
          DoctorDetails doctorDetails = new DoctorDetails();
          doctorDetails = doctorRegister.getDoctorDetails();
-         doctorDetails.setDoctorRegister(doctorRegister);
+         doctorDetails.setDoctorRegister(doctorRegister2);
         //  doctorRegister.setDoctorDetails(doctorRegister.getDoctorDetails());
         doctorDetailsRepository.save(doctorDetails);
 

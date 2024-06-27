@@ -1,5 +1,7 @@
 package com.G19.hospital.model.Authentication;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -20,6 +22,7 @@ public class DoctorDetails {
 
     @OneToOne
     @JoinColumn(name = "doctor_register_id", referencedColumnName = "id")
+    @JsonBackReference
     private DoctorRegister doctorRegister;
 
     // Getters and Setters

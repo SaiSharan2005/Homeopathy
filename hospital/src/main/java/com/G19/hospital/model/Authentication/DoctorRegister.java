@@ -1,5 +1,7 @@
 package com.G19.hospital.model.Authentication;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -22,6 +24,7 @@ public class DoctorRegister {
     private String email;
 
     @OneToOne(mappedBy = "doctorRegister", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private DoctorDetails doctorDetails;
 
     public DoctorRegister() {
