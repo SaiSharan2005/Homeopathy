@@ -28,7 +28,7 @@ public class ScheduleController {
     @GetMapping("/doctor/{doctorId}")
     public ResponseEntity<?> getAllSlots(@PathVariable String doctorId) {
         try {
-            DoctorRegister doctorData = doctorServices.getDoctorById(doctorId);
+            DoctorRegister doctorData = doctorServices.getDoctorByDoctorId(doctorId);
             if (doctorData == null) {
                 return new ResponseEntity<>("Doctor not found", HttpStatus.NOT_FOUND);
             }

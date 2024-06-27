@@ -1,4 +1,5 @@
 package com.G19.hospital.model.Authentication;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -8,14 +9,23 @@ public class PatientDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
-    private String patientId;
+    @Column(name = "patient_id", unique = true)
+    private String patientId;  // Use consistent naming
 
     private Integer age;
     private String gender;
     private String address;
     private String city;
     private String pincode;
+
+    @OneToOne
+    @JoinColumn(name = "patient_register_id", referencedColumnName = "id")
+    private PatientRegister patientRegister;
+
+    // Constructors, getters, and setters
+
+    public PatientDetails() {
+    }
 
     public Long getId() {
         return id;
@@ -73,5 +83,11 @@ public class PatientDetails {
         this.pincode = pincode;
     }
 
- 
+    public PatientRegister getPatientRegister() {
+        return patientRegister;
+    }
+
+    public void setPatientRegister(PatientRegister patientRegister) {
+        this.patientRegister = patientRegister;
+    }
 }

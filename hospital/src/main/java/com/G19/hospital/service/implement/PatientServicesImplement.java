@@ -2,7 +2,6 @@ package com.G19.hospital.service.implement;
 
 import com.G19.hospital.DTOs.PatientRegisterDTO;
 import com.G19.hospital.DTOs.PatientDetailsDTO;
-import com.G19.hospital.DTOs.PatientInfoDTO;
 import com.G19.hospital.model.Authentication.PatientRegister;
 import com.G19.hospital.model.Authentication.PatientDetails;
 import com.G19.hospital.repository.PatientAuthenticationRepository;
@@ -17,73 +16,65 @@ public class PatientServicesImplement implements PatientServices {
     @Autowired
     private PatientAuthenticationRepository patientRepository;
 
+    @Autowired
+    private PatientDetailsRepository patientDetailsRepository;
+
     @Override
     public PatientRegister registerPatient(PatientRegisterDTO patientRegisterDTO) throws Exception {
+        // Check if phone number is already registered
         if (patientRepository.findByPhoneNumber(patientRegisterDTO.getPhoneNumber()) != null) {
             throw new Exception("Phone number already in use");
         }
 
+        // Create a new patient register entity
         PatientRegister patientRegister = new PatientRegister();
         patientRegister.setPatientName(patientRegisterDTO.getPatientName());
         patientRegister.setPhoneNumber(patientRegisterDTO.getPhoneNumber());
         patientRegister.setPassword(patientRegisterDTO.getPassword());
         patientRegister.setEmail(patientRegisterDTO.getEmail());
-         // Set patientId based on the specified logic
-         String firstNamePart = patientRegisterDTO.getPatientName().substring(0, Math.min(patientRegisterDTO.getPatientName().length(), 4));
-         String lastNamePart = patientRegisterDTO.getPhoneNumber().substring(Math.max(patientRegisterDTO.getPhoneNumber().length() - 4, 0));
- 
-         patientRegister.setPatientId("P29"+firstNamePart + lastNamePart);
 
+        // Generate patientId based on the specified logic
+        String firstNamePart = patientRegisterDTO.getPatientName().substring(0, Math.min(patientRegisterDTO.getPatientName().length(), 4));
+        String lastNamePart = patientRegisterDTO.getPhoneNumber().substring(Math.max(patientRegisterDTO.getPhoneNumber().length() - 4, 0));
+        patientRegister.setPatientId("P29" + firstNamePart + lastNamePart);
+
+        // Save and return the registered patient
         return patientRepository.save(patientRegister);
     }
 
     @Override
     public PatientRegister loginPatient(String phoneNumber, String password) throws Exception {
+        // Find patient by phone number and validate password
         PatientRegister patient = patientRepository.findByPhoneNumber(phoneNumber);
         if (patient == null || !patient.getPassword().equals(password)) {
             throw new Exception("Invalid phone number or password");
         }
         return patient;
     }
-    @Autowired
-    private PatientDetailsRepository patientDetailsRepository;
-    
+
     @Override
     public PatientDetails profilePatient(PatientDetailsDTO patientDetailsDTO) throws Exception {
-       
+        PatientRegister patientRegister = patientRepository.findByPatientId(patientDetailsDTO.getPatientId());
+        if (patientRegister == null) {
+            throw new Exception("Patient not found");
+        }
+    
         PatientDetails patientDetails = new PatientDetails();
-
-        patientDetails.setId(patientDetailsDTO.getId());
-        patientDetails.setPatientId(patientDetailsDTO.getPatientId());
         patientDetails.setAge(patientDetailsDTO.getAge());
-        patientDetails.setAddress(patientDetailsDTO.getAddress());
         patientDetails.setGender(patientDetailsDTO.getGender());
+        patientDetails.setAddress(patientDetailsDTO.getAddress());
         patientDetails.setCity(patientDetailsDTO.getCity());
         patientDetails.setPincode(patientDetailsDTO.getPincode());
+        patientDetails.setPatientId(patientDetailsDTO.getPatientId());
+        patientDetails.setPatientRegister(patientRegister); // Set the patient register
+    
         return patientDetailsRepository.save(patientDetails);
     }
+    
 
-    // public PatientInfoDTO getPatientInfo(String patientId) {
-    //     PatientDetails patientDetails = patientDetailsRepository.findByPatientId(patientId);
-    //     PatientRegister patientRegister = patientRepository.findByPatientId(patientId);
-
-    //     if (patientDetails == null || patientRegister == null) {
-    //         throw new RuntimeException("Patient not found");
-    //     }
-
-    //     return new PatientInfoDTO(patientDetails, patientRegister);
-    // }
     @Override
     public PatientRegister getPatientInfo(String patientId) {
-        // PatientDetails patientDetails = patientDetailsRepository.findByPatientId(patientId);
-        PatientRegister patientRegister = patientRepository.findByPatientId(patientId);
-
-        // if (patientDetails == null || patientRegister == null) {
-        //     throw new RuntimeException("Patient not found");
-        // }
-
-        return patientRegister;
+        // Retrieve patient register information by patientId
+        return patientRepository.findByPatientId(patientId);
     }
-
-
 }

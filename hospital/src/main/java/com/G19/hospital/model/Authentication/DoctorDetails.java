@@ -9,9 +9,6 @@ public class DoctorDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // @Column(unique = true)
-    // private String doctorId;
-
     private Integer age;
     private String gender;
     private String address;
@@ -22,8 +19,8 @@ public class DoctorDetails {
     private Double remuneration;
 
     @OneToOne
-    @JoinColumn(name = "doctorId", referencedColumnName = "doctorId", insertable = false, updatable = false)
-    private DoctorRegister doctorId;
+    @JoinColumn(name = "doctor_register_id", referencedColumnName = "id")
+    private DoctorRegister doctorRegister;
 
     // Getters and Setters
 
@@ -34,14 +31,6 @@ public class DoctorDetails {
     public void setId(Long id) {
         this.id = id;
     }
-
-    // public String getDoctorId() {
-    //     return doctorId;
-    // }
-
-    // public void setDoctorId(String doctorId) {
-    //     this.doctorId = doctorId;
-    // }
 
     public Integer getAge() {
         return age;
@@ -107,11 +96,11 @@ public class DoctorDetails {
         this.remuneration = remuneration;
     }
 
-    public DoctorRegister getDoctorId() {
-        return doctorId;
+    public DoctorRegister getDoctorRegister() {
+        return doctorRegister;
     }
 
-    public void setDoctorId(DoctorRegister doctorId) {
-        this.doctorId = doctorId;
+    public void setDoctorRegister(DoctorRegister doctorRegister) {
+        this.doctorRegister = doctorRegister;
     }
 }

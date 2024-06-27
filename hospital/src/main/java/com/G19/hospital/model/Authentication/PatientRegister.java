@@ -17,8 +17,10 @@ public class PatientRegister {
     private String password;
     private String email;
 
-    // Getters and Setters
+    @OneToOne(mappedBy = "patientRegister", cascade = CascadeType.ALL)
+    private PatientDetails patientDetails;
 
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -67,5 +69,14 @@ public class PatientRegister {
         this.email = email;
     }
 
+    public PatientDetails getPatientDetails() {
+        return patientDetails;
+    }
 
+    public void setPatientDetails(PatientDetails patientDetails) {
+        this.patientDetails = patientDetails;
+        if (patientDetails != null) {
+            patientDetails.setPatientRegister(this);
+        }
+    }
 }

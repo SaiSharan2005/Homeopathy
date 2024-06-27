@@ -16,15 +16,13 @@ public class DoctorRegister {
 
     private String password;
 
-    private String email;
-
     @Column(unique = true)
     private String doctorId;
 
-    @OneToOne(mappedBy = "doctorRegister", cascade = CascadeType.ALL)
-    @JoinColumn(name = "doctor_id", referencedColumnName = "doctor_id")
-    private DoctorDetails doctorDetails;
+    private String email;
 
+    @OneToOne(mappedBy = "doctorRegister", cascade = CascadeType.ALL)
+    private DoctorDetails doctorDetails;
 
     public DoctorRegister() {
     }
@@ -36,6 +34,8 @@ public class DoctorRegister {
         this.password = password;
         this.email = email;
     }
+
+    // Getters and Setters
 
     public Long getId() {
         return id;
@@ -76,7 +76,6 @@ public class DoctorRegister {
     public void setEmail(String email) {
         this.email = email;
     }
-
     public String getDoctorId() {
         return doctorId;
     }

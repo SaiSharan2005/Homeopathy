@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import com.G19.hospital.DTOs.DoctorDetailsDTO;
 import com.G19.hospital.DTOs.DoctorLoginDTO;
-import com.G19.hospital.DTOs.DoctorRegisterDTO;
 import com.G19.hospital.model.Authentication.DoctorDetails;
 import com.G19.hospital.model.Authentication.DoctorRegister;
 import com.G19.hospital.service.DoctorServices;
@@ -36,8 +35,26 @@ public class DoctorAuthenticationController {
     @Autowired
     private DoctorServices doctorServices;
 
+
+    // {
+    //     "doctorName": "John Doe",
+    //     "phoneNumber": "45678",
+    //     "password": "securepass123",
+    //     "email": "johndoe@example.com",
+    //     "doctorDetails": {
+    //       "age": 40,
+    //       "gender": "Male",
+    //       "address": "456 Elm Street",
+    //       "city": "Townsville",
+    //       "pincode": "54321",
+    //       "consultationFee": 120.0,
+    //       "specialization": "Orthopedics",
+    //       "remuneration": 6000.0
+    //     }
+    //   }
+      
     @PostMapping("/register")
-    public String registerDoctor(@RequestBody DoctorRegisterDTO doctorRegisterDTO) {
+    public String registerDoctor(@RequestBody DoctorRegister doctorRegisterDTO) {
         try {
             
             DoctorRegister registeredDoctor = doctorServices.registerDoctor(doctorRegisterDTO);
@@ -72,7 +89,7 @@ public class DoctorAuthenticationController {
     @GetMapping("/byId/{id}")
     public ResponseEntity<?> getDoctorById(@PathVariable String id) {
         try {
-            DoctorRegister doctor = doctorServices.getDoctorById(id);
+            DoctorRegister doctor = doctorServices.getDoctorByDoctorId(id);
             if (doctor != null) {
                 return ResponseEntity.ok(doctor);
             } else {

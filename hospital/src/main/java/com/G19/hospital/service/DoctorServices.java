@@ -8,10 +8,10 @@ import com.G19.hospital.model.Authentication.DoctorRegister;
 import java.util.*;
 public interface DoctorServices{
     
-    DoctorRegister registerDoctor(DoctorRegisterDTO doctorRegisterDTO) throws Exception;
+    DoctorRegister registerDoctor(DoctorRegister doctorRegisterDTO) throws Exception;
     DoctorRegister loginDoctor(String phoneNumber, String password) throws Exception;
     DoctorDetails profileDoctor(DoctorDetailsDTO doctorDetailsDTO) throws Exception;
-    DoctorRegister getDoctorById(String doctorId) throws Exception;
+    DoctorRegister getDoctorByDoctorId(String doctorId) throws Exception;
     List<DoctorRegister> getAllDoctors() throws Exception;
 
 }

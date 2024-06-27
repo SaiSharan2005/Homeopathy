@@ -2,6 +2,7 @@ package com.G19.hospital.DTOs;
 
 public class DoctorDetailsDTO {
 
+    private Long doctorId;
     private Integer age;
     private String gender;
     private String address;
@@ -12,6 +13,14 @@ public class DoctorDetailsDTO {
     private Double remuneration;
 
     // Getters and setters
+
+    public Long getDoctorId() {
+        return doctorId;
+    }
+
+    public void setDoctorId(Long doctorId) {
+        this.doctorId = doctorId;
+    }
 
     public Integer getAge() {
         return age;
