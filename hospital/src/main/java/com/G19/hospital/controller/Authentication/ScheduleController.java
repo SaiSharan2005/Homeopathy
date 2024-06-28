@@ -38,6 +38,11 @@ public class ScheduleController {
             return new ResponseEntity<>("Failed to fetch schedule: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @GetMapping("byId/{scheduleId}")
+    public DoctorSchedule getScheduleById(@PathVariable Long scheduleId) {
+        return scheduleService.getScheduleById(scheduleId);
+    }
+
     
 
 

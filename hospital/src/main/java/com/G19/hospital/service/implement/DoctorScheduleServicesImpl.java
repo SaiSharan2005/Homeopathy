@@ -53,6 +53,12 @@ public class DoctorScheduleServicesImpl implements DoctorScheduleServices {
         schedule.setBooked(true);
         doctorScheduleRepository.save(schedule);
     }
+    @Override
+    public void cancelSlot(Long scheduleId) {
+        DoctorSchedule schedule = doctorScheduleRepository.findById(scheduleId).orElseThrow(() -> new RuntimeException("Slot not found"));
+        schedule.setBooked(false);
+        doctorScheduleRepository.save(schedule);
+    }
 
     @Override
     public List<LocalTime> generateAppointmentSlots() {
@@ -72,5 +78,9 @@ public class DoctorScheduleServicesImpl implements DoctorScheduleServices {
     public List<DoctorSchedule> getScheduleByDoctorAndDate(DoctorRegister doctor,LocalDate date){
         return doctorScheduleRepository.findByDoctorAndDate(doctor, date);
     
+    }
+    @Override
+    public DoctorSchedule getScheduleById(Long scheduleId) {
+        return doctorScheduleRepository.findByScheduleId(scheduleId);
     }
 }

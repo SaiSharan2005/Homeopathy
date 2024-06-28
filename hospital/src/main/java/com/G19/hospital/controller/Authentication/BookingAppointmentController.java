@@ -1,6 +1,9 @@
 package com.G19.hospital.controller.Authentication;
 
 import com.G19.hospital.model.Authentication.BookingAppointment;
+import com.G19.hospital.model.Authentication.DoctorRegister;
+import com.G19.hospital.model.Authentication.DoctorSchedule;
+import com.G19.hospital.model.Authentication.PatientRegister;
 import com.G19.hospital.service.BookingAppointmentServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +19,11 @@ public class BookingAppointmentController {
     private BookingAppointmentServices bookingAppointmentServices;
 
     @PostMapping
-    public ResponseEntity<BookingAppointment> createBookingAppointment(@RequestBody BookingAppointment bookingAppointment) {
+    public ResponseEntity<BookingAppointment> createBookingAppointment(
+            @RequestBody BookingAppointment bookingAppointment) {
         try {
-            BookingAppointment createdBookingAppointment = bookingAppointmentServices.createBookingAppointment(bookingAppointment);
+            BookingAppointment createdBookingAppointment = bookingAppointmentServices
+                    .createBookingAppointment(bookingAppointment);
             return ResponseEntity.ok(createdBookingAppointment);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
@@ -26,9 +31,11 @@ public class BookingAppointmentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BookingAppointment> updateBookingAppointment(@PathVariable Long id, @RequestBody BookingAppointment bookingAppointment) {
+    public ResponseEntity<BookingAppointment> updateBookingAppointment(@PathVariable Long id,
+            @RequestBody BookingAppointment bookingAppointment) {
         try {
-            BookingAppointment updatedBookingAppointment = bookingAppointmentServices.updateBookingAppointment(id, bookingAppointment);
+            BookingAppointment updatedBookingAppointment = bookingAppointmentServices.updateBookingAppointment(id,
+                    bookingAppointment);
             return ResponseEntity.ok(updatedBookingAppointment);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
@@ -51,7 +58,7 @@ public class BookingAppointmentController {
         return ResponseEntity.ok(bookingAppointments);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("byId/{id}")
     public ResponseEntity<BookingAppointment> getBookingAppointmentById(@PathVariable Long id) {
         try {
             BookingAppointment bookingAppointment = bookingAppointmentServices.getBookingAppointmentById(id);
@@ -60,4 +67,45 @@ public class BookingAppointmentController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/doctor/{doctorId}")
+    public ResponseEntity<List<BookingAppointment>> getBookingsByDoctorId(@PathVariable Long doctorId) {
+        // Assuming doctorId is Long type
+        DoctorRegister doctorRegister = new DoctorRegister();
+        doctorRegister.setId(doctorId); // Set the doctorId to the DoctorRegister entity
+
+        List<BookingAppointment> bookings = bookingAppointmentServices.getBookingsByDoctorId(doctorRegister);
+        return ResponseEntity.ok(bookings);
+    }
+
+    @GetMapping("/patient/{patientId}")
+    public ResponseEntity<List<BookingAppointment>> getBookingsByPatientId(@PathVariable Long patientId) {
+        // Assuming patientId is Long type
+        PatientRegister patientRegister = new PatientRegister();
+        patientRegister.setId(patientId); // Set the patientId to the PatientRegister entity
+
+        List<BookingAppointment> bookings = bookingAppointmentServices.getBookingsByPatientId(patientRegister);
+        return ResponseEntity.ok(bookings);
+    }
+
+    @GetMapping("/schedule/{scheduleId}")
+    public ResponseEntity<List<BookingAppointment>> getBookingsByScheduleId(@PathVariable Long scheduleId) {
+        // Assuming scheduleId is Long type
+        DoctorSchedule doctorSchedule = new DoctorSchedule();
+        doctorSchedule.setScheduleId(scheduleId); // Set the scheduleId to the DoctorSchedule entity
+
+        List<BookingAppointment> bookings = bookingAppointmentServices.getBookingsByScheduleId(doctorSchedule);
+        return ResponseEntity.ok(bookings);
+    }
+
+    @GetMapping("/token/{token}")
+    public ResponseEntity<BookingAppointment> getBookingByToken(@PathVariable String token) {
+        BookingAppointment booking = bookingAppointmentServices.getBookingByToken(token);
+        if (booking != null) {
+            return ResponseEntity.ok(booking);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }

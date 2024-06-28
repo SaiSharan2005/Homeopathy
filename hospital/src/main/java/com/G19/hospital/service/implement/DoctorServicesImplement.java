@@ -115,14 +115,13 @@ public class DoctorServicesImplement implements DoctorServices {
         // doctorRegister.setPassword(doctorRegisterDTO.getPassword());
         // doctorRegister.setEmail(doctorRegisterDTO.getEmail());
         String firstNamePart = doctorRegister.getDoctorName().substring(0, Math.min(doctorRegister.getDoctorName().length(), 4));
-         String lastNamePart = doctorRegister.getPhoneNumber().substring(Math.max(doctorRegister.getPhoneNumber().length() - 4, 0));
- 
-         doctorRegister.setDoctorId("D29"+firstNamePart + lastNamePart);
-         DoctorRegister doctorRegister2 = doctorRepository.save(doctorRegister);
+        String lastNamePart = doctorRegister.getPhoneNumber().substring(Math.max(doctorRegister.getPhoneNumber().length() - 4, 0));
+        doctorRegister.setDoctorId("D29"+firstNamePart + lastNamePart);
+        DoctorRegister doctorRegister2 = doctorRepository.save(doctorRegister);
 
-         DoctorDetails doctorDetails = new DoctorDetails();
-         doctorDetails = doctorRegister.getDoctorDetails();
-         doctorDetails.setDoctorRegister(doctorRegister2);
+        DoctorDetails doctorDetails = new DoctorDetails();
+        doctorDetails = doctorRegister.getDoctorDetails();
+        doctorDetails.setDoctorRegister(doctorRegister2);
         //  doctorRegister.setDoctorDetails(doctorRegister.getDoctorDetails());
         doctorDetailsRepository.save(doctorDetails);
 

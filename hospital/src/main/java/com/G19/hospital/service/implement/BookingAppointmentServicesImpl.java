@@ -1,8 +1,13 @@
 package com.G19.hospital.service.implement;
 
 import com.G19.hospital.model.Authentication.BookingAppointment;
+import com.G19.hospital.model.Authentication.DoctorRegister;
+import com.G19.hospital.model.Authentication.DoctorSchedule;
+import com.G19.hospital.model.Authentication.PatientRegister;
 import com.G19.hospital.repository.BookingAppointmentRepository;
 import com.G19.hospital.service.BookingAppointmentServices;
+import com.G19.hospital.service.DoctorScheduleServices;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +22,9 @@ public class BookingAppointmentServicesImpl implements BookingAppointmentService
     @Autowired
     private BookingAppointmentRepository bookingAppointmentRepository;
 
+    @Autowired
+    private DoctorScheduleServices doctorScheduleServices;
+
     @Override
     public BookingAppointment createBookingAppointment(BookingAppointment bookingAppointment) throws Exception {
         BookingAppointment savedAppointment = bookingAppointmentRepository.save(bookingAppointment);
@@ -30,9 +38,10 @@ public class BookingAppointmentServicesImpl implements BookingAppointmentService
         
         // Generate the token using the formatted date and booking ID
         String uniqueToken = formattedDate + "-" + savedAppointment.getBookingId();
-        
         // Assign the token to the booking appointment
         savedAppointment.setToken(uniqueToken);
+        DoctorSchedule sch = savedAppointment.getScheduleId();
+        doctorScheduleServices.bookSlot(sch.getScheduleId());
         
         return bookingAppointmentRepository.save(bookingAppointment);
     }
@@ -42,22 +51,40 @@ public class BookingAppointmentServicesImpl implements BookingAppointmentService
         BookingAppointment existingBookingAppointment = bookingAppointmentRepository.findById(bookingId)
                 .orElseThrow(() -> new Exception("Booking appointment not found"));
 
-        existingBookingAppointment.setDoctorId(bookingAppointment.getDoctorId());
-        existingBookingAppointment.setPatientId(bookingAppointment.getPatientId());
+        // existingBookingAppointment.setDoctorId(bookingAppointment.getDoctorId());
+        // existingBookingAppointment.setPatientId(bookingAppointment.getPatientId());
+        // existingBookingAppointment.setToken(bookingAppointment.getToken());
+        DoctorSchedule schedule = existingBookingAppointment.getScheduleId();
+        doctorScheduleServices.cancelSlot(schedule.getScheduleId());
+        schedule = bookingAppointment.getScheduleId();
+        doctorScheduleServices.bookSlot(schedule.getScheduleId());
         existingBookingAppointment.setScheduleId(bookingAppointment.getScheduleId());
-        existingBookingAppointment.setToken(bookingAppointment.getToken());
+
+
+
+
 
         return bookingAppointmentRepository.save(existingBookingAppointment);
     }
 
     @Override
     public void deleteBookingAppointment(Long bookingId) throws Exception {
-        BookingAppointment bookingAppointment = bookingAppointmentRepository.findById(bookingId)
-                .orElseThrow(() -> new Exception("Booking appointment not found"));
+        // Retrieve the booking appointment from the repository
+        BookingAppointment bookingAppointment = bookingAppointmentRepository.findByBookingId(bookingId);
+               
+        
+        // Retrieve the schedule ID from the booking appointment
+        DoctorSchedule schedule = bookingAppointment.getScheduleId();
+        
+        // Cancel the slot in the doctor's schedule
+        doctorScheduleServices.cancelSlot(schedule.getScheduleId());
+        
 
+        
+        // Delete the booking appointment
         bookingAppointmentRepository.delete(bookingAppointment);
     }
-
+    
     @Override
     public List<BookingAppointment> getAllBookingAppointments() {
         return bookingAppointmentRepository.findAll();
@@ -68,4 +95,21 @@ public class BookingAppointmentServicesImpl implements BookingAppointmentService
         return bookingAppointmentRepository.findById(bookingId)
                 .orElseThrow(() -> new Exception("Booking appointment not found"));
     }
+    @Override
+    public List<BookingAppointment> getBookingsByDoctorId(DoctorRegister doctorId) {
+        return bookingAppointmentRepository.findByDoctorId(doctorId);
+    }
+    @Override
+    public List<BookingAppointment> getBookingsByPatientId(PatientRegister patientId) {
+        return bookingAppointmentRepository.findByPatientId(patientId);
+    }
+    @Override
+    public List<BookingAppointment> getBookingsByScheduleId(DoctorSchedule scheduleId) {
+        return bookingAppointmentRepository.findByScheduleId(scheduleId);
+    }
+    @Override
+    public BookingAppointment getBookingByToken(String token) {
+        return bookingAppointmentRepository.findByToken(token);
+    }
+
 }

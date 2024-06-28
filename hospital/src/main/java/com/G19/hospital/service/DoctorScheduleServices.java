@@ -14,10 +14,11 @@ public interface DoctorScheduleServices {
     void createScheduleForDate(DoctorRegister doctor, LocalDate date, LocalTime startTime, LocalTime endTime, int slotDurationMinutes) ;
     List<DoctorSchedule> getAvailableSlots(LocalDate date) ;
     void bookSlot(Long scheduleId);
+    void cancelSlot(Long scheduleId) ;
     List<LocalTime> generateAppointmentSlots()throws Exception;
     List<DoctorSchedule> getScheduleByDoctorAndDate(DoctorRegister doctor,LocalDate date)throws Exception;
-
-    // DoctorSchedule updateDoctorSchedule(Long scheduleId, DoctorScheduleDTO doctorScheduleDTO) throws Exception;
+    DoctorSchedule getScheduleById(Long scheduleId) ;
+        // DoctorSchedule updateDoctorSchedule(Long scheduleId, DoctorScheduleDTO doctorScheduleDTO) throws Exception;
     // void deleteDoctorSchedule(Long scheduleId) throws Exception;
     // List<DoctorSchedule> getDoctorSchedulesByDoctorId(Long doctorId) throws Exception;
 }
