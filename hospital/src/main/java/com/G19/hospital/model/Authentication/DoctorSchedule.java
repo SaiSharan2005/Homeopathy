@@ -15,6 +15,10 @@ public class DoctorSchedule {
     @JoinColumn(name = "doctor_id", nullable = false)
     private DoctorRegister doctor;
 
+    @ManyToOne
+    @JoinColumn(name = "slot_id", nullable = false)
+    private DoctorTiming slot;
+
     private LocalDate date;
 
     private LocalTime startTime;
@@ -71,5 +75,11 @@ public class DoctorSchedule {
 
     public void setBooked(boolean booked) {
         this.booked = booked;
+    }
+    public void setSlot(DoctorTiming slot){
+        this.slot = slot;
+    }
+    public DoctorTiming getSlot(){
+        return this.slot;
     }
 }

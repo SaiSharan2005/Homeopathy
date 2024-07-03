@@ -10,12 +10,12 @@ import java.util.List;
 
 
 public interface DoctorScheduleServices {
-    void createDailySchedule(DoctorRegister doctor, LocalTime startTime, LocalTime endTime, int slotDurationMinutes) ;
-    void createScheduleForDate(DoctorRegister doctor, LocalDate date, LocalTime startTime, LocalTime endTime, int slotDurationMinutes) ;
+    // void createDailySchedule(DoctorRegister doctor, LocalTime startTime, LocalTime endTime, int slotDurationMinutes) ;
+    List<DoctorSchedule> createScheduleForDate(DoctorRegister doctorId, LocalDate date)  ;
     List<DoctorSchedule> getAvailableSlots(LocalDate date) ;
     void bookSlot(Long scheduleId);
     void cancelSlot(Long scheduleId) ;
-    List<LocalTime> generateAppointmentSlots()throws Exception;
+    // List<LocalTime> generateAppointmentSlots(DoctorRegister doctorId)throws Exception;
     List<DoctorSchedule> getScheduleByDoctorAndDate(DoctorRegister doctor,LocalDate date)throws Exception;
     DoctorSchedule getScheduleById(Long scheduleId) ;
         // DoctorSchedule updateDoctorSchedule(Long scheduleId, DoctorScheduleDTO doctorScheduleDTO) throws Exception;
