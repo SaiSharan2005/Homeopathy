@@ -1,15 +1,16 @@
 package com.G19.hospital.service.implement;
+import java.util.Optional;
 
-import com.G19.hospital.DTOs.AppointmentHistoryDTO;
-import com.G19.hospital.model.Authentication.AppointmentHistory;
-import com.G19.hospital.model.Authentication.BookingAppointment;
-import com.G19.hospital.model.Authentication.DoctorRegister;
-import com.G19.hospital.model.Authentication.Staff;
+import com.G19.hospital.DTO.AppointmentHistoryDTO;
+import com.G19.hospital.model.AppointmentHistory;
+import com.G19.hospital.model.BookingAppointment;
+import com.G19.hospital.model.DoctorRegister;
+import com.G19.hospital.model.Staff;
 import com.G19.hospital.repository.AppointmentHistoryRepository;
 import com.G19.hospital.repository.BookingAppointmentRepository;
 import com.G19.hospital.repository.DoctorAuthenticationRepository;
-import com.G19.hospital.repository.DoctorAuthenticationRepository;
 import com.G19.hospital.repository.StaffRepository;
+
 import com.G19.hospital.service.AppointmentHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,20 @@ public class AppointmentHistoryServiceImpl implements AppointmentHistoryService 
     @Override
     public AppointmentHistory addAppointmentHistory(AppointmentHistoryDTO appointmentHistoryDTO) {
         BookingAppointment bookingAppointment = bookingAppointmentRepository.findById(appointmentHistoryDTO.getBookingId()).orElseThrow();
-        DoctorRegister doctor = doctorAuthenticationRepository.findById(appointmentHistoryDTO.getDoctorId()).orElseThrow();
+        // DoctorRegister doctor = doctorAuthenticationRepository.findById(appointmentHistoryDTO.getDoctorId());
+        Optional<DoctorRegister> optionalDoctor = doctorAuthenticationRepository.findById(appointmentHistoryDTO.getDoctorId());
+        DoctorRegister doctor = optionalDoctor.get();
+
+        // if (optionalDoctor.isPresent()) {
+        //     DoctorRegister doctor = optionalDoctor.get();
+        //     // Use the doctor object as needed
+        // } else {
+        //     // Handle the case where the doctor was not found
+        //     // For example, throw an exception or log a message
+        //     throw new RuntimeException("Doctor not found with ID: " + appointmentHistoryDTO.getDoctorId());
+        // }
+
+        
         Staff admin = staffRepository.findById(appointmentHistoryDTO.getAdminId()).orElseThrow();
 
         AppointmentHistory appointmentHistory = new AppointmentHistory();

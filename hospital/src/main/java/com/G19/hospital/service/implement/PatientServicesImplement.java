@@ -1,9 +1,9 @@
 package com.G19.hospital.service.implement;
 
-import com.G19.hospital.DTOs.PatientRegisterDTO;
-import com.G19.hospital.DTOs.PatientDetailsDTO;
-import com.G19.hospital.model.Authentication.PatientRegister;
-import com.G19.hospital.model.Authentication.PatientDetails;
+import com.G19.hospital.DTO.PatientDetailsDTO;
+import com.G19.hospital.DTO.PatientRegisterDTO;
+import com.G19.hospital.model.PatientDetails;
+import com.G19.hospital.model.PatientRegister;
 import com.G19.hospital.repository.PatientAuthenticationRepository;
 import com.G19.hospital.repository.PatientDetailsRepository;
 import com.G19.hospital.service.PatientServices;

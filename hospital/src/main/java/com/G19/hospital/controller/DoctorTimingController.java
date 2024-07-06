@@ -1,7 +1,7 @@
 package com.G19.hospital.controller;
 
-import com.G19.hospital.DTOs.DoctorTimingDTO;
-import com.G19.hospital.model.Authentication.DoctorRegister;
+import com.G19.hospital.DTO.DoctorTimingDTO;
+import com.G19.hospital.model.DoctorRegister;
 import com.G19.hospital.service.DoctorTimingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

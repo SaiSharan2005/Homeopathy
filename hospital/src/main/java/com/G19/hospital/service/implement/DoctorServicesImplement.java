@@ -86,10 +86,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-import com.G19.hospital.DTOs.DoctorRegisterDTO;
-import com.G19.hospital.DTOs.DoctorDetailsDTO;
-import com.G19.hospital.model.Authentication.DoctorDetails;
-import com.G19.hospital.model.Authentication.DoctorRegister;
+import com.G19.hospital.DTO.DoctorDetailsDTO;
+import com.G19.hospital.DTO.DoctorRegisterDTO;
+import com.G19.hospital.model.DoctorDetails;
+import com.G19.hospital.model.DoctorRegister;
 import com.G19.hospital.repository.DoctorAuthenticationRepository;
 import com.G19.hospital.repository.DoctorDetailsRepository;
 import com.G19.hospital.service.DoctorServices;

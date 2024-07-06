@@ -1,7 +1,7 @@
 package com.G19.hospital.service;
 
-import com.G19.hospital.DTOs.StaffDTO;
-import com.G19.hospital.model.Authentication.Staff;
+import com.G19.hospital.DTO.StaffDTO;
+import com.G19.hospital.model.Staff;
 
 import java.util.List;
 

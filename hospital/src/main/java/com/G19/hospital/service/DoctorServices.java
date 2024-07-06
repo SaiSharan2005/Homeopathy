@@ -1,9 +1,9 @@
 package com.G19.hospital.service;
 
-import com.G19.hospital.DTOs.DoctorDetailsDTO;
-import com.G19.hospital.DTOs.DoctorRegisterDTO;
-import com.G19.hospital.model.Authentication.DoctorDetails;
-import com.G19.hospital.model.Authentication.DoctorRegister;
+import com.G19.hospital.DTO.DoctorDetailsDTO;
+import com.G19.hospital.DTO.DoctorRegisterDTO;
+import com.G19.hospital.model.DoctorDetails;
+import com.G19.hospital.model.DoctorRegister;
 
 import java.util.*;
 public interface DoctorServices{

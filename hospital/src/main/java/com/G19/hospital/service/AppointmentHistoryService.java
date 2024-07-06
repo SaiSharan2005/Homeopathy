@@ -1,7 +1,7 @@
 package com.G19.hospital.service;
 
-import com.G19.hospital.DTOs.AppointmentHistoryDTO;
-import com.G19.hospital.model.Authentication.AppointmentHistory;
+import com.G19.hospital.DTO.AppointmentHistoryDTO;
+import com.G19.hospital.model.AppointmentHistory;
 
 import java.util.List;
 

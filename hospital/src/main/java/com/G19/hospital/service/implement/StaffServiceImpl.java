@@ -1,7 +1,7 @@
 package com.G19.hospital.service.implement;
 
-import com.G19.hospital.DTOs.StaffDTO;
-import com.G19.hospital.model.Authentication.Staff;
+import com.G19.hospital.DTO.StaffDTO;
+import com.G19.hospital.model.Staff;
 import com.G19.hospital.repository.StaffRepository;
 import com.G19.hospital.service.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;

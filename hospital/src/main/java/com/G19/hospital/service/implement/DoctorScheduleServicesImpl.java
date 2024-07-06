@@ -1,9 +1,9 @@
 package com.G19.hospital.service.implement;
 
-import com.G19.hospital.DTOs.DoctorScheduleDTO;
-import com.G19.hospital.model.Authentication.DoctorRegister;
-import com.G19.hospital.model.Authentication.DoctorSchedule;
-import com.G19.hospital.model.Authentication.DoctorTiming;
+import com.G19.hospital.DTO.DoctorScheduleDTO;
+import com.G19.hospital.model.DoctorRegister;
+import com.G19.hospital.model.DoctorSchedule;
+import com.G19.hospital.model.DoctorTiming;
 import com.G19.hospital.repository.DoctorScheduleRepository;
 import com.G19.hospital.repository.DoctorTimingRepository;
 import com.G19.hospital.service.DoctorScheduleServices;

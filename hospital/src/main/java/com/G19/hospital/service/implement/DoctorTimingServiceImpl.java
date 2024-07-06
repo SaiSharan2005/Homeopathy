@@ -1,8 +1,8 @@
 package com.G19.hospital.service.implement;
 
-import com.G19.hospital.DTOs.DoctorTimingDTO;
-import com.G19.hospital.model.Authentication.DoctorRegister;
-import com.G19.hospital.model.Authentication.DoctorTiming;
+import com.G19.hospital.DTO.DoctorTimingDTO;
+import com.G19.hospital.model.DoctorRegister;
+import com.G19.hospital.model.DoctorTiming;
 import com.G19.hospital.repository.DoctorTimingRepository;
 import com.G19.hospital.service.DoctorTimingService;
 import org.springframework.beans.factory.annotation.Autowired;

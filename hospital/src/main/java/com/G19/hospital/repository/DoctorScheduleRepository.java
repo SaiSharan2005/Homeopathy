@@ -1,7 +1,8 @@
 package com.G19.hospital.repository;
 
-import com.G19.hospital.model.Authentication.DoctorRegister;
-import com.G19.hospital.model.Authentication.DoctorSchedule;
+import com.G19.hospital.model.DoctorRegister;
+import com.G19.hospital.model.DoctorSchedule;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;

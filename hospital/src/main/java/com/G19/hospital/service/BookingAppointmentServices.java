@@ -1,9 +1,9 @@
 package com.G19.hospital.service;
 
-import com.G19.hospital.model.Authentication.BookingAppointment;
-import com.G19.hospital.model.Authentication.DoctorRegister;
-import com.G19.hospital.model.Authentication.DoctorSchedule;
-import com.G19.hospital.model.Authentication.PatientRegister;
+import com.G19.hospital.model.BookingAppointment;
+import com.G19.hospital.model.DoctorRegister;
+import com.G19.hospital.model.DoctorSchedule;
+import com.G19.hospital.model.PatientRegister;
 
 import java.util.List;
 
