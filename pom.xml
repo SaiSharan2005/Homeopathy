@@ -13,6 +13,10 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>hospitalmanagement</name>
 	<description>Demo project for Spring Boot</description>
+	<packaging>jar</packaging>
+
+
+
 	<url/>
 	<licenses>
 		<license/>
@@ -83,8 +87,10 @@
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
-			<version>1.4</version>
+			<version>1.4.0</version>
+		
 		</dependency>
+		
 		<dependency>
 			<groupId>com.cloudinary</groupId>
 			<artifactId>cloudinary-http44</artifactId>
@@ -99,5 +105,6 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+		<finalName>spring-boot-docker</finalName>
 	</build>
 </project>
