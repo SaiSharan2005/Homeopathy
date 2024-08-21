@@ -26,6 +26,7 @@ public class BookingAppointmentController {
 
     @Autowired
     private BookingAppointmentRepository bookingAppointmentRepository;
+
     @PostMapping
     public ResponseEntity<BookingAppointment> createBookingAppointment(
             @RequestBody BookingAppointment bookingAppointment) {
@@ -39,8 +40,8 @@ public class BookingAppointmentController {
     }
 
    
-    // @Scheduled(cron = "0 0 0 * * ?")
-    @Scheduled(cron = "0 * * * * ?") // Every minute
+    @Scheduled(cron = "0 0 0 * * ?")
+    // @Scheduled(cron = "0 * * * * ?") // Every minute
     public void updateMissedAppointments() {
         List<BookingAppointment> upcomingAppointments = bookingAppointmentRepository.findUpcomingAppointments();
         LocalDateTime currentTime = LocalDateTime.now(); // Get the current time

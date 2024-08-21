@@ -24,7 +24,7 @@ public class BookingAppointment {
     @JoinColumn(name = "schedule_id", nullable = false)
     private DoctorSchedule scheduleId;
     
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String token;
 
     @Column(unique = false )

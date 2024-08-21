@@ -14,8 +14,11 @@ public class CorsConfiguration {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("https://homeo-eta.vercel.app/") // Allow requests from this origin
+                        // .allowedOrigins("https://homeo-eta.vercel.app/") // Allow requests from this origin
+                        .allowedOrigins("http://localhost:3000/") // Allow requests from this origin
+
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Allow these HTTP methods
+
                         .allowedHeaders("*") // Allow all headers
                         .allowCredentials(true); // Allow credentials
             }
