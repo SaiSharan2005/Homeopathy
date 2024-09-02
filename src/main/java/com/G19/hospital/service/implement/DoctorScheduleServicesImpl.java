@@ -30,6 +30,13 @@ public class DoctorScheduleServicesImpl implements DoctorScheduleServices {
     // }
     @Override
     public List<DoctorSchedule> createScheduleForDate(DoctorRegister doctorId, LocalDate date) {
+        if (date.isBefore(LocalDate.now())) {
+            // Option 1: Return an empty list
+            // return Collections.emptyList();
+            
+            // Option 2: Throw an exception
+            throw new IllegalArgumentException("Cannot create a schedule for a past date.");
+        }
         List<DoctorSchedule> doctorSchedule = new ArrayList<>();
         List<DoctorTiming> doctorSlots = doctorTimingRepository.findByDoctorIdAndInUse(doctorId, true);
         for(DoctorTiming slot:doctorSlots){
