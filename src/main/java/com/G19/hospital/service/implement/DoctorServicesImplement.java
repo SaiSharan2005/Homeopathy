@@ -25,20 +25,20 @@ public class DoctorServicesImplement implements DoctorServices {
             throw new Exception("Phone number already in use");
         }
 
-        DoctorRegister patientRegister = new DoctorRegister();
-        patientRegister.setDoctorName(doctorRegisterDTO.getDoctorName());
-        patientRegister.setPhoneNumber(doctorRegisterDTO.getPhoneNumber());
-        patientRegister.setPassword(doctorRegisterDTO.getPassword());
-        patientRegister.setEmail(doctorRegisterDTO.getEmail());
+        DoctorRegister doctorRegister = new DoctorRegister();
+        doctorRegister.setDoctorName(doctorRegisterDTO.getDoctorName());
+        doctorRegister.setPhoneNumber(doctorRegisterDTO.getPhoneNumber());
+        doctorRegister.setPassword(doctorRegisterDTO.getPassword());
+        doctorRegister.setEmail(doctorRegisterDTO.getEmail());
         // Set patientId based on the specified logic
         String firstNamePart = doctorRegisterDTO.getDoctorName().substring(0,
                 Math.min(doctorRegisterDTO.getDoctorName().length(), 4));
         String lastNamePart = doctorRegisterDTO.getPhoneNumber()
                 .substring(Math.max(doctorRegisterDTO.getPhoneNumber().length() - 4, 0));
 
-        patientRegister.setDoctorId("D29" + firstNamePart + lastNamePart);
+        doctorRegister.setDoctorId("D29" + firstNamePart + lastNamePart);
 
-        return doctorRepository.save(patientRegister);
+        return doctorRepository.save(doctorRegister);
     }
 
     @Override
