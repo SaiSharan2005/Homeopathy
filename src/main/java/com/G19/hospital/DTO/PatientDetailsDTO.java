@@ -3,7 +3,7 @@ package com.G19.hospital.DTO;
 public class PatientDetailsDTO {
 
     private Long id;
-    private String patientId;
+    // private String patientId;
     private Integer age;
     private String gender;
     private String address;
@@ -33,13 +33,13 @@ public class PatientDetailsDTO {
         this.id = id;
     }
 
-    public String getPatientId() {
-        return patientId;
-    }
+    // public String getPatientId() {
+    //     return patientId;
+    // }
 
-    public void setPatientId(String patientId) {
-        this.patientId = patientId;
-    }
+    // public void setPatientId(String patientId) {
+    //     this.patientId = patientId;
+    // }
 
     public Integer getAge() {
         return age;

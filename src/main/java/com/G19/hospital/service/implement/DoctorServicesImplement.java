@@ -123,13 +123,13 @@ public class DoctorServicesImplement implements DoctorServices {
     @Override
     public List<User> searchDoctors(String keyword) throws Exception {
         // Search by username (phone number) or email for doctors
-        Role doctorRole = roleRepository.findByName("Doctor");
+        Role doctorRole = roleRepository.findByName("DOCTOR");
         return userRepository.searchUsers(keyword, doctorRole);
     }
 
     @Override
     public long getDoctorCount() throws Exception {
-        Role doctorRole = roleRepository.findByName("ROLE_DOCTOR");
+        Role doctorRole = roleRepository.findByName("DOCTOR");
         return userRepository.countByRoles(doctorRole);
     }
 }

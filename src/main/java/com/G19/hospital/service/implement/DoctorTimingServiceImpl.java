@@ -69,6 +69,17 @@ public class DoctorTimingServiceImpl implements DoctorTimingService {
         return doctorTimingDTO;
     }
 
+    public User getDoctorInfoByUserName(String username) {
+        try {
+            // Logic to retrieve the patient from the database using the phone number
+            return userRepository.findByUsername(username)
+                    .orElseThrow(() -> new Exception("Patient not found"));
+        } catch (Exception e) {
+            // Handle the exception (e.g., log it or throw a specific runtime exception)
+            throw new RuntimeException("Error retrieving patient info: " + e.getMessage());
+        }
+    }
+
     @Override
     public void deleteDoctorTiming(Long slotId) {
         doctorTimingRepository.deleteById(slotId);

@@ -1,6 +1,7 @@
 package com.G19.hospital.controller;
 
 import com.G19.hospital.DTO.UserLoginDto;
+import com.G19.hospital.model.User;
 import com.G19.hospital.DTO.UserRegisterDto;
 import com.G19.hospital.repository.UserRepository;
 import com.G19.hospital.service.AuthService;
@@ -15,7 +16,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
+
+import javax.swing.text.html.Option;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -34,8 +38,17 @@ public class AuthController {
 
     }
     @PostMapping("/login")
-    public ResponseEntity<AccessToken> login(@RequestBody UserLoginDto userLoginDto) {
+    public ResponseEntity<?> login(@RequestBody UserLoginDto userLoginDto) {
+        Optional<User> userData = userRepository.findByPhoneNumber(userLoginDto.getUsername());
+    
+        if (userData.isEmpty()) {
+            return ResponseEntity.status(401).body("Login failed: User not found.");
+        }
+    
+        userLoginDto.setUsername(userData.get().getUsername());
         AccessToken accessToken = authService.login(userLoginDto);
+    
         return ResponseEntity.ok(accessToken);
     }
+    
 }

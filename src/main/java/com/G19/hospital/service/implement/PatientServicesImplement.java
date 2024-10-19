@@ -45,8 +45,9 @@ public class PatientServicesImplement implements PatientServices {
 
         // Create a new User entity
         User patient = new User();
-        patient.setUsername(patientRegisterDTO.getPhoneNumber()); // Treat phone number as username
+        patient.setUsername(patientRegisterDTO.getPatientName()); // Treat phone number as username
         patient.setEmail(patientRegisterDTO.getEmail());
+        patient.setPhoneNumber(patientRegisterDTO.getPhoneNumber());
         patient.setPassword(passwordEncoder.encode(patientRegisterDTO.getPassword()));
 
         // Generate a unique patientId based on logic
@@ -79,7 +80,7 @@ public class PatientServicesImplement implements PatientServices {
     @Override
     public PatientDetails profilePatient(PatientDetailsDTO patientDetailsDTO) throws Exception {
         // Find the associated patient (User)
-        User patient = userRepository.findByUserId(patientDetailsDTO.getPatientId())
+        User patient = userRepository.findById(patientDetailsDTO.getId())
                 .orElseThrow(() -> new Exception("Patient not found"));
 
         // Create and populate the PatientDetails entity
@@ -101,6 +102,18 @@ public class PatientServicesImplement implements PatientServices {
                 .orElseThrow(() -> new CustomSecurityException("Patient not found", HttpStatus.NOT_FOUND));
     }
 
+    public User getPatientInfoByUserName(String phoneNumber) {
+        try {
+            // Logic to retrieve the patient from the database using the phone number
+            return userRepository.findByUsername(phoneNumber)
+                    .orElseThrow(() -> new Exception("Patient not found"));
+        } catch (Exception e) {
+            // Handle the exception (e.g., log it or throw a specific runtime exception)
+            throw new RuntimeException("Error retrieving patient info: " + e.getMessage());
+        }
+    }
+    
+    
     @Override
     public long getPatientCount() {
         Role patientRole = roleRepository.findByName("PATIENT");

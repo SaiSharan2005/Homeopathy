@@ -40,15 +40,30 @@ public class DoctorAuthenticationController {
         }
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> loginDoctor(@RequestBody DoctorLoginDTO loginRequest) {
+    @GetMapping("/me")
+    public ResponseEntity<?> getAuthenticatedPatientDetails() {
         try {
-            User doctor = doctorServices.loginDoctor(loginRequest.getPhoneNumber(), loginRequest.getPassword());
-            return ResponseEntity.ok(doctor);
+            // Get the currently authenticated user's information
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName(); // Assuming phone number is used as the username
+            
+            // Retrieve the patient information based on the authenticated phone number
+            User patient = doctorServices.getDoctorInfoByUserName(username);
+            return ResponseEntity.ok(patient);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed: " + e.getMessage());
+            return ResponseEntity.status(404).body("Patient not found: " + e.getMessage());
         }
     }
+
+    // @PostMapping("/login")
+    // public ResponseEntity<?> loginDoctor(@RequestBody DoctorLoginDTO loginRequest) {
+    //     try {
+    //         User doctor = doctorServices.loginDoctor(loginRequest.getPhoneNumber(), loginRequest.getPassword());
+    //         return ResponseEntity.ok(doctor);
+    //     } catch (Exception e) {
+    //         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed: " + e.getMessage());
+    //     }
+    // }
 
     @GetMapping("/byId/{id}")
     public ResponseEntity<?> getDoctorById(@PathVariable String id) {

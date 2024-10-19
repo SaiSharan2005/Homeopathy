@@ -12,6 +12,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 
 @RestController
 @RequestMapping("/patient")
@@ -47,6 +50,22 @@ public class PatientAuthenticationController {
             return ResponseEntity.ok(registeredPatient);
         } catch (Exception e) {
             return ResponseEntity.status(400).body("Profile creation failed: " + e.getMessage());
+        }
+    }
+
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getAuthenticatedPatientDetails() {
+        try {
+            // Get the currently authenticated user's information
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName(); // Assuming phone number is used as the username
+            
+            // Retrieve the patient information based on the authenticated phone number
+            User patient = patientServices.getPatientInfoByUserName(username);
+            return ResponseEntity.ok(patient);
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("Patient not found: " + e.getMessage());
         }
     }
 
