@@ -1,9 +1,8 @@
 package com.G19.hospital.service;
 
 import com.G19.hospital.model.BookingAppointment;
-import com.G19.hospital.model.DoctorRegister;
+import com.G19.hospital.model.User; // Updated import to User
 import com.G19.hospital.model.DoctorSchedule;
-import com.G19.hospital.model.PatientRegister;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,13 +16,12 @@ public interface BookingAppointmentServices {
     List<BookingAppointment> getAllBookingAppointments();
     BookingAppointment getBookingAppointmentById(Long bookingId) throws Exception;
 
-     List<BookingAppointment> getBookingsByDoctorId(DoctorRegister doctorId) ;
+    List<BookingAppointment> getBookingsByDoctorId(User doctorId); // Updated parameter type to User
+    List<BookingAppointment> getBookingsByPatientId(User patientId); // Updated parameter type to User
 
-     List<BookingAppointment> getBookingsByPatientId(PatientRegister patientId) ;
+    List<BookingAppointment> getBookingsByScheduleId(DoctorSchedule scheduleId);
 
-    List<BookingAppointment> getBookingsByScheduleId(DoctorSchedule scheduleId) ;
-
-    Optional<BookingAppointment> getBookingByToken(String token) ;
+    Optional<BookingAppointment> getBookingByToken(String token);
 
     long getAppointmentCount();
 }

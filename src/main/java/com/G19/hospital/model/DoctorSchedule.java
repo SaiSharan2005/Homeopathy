@@ -1,8 +1,14 @@
 package com.G19.hospital.model;
 
-import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class DoctorSchedule {
@@ -13,7 +19,7 @@ public class DoctorSchedule {
 
     @ManyToOne
     @JoinColumn(name = "doctor_id", nullable = false)
-    private DoctorRegister doctor;
+    private User doctor;  // Changed from DoctorRegister to User
 
     @ManyToOne
     @JoinColumn(name = "slot_id", nullable = false)
@@ -28,7 +34,6 @@ public class DoctorSchedule {
     private boolean booked = false;
 
     // Getters and Setters
-
     public Long getScheduleId() {
         return scheduleId;
     }
@@ -37,11 +42,11 @@ public class DoctorSchedule {
         this.scheduleId = scheduleId;
     }
 
-    public DoctorRegister getDoctor() {
-        return doctor;
+    public User getDoctor() {
+        return doctor;  // Changed return type to User
     }
 
-    public void setDoctor(DoctorRegister doctor) {
+    public void setDoctor(User doctor) {  // Changed parameter type to User
         this.doctor = doctor;
     }
 
@@ -76,10 +81,12 @@ public class DoctorSchedule {
     public void setBooked(boolean booked) {
         this.booked = booked;
     }
-    public void setSlot(DoctorTiming slot){
-        this.slot = slot;
-    }
+
     public DoctorTiming getSlot(){
         return this.slot;
+    }
+    
+    public void setSlot(DoctorTiming slot){
+        this.slot = slot;
     }
 }

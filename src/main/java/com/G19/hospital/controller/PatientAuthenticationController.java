@@ -1,14 +1,11 @@
 package com.G19.hospital.controller;
 
 import com.G19.hospital.service.PatientServices;
-import com.G19.hospital.service.implement.PatientServicesImplement;
 import com.G19.hospital.DTO.PatientDetailsDTO;
-import com.G19.hospital.DTO.PatientInfoDTO;
 import com.G19.hospital.DTO.PatientLoginDTO;
 import com.G19.hospital.DTO.PatientRegisterDTO;
-import com.G19.hospital.model.DoctorRegister;
 import com.G19.hospital.model.PatientDetails;
-import com.G19.hospital.model.PatientRegister;
+import com.G19.hospital.model.User;
 
 import java.util.List;
 
@@ -26,57 +23,60 @@ public class PatientAuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<?> registerPatient(@RequestBody PatientRegisterDTO patientRegisterDTO) {
         try {
-            
-            PatientRegister registeredPatient = patientServices.registerPatient(patientRegisterDTO);
-            // String response="Registered sucessfully"+registeredPatient.getPatientId();
-            // return response;
+            User registeredPatient = patientServices.registerPatient(patientRegisterDTO);
             return ResponseEntity.ok(registeredPatient);
-
         } catch (Exception e) {
-            return ResponseEntity.status(401).body("Login failed: " + e.getMessage());
+            return ResponseEntity.status(400).body("Registration failed: " + e.getMessage());
         }
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> loginPatient(@RequestBody PatientLoginDTO loginRequest) {
         try {
-            PatientRegister patient = patientServices.loginPatient(loginRequest.getPhoneNumber(), loginRequest.getPassword());
+            User patient = patientServices.loginPatient(loginRequest.getPhoneNumber(), loginRequest.getPassword());
             return ResponseEntity.ok(patient);
         } catch (Exception e) {
             return ResponseEntity.status(401).body("Login failed: " + e.getMessage());
         }
     }
+
     @PostMapping("/profile")
     public ResponseEntity<?> profilePatient(@RequestBody PatientDetailsDTO patientDetailsDTO) {
         try {
-            
             PatientDetails registeredPatient = patientServices.profilePatient(patientDetailsDTO);
             return ResponseEntity.ok(registeredPatient);
         } catch (Exception e) {
-            return ResponseEntity.status(401).body("Login failed: " + e.getMessage());
+            return ResponseEntity.status(400).body("Profile creation failed: " + e.getMessage());
         }
     }
 
-    // @Autowired
-    // private PatientServicesImplement patientService;
-    
- 
     @GetMapping("/{patientId}")
-    public PatientRegister getPatientByPatientId(@PathVariable String patientId) throws Exception {
-        return patientServices.getPatientInfo(patientId);
+    public ResponseEntity<?> getPatientByPatientId(@PathVariable String patientId) {
+        try {
+            User patient = patientServices.getPatientInfo(patientId);
+            return ResponseEntity.ok(patient);
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("Patient not found: " + e.getMessage());
+        }
     }
-
 
     @GetMapping("/searchPatient/{keyword}")
-    public List<PatientRegister> searchDoctors(@PathVariable String keyword) throws Exception {
-        // System.out.println(keyword);
-        return patientServices.searchPatients(keyword);
+    public ResponseEntity<List<User>> searchPatients(@PathVariable String keyword) {
+        try {
+            List<User> patients = patientServices.searchPatients(keyword);
+            return ResponseEntity.ok(patients);
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(null);
+        }
     }
 
-    
     @GetMapping("/count")
-    public Long PatientCount() throws Exception {
-        return patientServices.getPatientCount();
+    public ResponseEntity<Long> getPatientCount() {
+        try {
+            Long count = patientServices.getPatientCount();
+            return ResponseEntity.ok(count);
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(null);
+        }
     }
-    
 }

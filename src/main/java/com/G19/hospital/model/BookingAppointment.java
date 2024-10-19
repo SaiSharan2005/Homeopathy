@@ -3,7 +3,14 @@ package com.G19.hospital.model;
 import java.time.LocalDate;
 
 import org.hibernate.annotations.ColumnDefault;
-import jakarta.persistence.*;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class BookingAppointment {
@@ -14,20 +21,20 @@ public class BookingAppointment {
 
     @ManyToOne
     @JoinColumn(name = "doctor_id", nullable = false)
-    private DoctorRegister doctorId;
+    private User doctor;  // Changed from DoctorRegister to User
 
     @ManyToOne
     @JoinColumn(name = "patient_id", nullable = false)
-    private PatientRegister patientId;
+    private User patient;  // Changed from PatientRegister to User
 
     @ManyToOne
     @JoinColumn(name = "schedule_id", nullable = false)
-    private DoctorSchedule scheduleId;
-    
+    private DoctorSchedule schedule;
+
     @Column(unique = true)
     private String token;
 
-    @Column(unique = false )
+    @Column(unique = false)
     private LocalDate appointDate;
 
     @ColumnDefault("'Upcoming'")
@@ -43,28 +50,28 @@ public class BookingAppointment {
         this.bookingId = bookingId;
     }
 
-    public DoctorRegister getDoctorId() {
-        return doctorId;
+    public User getDoctor() {
+        return doctor;  // Changed return type to User
     }
 
-    public void setDoctorId(DoctorRegister doctorId) {
-        this.doctorId = doctorId;
+    public void setDoctor(User doctor) {  // Changed parameter type to User
+        this.doctor = doctor;
     }
 
-    public PatientRegister getPatientId() {
-        return patientId;
+    public User getPatient() {
+        return patient;  // Changed return type to User
     }
 
-    public void setPatientId(PatientRegister patientId) {
-        this.patientId = patientId;
+    public void setPatient(User patient) {  // Changed parameter type to User
+        this.patient = patient;
     }
 
     public DoctorSchedule getScheduleId() {
-        return scheduleId;
+        return schedule;
     }
 
     public void setScheduleId(DoctorSchedule scheduleId) {
-        this.scheduleId = scheduleId;
+        this.schedule = scheduleId;
     }
 
     public String getToken() {
@@ -86,12 +93,8 @@ public class BookingAppointment {
     public LocalDate getAppointmenDate(){
         return this.appointDate;
     }
+
     public void setAppointmentDate(LocalDate appointmenDate){
         this.appointDate = appointmenDate;
-    }
-
-    // Remove or update this method
-    public BookingAppointment orElseThrow(Object object) {
-        throw new UnsupportedOperationException("Unimplemented method 'orElseThrow'");
     }
 }

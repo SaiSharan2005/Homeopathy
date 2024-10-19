@@ -1,9 +1,8 @@
 package com.G19.hospital.controller;
 
 import com.G19.hospital.model.BookingAppointment;
-import com.G19.hospital.model.DoctorRegister;
+import com.G19.hospital.model.User; // Updated import to User
 import com.G19.hospital.model.DoctorSchedule;
-import com.G19.hospital.model.PatientRegister;
 import com.G19.hospital.repository.BookingAppointmentRepository;
 import com.G19.hospital.service.BookingAppointmentServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
 
 @RestController
 @RequestMapping("/bookingAppointments")
@@ -39,9 +36,7 @@ public class BookingAppointmentController {
         }
     }
 
-   
-    @Scheduled(cron = "0 0 0 * * ?")
-    // @Scheduled(cron = "0 * * * * ?") // Every minute
+    @Scheduled(cron = "0 0 0 * * ?") // Runs every midnight
     public void updateMissedAppointments() {
         List<BookingAppointment> upcomingAppointments = bookingAppointmentRepository.findUpcomingAppointments();
         LocalDateTime currentTime = LocalDateTime.now(); // Get the current time
@@ -58,7 +53,6 @@ public class BookingAppointmentController {
         System.out.println("Missed appointments updated at midnight");
     }
 
-    
     @PutMapping("/{id}")
     public ResponseEntity<BookingAppointment> updateBookingAppointment(@PathVariable Long id,
             @RequestBody BookingAppointment bookingAppointment) {
@@ -70,10 +64,11 @@ public class BookingAppointmentController {
             return ResponseEntity.notFound().build();
         }
     }
-    @PostMapping("/completed-appointment/{id}")
-    public ResponseEntity<BookingAppointment> completedAppointment(@PathVariable String id) {
+
+    @PostMapping("/completed-appointment/{token}")
+    public ResponseEntity<BookingAppointment> completedAppointment(@PathVariable String token) {
         try {
-            BookingAppointment updatedBookingAppointment = bookingAppointmentServices.completedAppointment(id);
+            BookingAppointment updatedBookingAppointment = bookingAppointmentServices.completedAppointment(token);
             return ResponseEntity.ok(updatedBookingAppointment);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
@@ -109,20 +104,20 @@ public class BookingAppointmentController {
     @GetMapping("/doctor/{doctorId}")
     public ResponseEntity<List<BookingAppointment>> getBookingsByDoctorId(@PathVariable Long doctorId) {
         // Assuming doctorId is Long type
-        DoctorRegister doctorRegister = new DoctorRegister();
-        doctorRegister.setId(doctorId); // Set the doctorId to the DoctorRegister entity
+        User doctor = new User();
+        doctor.setId(doctorId); // Set the doctorId to the User entity
 
-        List<BookingAppointment> bookings = bookingAppointmentServices.getBookingsByDoctorId(doctorRegister);
+        List<BookingAppointment> bookings = bookingAppointmentServices.getBookingsByDoctorId(doctor);
         return ResponseEntity.ok(bookings);
     }
 
     @GetMapping("/patient/{patientId}")
     public ResponseEntity<List<BookingAppointment>> getBookingsByPatientId(@PathVariable Long patientId) {
         // Assuming patientId is Long type
-        PatientRegister patientRegister = new PatientRegister();
-        patientRegister.setId(patientId); // Set the patientId to the PatientRegister entity
+        User patient = new User();
+        patient.setId(patientId); // Set the patientId to the User entity
 
-        List<BookingAppointment> bookings = bookingAppointmentServices.getBookingsByPatientId(patientRegister);
+        List<BookingAppointment> bookings = bookingAppointmentServices.getBookingsByPatientId(patient);
         return ResponseEntity.ok(bookings);
     }
 
@@ -135,20 +130,15 @@ public class BookingAppointmentController {
         List<BookingAppointment> bookings = bookingAppointmentServices.getBookingsByScheduleId(doctorSchedule);
         return ResponseEntity.ok(bookings);
     }
-
     @GetMapping("/token/{token}")
-    public ResponseEntity<Optional<BookingAppointment>> getBookingByToken(@PathVariable String token) {
+    public ResponseEntity<BookingAppointment> getBookingByToken(@PathVariable String token) {
         Optional<BookingAppointment> booking = bookingAppointmentServices.getBookingByToken(token);
-        if (booking != null) {
-            return ResponseEntity.ok(booking);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return booking.map(ResponseEntity::ok)  // If present, return 200 OK with the BookingAppointment
+                      .orElseGet(() -> ResponseEntity.notFound().build()); // If not present, return 404 Not Found
     }
-
+    
     @GetMapping("/count")
     public long AppointmentCount() {
         return bookingAppointmentServices.getAppointmentCount();
     }
-    
 }

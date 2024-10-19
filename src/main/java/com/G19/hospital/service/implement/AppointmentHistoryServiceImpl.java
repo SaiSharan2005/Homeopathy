@@ -1,16 +1,14 @@
 package com.G19.hospital.service.implement;
-import java.util.Optional;
 
 import com.G19.hospital.DTO.AppointmentHistoryDTO;
 import com.G19.hospital.model.AppointmentHistory;
 import com.G19.hospital.model.BookingAppointment;
-import com.G19.hospital.model.DoctorRegister;
 import com.G19.hospital.model.Staff;
+import com.G19.hospital.model.User;  // Importing User model
 import com.G19.hospital.repository.AppointmentHistoryRepository;
 import com.G19.hospital.repository.BookingAppointmentRepository;
-import com.G19.hospital.repository.DoctorAuthenticationRepository;
+import com.G19.hospital.repository.UserRepository;  // Assuming you have a UserRepository
 import com.G19.hospital.repository.StaffRepository;
-
 import com.G19.hospital.service.AppointmentHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,29 +25,35 @@ public class AppointmentHistoryServiceImpl implements AppointmentHistoryService 
     private BookingAppointmentRepository bookingAppointmentRepository;
 
     @Autowired
-    private DoctorAuthenticationRepository doctorAuthenticationRepository;
+    private UserRepository userRepository;  // Replacing DoctorAuthenticationRepository with UserRepository
 
     @Autowired
     private StaffRepository staffRepository;
 
     @Override
     public AppointmentHistory addAppointmentHistory(AppointmentHistoryDTO appointmentHistoryDTO) {
-        BookingAppointment bookingAppointment = bookingAppointmentRepository.findById(appointmentHistoryDTO.getBookingId()).orElseThrow();
-        // DoctorRegister doctor = doctorAuthenticationRepository.findById(appointmentHistoryDTO.getDoctorId());
-        Optional<DoctorRegister> optionalDoctor = doctorAuthenticationRepository.findById(appointmentHistoryDTO.getDoctorId());
-        DoctorRegister doctor = optionalDoctor.get();
-
+        // Retrieve the booking appointment
+        BookingAppointment bookingAppointment = bookingAppointmentRepository.findById(appointmentHistoryDTO.getBookingId())
+                .orElseThrow(() -> new RuntimeException("Booking appointment not found for ID: " + appointmentHistoryDTO.getBookingId()));
         
-        Staff admin = staffRepository.findById(appointmentHistoryDTO.getAdminId()).orElseThrow();
+        // Retrieve the user (previously DoctorRegister)
+        User user = userRepository.findById(appointmentHistoryDTO.getDoctorId())
+                .orElseThrow(() -> new RuntimeException("User not found for ID: " + appointmentHistoryDTO.getDoctorId()));
+        
+        // Retrieve the admin
+        Staff admin = staffRepository.findById(appointmentHistoryDTO.getAdminId())
+                .orElseThrow(() -> new RuntimeException("Staff not found for ID: " + appointmentHistoryDTO.getAdminId()));
 
+        // Create and populate the AppointmentHistory entity
         AppointmentHistory appointmentHistory = new AppointmentHistory();
         appointmentHistory.setBookingAppointment(bookingAppointment);
-        appointmentHistory.setDoctorId(doctor);
+        appointmentHistory.setDoctor(user);  // Set the user instead of doctor
         appointmentHistory.setAdminId(admin);
         appointmentHistory.setRole(appointmentHistoryDTO.getRole());
         appointmentHistory.setAction(appointmentHistoryDTO.getAction());
         appointmentHistory.setReasonForAction(appointmentHistoryDTO.getReasonForAction());
 
+        // Save and return the appointment history
         return appointmentHistoryRepository.save(appointmentHistory);
     }
 
