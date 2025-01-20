@@ -5,11 +5,16 @@ import com.G19.hospital.model.BookingAppointment;
 import com.G19.hospital.model.User; // Updated import to User
 import com.G19.hospital.model.DoctorSchedule;
 import com.G19.hospital.repository.BookingAppointmentRepository;
+import com.G19.hospital.repository.UserRepository;
 import com.G19.hospital.service.BookingAppointmentServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,15 +30,42 @@ public class BookingAppointmentController {
     @Autowired
     private BookingAppointmentRepository bookingAppointmentRepository;
 
- @PostMapping
-    public ResponseEntity<BookingAppointment> createBookingAppointment(@RequestBody BookingAppointmentDTO bookingAppointmentDTO) {
-        try {
-            BookingAppointment createdBookingAppointment = bookingAppointmentServices.createBookingAppointment(bookingAppointmentDTO);
-            return ResponseEntity.ok(createdBookingAppointment);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+    @Autowired
+    private UserRepository userRepository;
+
+//  @PostMapping
+//     public ResponseEntity<BookingAppointment> createBookingAppointment(@RequestBody BookingAppointmentDTO bookingAppointmentDTO) {
+//         try {
+//             BookingAppointment createdBookingAppointment = bookingAppointmentServices.createBookingAppointment(bookingAppointmentDTO);
+//             return ResponseEntity.ok(createdBookingAppointment);
+//         } catch (Exception e) {
+//             return ResponseEntity.badRequest().build();
+//         }
+//     }
+
+@PostMapping
+public ResponseEntity<BookingAppointment> createBookingAppointment(@RequestBody BookingAppointmentDTO bookingAppointmentDTO) {
+    try {
+        // Extract the authenticated user's details from the token
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName(); // Assuming the username is the doctor's identifier
+
+        // Fetch the doctor (User object) by username
+        User patient = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+
+        // Set the doctor ID in the DTO
+        bookingAppointmentDTO.setPatientId(patient.getId());
+
+        // Create the booking appointment
+        BookingAppointment createdBookingAppointment = bookingAppointmentServices.createBookingAppointment(bookingAppointmentDTO);
+
+        return ResponseEntity.ok(createdBookingAppointment);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
     }
+}
+
 
     @PutMapping("/{id}")
     public ResponseEntity<BookingAppointment> updateBookingAppointment(@PathVariable Long id,

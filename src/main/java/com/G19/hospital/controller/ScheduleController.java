@@ -9,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -27,23 +30,27 @@ public class ScheduleController {
     @Autowired
     private UserRepository userRepository; // Inject UserRepository
 
-    @PostMapping("/doctor/{doctorId}/create/{date}")
-    public ResponseEntity<String> createSchedule(
-        @PathVariable Long doctorId, 
+  @PostMapping("/create/{date}")
+public ResponseEntity<String> createSchedule(
         @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-            try {
-            // Fetch the doctor (User object) by ID
-            User doctorData = userRepository.findById(doctorId)
-                    .orElseThrow(() -> new RuntimeException("Doctor not found"));
+    try {
+        // Extract the authenticated user's details from the token
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName(); // Assuming the username is the doctor's identifier
 
-            scheduleService.createScheduleForDate(doctorData, date);
+        // Fetch the doctor (User object) by username
+        User doctorData = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
-            return ResponseEntity.ok("Schedule created successfully for doctor ID: " + doctorId + " on " + date);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to create schedule: " + e.getMessage());
-        }
+        // Create the schedule for the specified date
+        scheduleService.createScheduleForDate(doctorData, date);
+
+        return ResponseEntity.ok("Schedule created successfully for doctor: " + username + " on " + date);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Failed to create schedule: " + e.getMessage());
     }
+}
 
     @GetMapping("/doctor/{doctorId}")
     public ResponseEntity<?> getAllSlots(@PathVariable Long doctorId) { // Changed from String to Long
