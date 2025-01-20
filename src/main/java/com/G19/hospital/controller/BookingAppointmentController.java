@@ -153,6 +153,28 @@ public ResponseEntity<BookingAppointment> createBookingAppointment(@RequestBody 
         return ResponseEntity.ok(bookings);
     }
 
+    @GetMapping("/my-appointments")
+pubulic ResponseEntity<List<BookingAppointment>> getMyAppointments() {
+    try {
+        // Extract the authenticated user's details from the token
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName(); // Assuming the username is the doctor's identifier
+
+        // Fetch the doctor (User object) by username
+        User doctor = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+
+        // Fetch the bookings for the authenticated doctor
+        List<BookingAppointment> bookings = bookingAppointmentServices.getBookingsByDoctorId(doctor);
+
+        return ResponseEntity.ok(bookings);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Collections.emptyList());
+    }
+}
+
+
     @GetMapping("/patient/{patientId}")
     public ResponseEntity<List<BookingAppointment>> getBookingsByPatientId(@PathVariable Long patientId) {
         // Assuming patientId is Long type
