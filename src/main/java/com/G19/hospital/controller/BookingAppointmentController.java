@@ -153,7 +153,7 @@ public ResponseEntity<BookingAppointment> createBookingAppointment(@RequestBody 
         return ResponseEntity.ok(bookings);
     }
 
-    @GetMapping("/my-appointments")
+    @GetMapping("/doctor/my-appointments")
 pubulic ResponseEntity<List<BookingAppointment>> getMyAppointments() {
     try {
         // Extract the authenticated user's details from the token
