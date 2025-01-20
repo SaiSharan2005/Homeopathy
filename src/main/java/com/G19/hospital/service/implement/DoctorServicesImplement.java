@@ -130,8 +130,8 @@ public class DoctorServicesImplement implements DoctorServices {
     }
     
     @Override
-    public User getDoctorByDoctorId(String doctorId) throws Exception {
-        return userRepository.findByUserId(doctorId)
+    public User getDoctorByDoctorId(Long id ) throws Exception {
+        return userRepository.findById(id)
                 .orElseThrow(() -> new CustomSecurityException("Doctor not found", HttpStatus.NOT_FOUND));
     }
 

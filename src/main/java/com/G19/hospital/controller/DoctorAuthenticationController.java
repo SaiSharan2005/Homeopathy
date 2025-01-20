@@ -119,7 +119,7 @@ public class DoctorAuthenticationController {
     // }
 
     @GetMapping("/byId/{id}")
-    public ResponseEntity<?> getDoctorById(@PathVariable String id) {
+    public ResponseEntity<?> getDoctorById(@PathVariable Long id) {
         try {
             User doctor = doctorServices.getDoctorByDoctorId(id);
             if (doctor != null) {

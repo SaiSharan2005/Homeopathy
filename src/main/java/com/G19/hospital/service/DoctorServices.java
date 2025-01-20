@@ -19,7 +19,7 @@ public interface DoctorServices {
     DoctorDetails profileDoctor(DoctorDetailsDTO doctorDetailsDTO) throws Exception;
 
     // Fetch a doctor using doctorId (stored in the User model)
-    User getDoctorByDoctorId(String doctorId) throws Exception;
+    User getDoctorByDoctorId(Long id ) throws Exception;
 
     User getDoctorInfoByUserName(String username);
 
