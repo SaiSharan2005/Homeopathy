@@ -8,7 +8,7 @@ public interface DoctorTimingService {
     DoctorTimingDTO createDoctorTiming(DoctorTimingDTO doctorTimingDTO);
     List<DoctorTimingDTO> createDoctorTimings(List<DoctorTimingDTO> doctorTimingDTOs);
     DoctorTimingDTO updateDoctorTiming(Long slotId, DoctorTimingDTO doctorTimingDTO);
-    void deleteDoctorTiming(Long slotId);
+    boolean deleteDoctorTiming(Long slotId);
     DoctorTimingDTO getDoctorTiming(Long slotId);
     List<DoctorTimingDTO> getAllDoctorTimings();
     

@@ -21,6 +21,9 @@ public interface DoctorServices {
     // Fetch a doctor using doctorId (stored in the User model)
     User getDoctorByDoctorId(String doctorId) throws Exception;
 
+    User getDoctorInfoByUserName(String username);
+
+    
     // Fetch all doctors (based on a role or attribute in User model)
     List<User> getAllDoctors() throws Exception;
 
@@ -29,4 +32,6 @@ public interface DoctorServices {
 
     // Get total count of doctors
     long getDoctorCount() throws Exception;
+    DoctorDetails updateDoctorProfile(DoctorDetailsDTO doctorDetailsDTO) throws Exception;
+
 }

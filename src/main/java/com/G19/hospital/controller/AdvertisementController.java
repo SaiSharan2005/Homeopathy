@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/ads")
+@RequestMapping("/api/ads")
 public class AdvertisementController {
 
     private final String uploadDir = "uploads/";
@@ -32,7 +32,7 @@ public class AdvertisementController {
     }
 
   @PostMapping
-    public ResponseEntity<Advertisement> createAd(
+    public ResponseEntity<Advertisement> createAdv(
         @RequestParam("title") String title,
         @RequestParam("description") String description,
         @RequestParam("targetPage") String targetPage,

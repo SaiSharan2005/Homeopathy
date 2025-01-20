@@ -39,13 +39,12 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     }
     @Override
     public Advertisement createAdvertisement(Advertisement advertisement) {
-    // Create a new ActivityLog entry
+
     ActivityLog advertisementLog = new ActivityLog();
-    advertisementLog.setMessage(String.format("Advertisement %d is created by %s (ID = %d)", 
-                                              advertisement.getId(), "staff", 34));
-    advertisementLog.setTimestamp(LocalDateTime.now()); // Set current timestamp
-    advertisementLog.setUserId(34); // Assuming staff ID is 34
-    advertisementLog.setUserType("Staff");
+    advertisementLog.setMessage(String.format("Advertisement %d is created by %s (ID = %d)", advertisement.getId(), "staff", 34));
+    advertisementLog.setTimestamp(LocalDateTime.now()); 
+    advertisementLog.setUserId(34); 
+    advertisementLog.setUserType("STAFF");
 
     // Log the activity
     activityLogService.createActivityLog(advertisementLog);
@@ -79,7 +78,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
                                                       savedAd.getId(), "staff", 34));
             advertisementLog.setTimestamp(LocalDateTime.now()); // Set current timestamp
             advertisementLog.setUserId(34); // Assuming staff ID is 34
-            advertisementLog.setUserType("Staff");
+            advertisementLog.setUserType("STAFF");
     
             // Log the activity
             activityLogService.createActivityLog(advertisementLog);

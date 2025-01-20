@@ -1,5 +1,6 @@
 package com.G19.hospital.service.implement;
 
+import com.G19.hospital.DTO.BookingAppointmentDTO;
 import com.G19.hospital.model.BookingAppointment;
 import com.G19.hospital.model.User; // Updated import to User
 import com.G19.hospital.model.DoctorSchedule;
@@ -25,43 +26,72 @@ public class BookingAppointmentServicesImpl implements BookingAppointmentService
     @Autowired
     private DoctorScheduleServices doctorScheduleServices;
 
-    @Override
-    public BookingAppointment createBookingAppointment(BookingAppointment bookingAppointment) throws Exception {
-        DoctorSchedule sch = bookingAppointment.getScheduleId();
-        bookingAppointment.setAppointmentDate(sch.getDate());
-        BookingAppointment savedAppointment = bookingAppointmentRepository.save(bookingAppointment);
-    
-        // Get the current date and time
+   @Override
+    public BookingAppointment createBookingAppointment(BookingAppointmentDTO bookingAppointmentDTO) throws Exception {
+        DoctorSchedule schedule = doctorScheduleServices.getScheduleById(bookingAppointmentDTO.getScheduleId());
+        User doctor = new User();
+        doctor.setId(bookingAppointmentDTO.getDoctorId());
+        User patient = new User();
+        patient.setId(bookingAppointmentDTO.getPatientId());
+
+        BookingAppointment bookingAppointment = new BookingAppointment();
+        bookingAppointment.setDoctor(doctor);
+        bookingAppointment.setPatient(patient);
+        bookingAppointment.setScheduleId(schedule);
+        bookingAppointment.setAppointmentDate(schedule.getDate());
+        bookingAppointment.setStatus(bookingAppointmentDTO.getStatus());
+        bookingAppointment = bookingAppointmentRepository.save(bookingAppointment);
+        // Generate the token
         LocalDateTime now = LocalDateTime.now();
-        
-        // Format the date
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         String formattedDate = now.format(formatter);
-        
-        // Generate the token using the formatted date and booking ID
-        String uniqueToken = formattedDate + "-" + savedAppointment.getBookingId();
-        // Assign the token to the booking appointment
-        savedAppointment.setToken(uniqueToken);
-        doctorScheduleServices.bookSlot(sch.getScheduleId());
-        
-        return bookingAppointmentRepository.save(savedAppointment); // Save the savedAppointment instead of bookingAppointment
+        String uniqueToken = formattedDate + "-" + bookingAppointment.getBookingId();
+        bookingAppointment.setToken(uniqueToken);
+
+        doctorScheduleServices.bookSlot(schedule.getScheduleId());
+
+        return bookingAppointment;
     }
 
     @Override
-    public BookingAppointment updateBookingAppointment(Long bookingId, BookingAppointment bookingAppointment) throws Exception {
+    public BookingAppointment updateBookingAppointment(Long bookingId, BookingAppointmentDTO bookingAppointmentDTO) throws Exception {
         BookingAppointment existingBookingAppointment = bookingAppointmentRepository.findById(bookingId)
                 .orElseThrow(() -> new Exception("Booking appointment not found"));
 
-        DoctorSchedule schedule = existingBookingAppointment.getScheduleId();
-        doctorScheduleServices.cancelSlot(schedule.getScheduleId());
-        
-        // Update the schedule ID
-        schedule = bookingAppointment.getScheduleId();
-        doctorScheduleServices.bookSlot(schedule.getScheduleId());
+        DoctorSchedule schedule = doctorScheduleServices.getScheduleById(bookingAppointmentDTO.getScheduleId());
         existingBookingAppointment.setScheduleId(schedule);
-        
+
+        User doctor = new User();
+        doctor.setId(bookingAppointmentDTO.getDoctorId());
+        User patient = new User();
+        patient.setId(bookingAppointmentDTO.getPatientId());
+
+        existingBookingAppointment.setDoctor(doctor);
+        existingBookingAppointment.setPatient(patient);
+        existingBookingAppointment.setStatus(bookingAppointmentDTO.getStatus());
+
+        doctorScheduleServices.cancelSlot(existingBookingAppointment.getScheduleId().getScheduleId());
+        doctorScheduleServices.bookSlot(schedule.getScheduleId());
+
         return bookingAppointmentRepository.save(existingBookingAppointment);
     }
+
+
+    // @Override
+    // public BookingAppointment updateBookingAppointment(Long bookingId, BookingAppointment bookingAppointment) throws Exception {
+    //     BookingAppointment existingBookingAppointment = bookingAppointmentRepository.findById(bookingId)
+    //             .orElseThrow(() -> new Exception("Booking appointment not found"));
+
+    //     DoctorSchedule schedule = existingBookingAppointment.getScheduleId();
+    //     doctorScheduleServices.cancelSlot(schedule.getScheduleId());
+        
+    //     // Update the schedule ID
+    //     schedule = bookingAppointment.getScheduleId();
+    //     doctorScheduleServices.bookSlot(schedule.getScheduleId());
+    //     existingBookingAppointment.setScheduleId(schedule);
+        
+    //     return bookingAppointmentRepository.save(existingBookingAppointment);
+    // }
 
     @Override
     public BookingAppointment completedAppointment(String tokenId) throws Exception {

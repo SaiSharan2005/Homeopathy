@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 public class UserLoginDto {
 
     private String username;
+    private String phoneNumber;
     private String password;
 }

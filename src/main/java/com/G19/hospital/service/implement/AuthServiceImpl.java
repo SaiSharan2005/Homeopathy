@@ -27,18 +27,21 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-
+import java.util.Random;
 @Service
 @Slf4j
 @Transactional
 public class AuthServiceImpl implements AuthService {
+
     @Autowired
     private ITokenProvider tokenProvider;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private RoleRepository roleRepository;
 
@@ -47,66 +50,90 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AccessToken register(UserRegisterDto userRegisterDto) {
-        checkUserExistsWithUserName(userRegisterDto.getUsername());
+        try {
+            checkUserExistsWithUserName(userRegisterDto.getUsername());
 
-        User user = new User();
-        user.setEmail(userRegisterDto.getEmail());
-        user.setUsername(userRegisterDto.getUsername());
-        user.setPhoneNumber(userRegisterDto.getPhoneNumber());
-        user.setPassword(passwordEncoder.encode(userRegisterDto.getPassword()));
-        user.setRoles(getRoles(userRegisterDto.getRoles()));
+            User user = new User();
+            user.setEmail(userRegisterDto.getEmail());
+            user.setUsername(userRegisterDto.getUsername());
+            user.setPhoneNumber(userRegisterDto.getPhoneNumber());
+            user.setPassword(passwordEncoder.encode(userRegisterDto.getPassword()));
+            user.setRoles(getRoles(userRegisterDto.getRoles()));
 
-        userRepository.save(user);
+            String userId;
+            Random random = new Random();
+            do {
+                String firstNamePart = user.getUsername().substring(0,
+                        Math.min(user.getUsername().length(), 4));
+                int randomNumber = random.nextInt(9000) + 1000; // Random number between 1000 and 9999
+                userId = "D29" + firstNamePart + randomNumber;
+            } while (userRepository.existsByUserId(userId));
 
-        String username = user.getUsername();
-        Set<Role> roles = user.getRoles();
+            user.setUserId(userId);
+            userRepository.save(user);
 
-        return tokenProvider.createToken(username,roles);
+            return tokenProvider.createToken(user.getUsername(), user.getRoles());
+        } catch (Exception ex) {
+            log.error("Error during user registration: {}", ex.getMessage(), ex);
+            throw new CustomSecurityException(ApiMessages.REGISTRATION_FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
+    @Override
+    public AccessToken login(UserLoginDto userLoginDto) {
+        String username = userLoginDto.getUsername();
+        String password = userLoginDto.getPassword();
 
+        try {
+            // Load user details
+            Optional<User> optionalUser = userRepository.findByUsername(username);
 
-@Override
-public AccessToken login(UserLoginDto userLoginDto) {
-    String username = userLoginDto.getUsername();
-    String password = userLoginDto.getPassword();
+            if (optionalUser.isEmpty()) {
+                throw new CustomSecurityException(ApiMessages.BAD_CREDENTIALS, HttpStatus.BAD_REQUEST);
+            }
 
-    // Load user details from UserDetailsService
-    Optional<User> userDetails = userRepository.findByUsername(username);
-    
-    // Check if user exists and if the password matches
-    if (userDetails == null) {
-        throw new CustomSecurityException(ApiMessages.BAD_CREDENTIALS, HttpStatus.BAD_REQUEST);
+            User user = optionalUser.get();
+
+            // Verify the password
+            if (!passwordEncoder.matches(password, user.getPassword())) {
+                throw new CustomSecurityException(ApiMessages.BAD_CREDENTIALS, HttpStatus.BAD_REQUEST);
+            }
+
+            // Authenticate the user
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(username, password));
+
+            // Generate and return the token
+            return tokenProvider.createToken(user.getUsername(), user.getRoles());
+        } catch (AuthenticationException ex) {
+            log.error("Authentication failed for user {}: {}", username, ex.getMessage(), ex);
+            throw new CustomSecurityException(ApiMessages.BAD_CREDENTIALS, HttpStatus.BAD_REQUEST);
+        } catch (Exception ex) {
+            log.error("Unexpected error during login for user {}: {}", username, ex.getMessage(), ex);
+            throw new CustomSecurityException(ApiMessages.LOGIN_FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
-    User userDetail = userDetails.get();
-    // Verify the password against the stored password
-    if (!passwordEncoder.matches(password, userDetail.getPassword())) {
-        throw new CustomSecurityException(ApiMessages.BAD_CREDENTIALS, HttpStatus.BAD_REQUEST);
-    }
-
-    // Authenticate the user
-    try {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        // Retrieve roles from user details
-        Set<Role> roles = userRepository.findByUsername(username).get().getRoles();
-        // Generate and return the access token
-        return tokenProvider.createToken(username, roles);
-    } catch (AuthenticationException exception) {
-        throw new CustomSecurityException(ApiMessages.BAD_CREDENTIALS, HttpStatus.BAD_REQUEST);
-    }
-}
 
     private void checkUserExistsWithUserName(String username) {
         if (userRepository.existsByUsername(username)) {
-            throw new CustomSecurityException(ApiMessages.USER_ALREADY_EXISTS,HttpStatus.BAD_REQUEST);
+            throw new CustomSecurityException(ApiMessages.USER_ALREADY_EXISTS, HttpStatus.BAD_REQUEST);
         }
-    }
-    private Set<Role> getRoles(String [] roles){
-        Set<Role> userRoles = new HashSet<>();
-        for(String role : roles) {
-            userRoles.add(roleRepository.findByName(role));
-        }
-        return userRoles;
     }
 
+    private Set<Role> getRoles(String[] roles) {
+        try {
+            Set<Role> userRoles = new HashSet<>();
+            for (String role : roles) {
+                Role roleEntity = roleRepository.findByName(role);
+                if (roleEntity == null) {
+                    throw new CustomSecurityException(String.format("Role '%s' not found", role), HttpStatus.BAD_REQUEST);
+                }
+                userRoles.add(roleEntity);
+            }
+            return userRoles;
+        } catch (Exception ex) {
+            log.error("Error fetching roles: {}", ex.getMessage(), ex);
+            throw new CustomSecurityException(ApiMessages.ROLE_FETCH_FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

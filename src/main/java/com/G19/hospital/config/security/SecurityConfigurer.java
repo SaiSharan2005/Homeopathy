@@ -9,10 +9,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-// import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter; // This import is removed
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -31,34 +29,20 @@ public class SecurityConfigurer {
     @Autowired
     private TokenFilter tokenFilter;
 
-    // @Bean
-    // public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    //     http
-    //         .csrf().disable()
-    //         .sessionManagement(session -> session
-    //             .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-    //         .authorizeHttpRequests(auth -> auth
-    //             .requestMatchers("/api/auth/register").permitAll()
-    //             .requestMatchers("/*").permitAll()
-    //             .anyRequest().authenticated())
-    //         .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
-
-    //     return http.build();
-    // }
-
     @Bean
-public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http
-        .csrf().disable()
-        .sessionManagement(session -> session
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authorizeHttpRequests(auth -> auth
-            .anyRequest().permitAll() // Allow all requests without authentication
-        )
-        .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
-
-    return http.build();
-}
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf().disable()
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // Stateless session management
+            .authorizeRequests(auth -> auth
+                .anyRequest().permitAll() // Allow all requests without authentication
+            )
+            .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class); // Add the token filter before the UsernamePasswordAuthenticationFilter
+    
+        return http.build();
+    }
+    
 
     @Bean
     public AuthenticationManager authManager(HttpSecurity http) throws Exception {
@@ -69,6 +53,4 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
             .passwordEncoder(passwordEncoder);
         return authenticationManagerBuilder.build();
     }
-
- 
 }

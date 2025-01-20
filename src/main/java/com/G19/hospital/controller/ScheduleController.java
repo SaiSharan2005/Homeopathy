@@ -15,7 +15,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/schedule")
+@RequestMapping("/api/schedule")
 public class ScheduleController {
 
     @Autowired
@@ -27,27 +27,49 @@ public class ScheduleController {
     @Autowired
     private UserRepository userRepository; // Inject UserRepository
 
+    @PostMapping("/doctor/{doctorId}/create/{date}")
+    public ResponseEntity<String> createSchedule(
+        @PathVariable Long doctorId, 
+        @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+            try {
+            // Fetch the doctor (User object) by ID
+            User doctorData = userRepository.findById(doctorId)
+                    .orElseThrow(() -> new RuntimeException("Doctor not found"));
+
+            scheduleService.createScheduleForDate(doctorData, date);
+
+            return ResponseEntity.ok("Schedule created successfully for doctor ID: " + doctorId + " on " + date);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to create schedule: " + e.getMessage());
+        }
+    }
+
     @GetMapping("/doctor/{doctorId}")
     public ResponseEntity<?> getAllSlots(@PathVariable Long doctorId) { // Changed from String to Long
         try {
             User doctorData = userRepository.findById(doctorId)
-                .orElseThrow(() -> new RuntimeException("Doctor not found")); // Fetch User object
+                    .orElseThrow(() -> new RuntimeException("Doctor not found")); // Fetch User object
             List<DoctorSchedule> data = scheduleService.getScheduleByDoctorAndDate(doctorData, LocalDate.now());
             return ResponseEntity.ok(data);
         } catch (Exception e) {
-            return new ResponseEntity<>("Failed to fetch schedule: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Failed to fetch schedule: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("/doctor/{doctorId}/date/{date}")
-    public ResponseEntity<?> getAllSlotsByDate(@PathVariable Long doctorId, @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) { // Changed from String to Long
+    public ResponseEntity<?> getAllSlotsByDate(@PathVariable Long doctorId,
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) { // Changed from String to
+                                                                                           // Long
         try {
             User doctorData = userRepository.findById(doctorId)
-                .orElseThrow(() -> new RuntimeException("Doctor not found")); // Fetch User object
+                    .orElseThrow(() -> new RuntimeException("Doctor not found")); // Fetch User object
             List<DoctorSchedule> data = scheduleService.getScheduleByDoctorAndDate(doctorData, date);
             return ResponseEntity.ok(data);
         } catch (Exception e) {
-            return new ResponseEntity<>("Failed to fetch schedule: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Failed to fetch schedule: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -60,9 +82,10 @@ public class ScheduleController {
         return ResponseEntity.ok(schedule);
     }
 
-    @GetMapping("/available")
-    public ResponseEntity<List<DoctorSchedule>> getAvailableSlots(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        List<DoctorSchedule> availableSlots = scheduleService.getAvailableSlots(date);
+    @GetMapping("/available/{date}")
+    public ResponseEntity<List<DoctorSchedule>> getAvailableSlots(
+        @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) { // Changed from String to
+            List<DoctorSchedule> availableSlots = scheduleService.getAvailableSlots(date);
         return ResponseEntity.ok(availableSlots);
     }
 

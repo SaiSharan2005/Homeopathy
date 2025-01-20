@@ -18,7 +18,7 @@ import com.G19.hospital.service.DoctorServices;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("/create-appointment-slots")
+@RequestMapping("/api/create-appointment-slots")
 public class AppointmentSlotController {
 
     @Autowired

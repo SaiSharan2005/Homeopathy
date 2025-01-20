@@ -37,18 +37,16 @@ public class DoctorServicesImplement implements DoctorServices {
 
     @Override
     public User registerDoctor(DoctorRegisterDTO doctorRegisterDTO) throws Exception {
-        // Check if the phone number already exists in the User repository
         if (userRepository.existsByUsername(doctorRegisterDTO.getPhoneNumber())) {
             throw new CustomSecurityException(ApiMessages.USER_ALREADY_EXISTS, HttpStatus.BAD_REQUEST);
         }
 
-        // Create a new User and set properties from the DoctorRegisterDTO
         User doctor = new User();
-        doctor.setUsername(doctorRegisterDTO.getDoctorName()); // Treat phone number as username
+        doctor.setUsername(doctorRegisterDTO.getDoctorName()); 
         doctor.setEmail(doctorRegisterDTO.getEmail());
         doctor.setPassword(passwordEncoder.encode(doctorRegisterDTO.getPassword()));
         doctor.setPhoneNumber(doctorRegisterDTO.getPhoneNumber());
-        // Assign the role of "DOCTOR"
+
         Set<Role> roles = new HashSet<>();
         Role doctorRole = roleRepository.findByName("DOCTOR");
         roles.add(doctorRole);
@@ -89,7 +87,7 @@ public class DoctorServicesImplement implements DoctorServices {
     @Override
     public DoctorDetails profileDoctor(DoctorDetailsDTO doctorDetailsDTO) throws Exception {
         // Find the associated doctor (User)
-        User doctor = userRepository.findById(doctorDetailsDTO.getDoctorId())
+        User doctor = userRepository.findById(doctorDetailsDTO.getUserId())
                 .orElseThrow(() -> new CustomSecurityException("Doctor not found", HttpStatus.NOT_FOUND));
 
         // Create and populate the DoctorDetails entity
@@ -107,7 +105,30 @@ public class DoctorServicesImplement implements DoctorServices {
         // Save the doctor details
         return doctorDetailsRepository.save(doctorDetails);
     }
-
+    @Override
+    public DoctorDetails updateDoctorProfile(DoctorDetailsDTO doctorDetailsDTO) throws Exception {
+        // Find the associated doctor (User)
+        // User doctor = userRepository.findById(doctorDetailsDTO.getUserId())
+        //         .orElseThrow(() -> new CustomSecurityException("Doctor not found", HttpStatus.NOT_FOUND));
+    
+        // Retrieve the existing doctor details
+        DoctorDetails doctorDetails = userRepository.findById(doctorDetailsDTO.getUserId()).get().getDoctorDetails();
+                // .orElseThrow(() -> new CustomSecurityException("Doctor profile not found", HttpStatus.NOT_FOUND));
+    
+        // Update the doctor details
+        doctorDetails.setAge(doctorDetailsDTO.getAge());
+        doctorDetails.setGender(doctorDetailsDTO.getGender());
+        doctorDetails.setAddress(doctorDetailsDTO.getAddress());
+        doctorDetails.setCity(doctorDetailsDTO.getCity());
+        doctorDetails.setPincode(doctorDetailsDTO.getPincode());
+        doctorDetails.setConsultationFee(doctorDetailsDTO.getConsultationFee());
+        doctorDetails.setSpecialization(doctorDetailsDTO.getSpecialization());
+        doctorDetails.setRemuneration(doctorDetailsDTO.getRemuneration());
+    
+        // Save the updated details
+        return doctorDetailsRepository.save(doctorDetails);
+    }
+    
     @Override
     public User getDoctorByDoctorId(String doctorId) throws Exception {
         return userRepository.findByUserId(doctorId)
@@ -118,6 +139,12 @@ public class DoctorServicesImplement implements DoctorServices {
     public List<User> getAllDoctors() throws Exception {
         Role doctorRole = roleRepository.findByName("DOCTOR");
         return userRepository.findByRoles(doctorRole);
+    }
+
+    @Override
+    public User getDoctorInfoByUserName(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Doctor with username " + username + " not found"));
     }
 
     @Override

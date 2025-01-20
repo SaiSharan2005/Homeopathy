@@ -39,7 +39,7 @@ public class AuthController {
     }
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserLoginDto userLoginDto) {
-        Optional<User> userData = userRepository.findByPhoneNumber(userLoginDto.getUsername());
+        Optional<User> userData = userRepository.findByPhoneNumber(userLoginDto.getPhoneNumber());
     
         if (userData.isEmpty()) {
             return ResponseEntity.status(401).body("Login failed: User not found.");

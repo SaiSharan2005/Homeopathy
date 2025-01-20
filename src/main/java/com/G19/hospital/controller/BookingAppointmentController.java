@@ -1,5 +1,6 @@
 package com.G19.hospital.controller;
 
+import com.G19.hospital.DTO.BookingAppointmentDTO;
 import com.G19.hospital.model.BookingAppointment;
 import com.G19.hospital.model.User; // Updated import to User
 import com.G19.hospital.model.DoctorSchedule;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/bookingAppointments")
+@RequestMapping("/api/bookingAppointments")
 public class BookingAppointmentController {
 
     @Autowired
@@ -24,18 +25,27 @@ public class BookingAppointmentController {
     @Autowired
     private BookingAppointmentRepository bookingAppointmentRepository;
 
-    @PostMapping
-    public ResponseEntity<BookingAppointment> createBookingAppointment(
-            @RequestBody BookingAppointment bookingAppointment) {
+ @PostMapping
+    public ResponseEntity<BookingAppointment> createBookingAppointment(@RequestBody BookingAppointmentDTO bookingAppointmentDTO) {
         try {
-            BookingAppointment createdBookingAppointment = bookingAppointmentServices
-                    .createBookingAppointment(bookingAppointment);
+            BookingAppointment createdBookingAppointment = bookingAppointmentServices.createBookingAppointment(bookingAppointmentDTO);
             return ResponseEntity.ok(createdBookingAppointment);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<BookingAppointment> updateBookingAppointment(@PathVariable Long id,
+            @RequestBody BookingAppointmentDTO bookingAppointmentDTO) {
+        try {
+            BookingAppointment updatedBookingAppointment = bookingAppointmentServices.updateBookingAppointment(id, bookingAppointmentDTO);
+            return ResponseEntity.ok(updatedBookingAppointment);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    
     @Scheduled(cron = "0 0 0 * * ?") // Runs every midnight
     public void updateMissedAppointments() {
         List<BookingAppointment> upcomingAppointments = bookingAppointmentRepository.findUpcomingAppointments();
@@ -53,17 +63,17 @@ public class BookingAppointmentController {
         System.out.println("Missed appointments updated at midnight");
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<BookingAppointment> updateBookingAppointment(@PathVariable Long id,
-            @RequestBody BookingAppointment bookingAppointment) {
-        try {
-            BookingAppointment updatedBookingAppointment = bookingAppointmentServices.updateBookingAppointment(id,
-                    bookingAppointment);
-            return ResponseEntity.ok(updatedBookingAppointment);
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
+    // @PutMapping("/{id}")
+    // public ResponseEntity<BookingAppointment> updateBookingAppointment(@PathVariable Long id,
+    //         @RequestBody BookingAppointment bookingAppointment) {
+    //     try {
+    //         BookingAppointment updatedBookingAppointment = bookingAppointmentServices.updateBookingAppointment(id,
+    //                 bookingAppointment);
+    //         return ResponseEntity.ok(updatedBookingAppointment);
+    //     } catch (Exception e) {
+    //         return ResponseEntity.notFound().build();
+    //     }
+    // }
 
     @PostMapping("/completed-appointment/{token}")
     public ResponseEntity<BookingAppointment> completedAppointment(@PathVariable String token) {

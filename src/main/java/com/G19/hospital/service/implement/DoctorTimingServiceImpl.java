@@ -81,8 +81,13 @@ public class DoctorTimingServiceImpl implements DoctorTimingService {
     }
 
     @Override
-    public void deleteDoctorTiming(Long slotId) {
-        doctorTimingRepository.deleteById(slotId);
+    public boolean deleteDoctorTiming(Long slotId) {
+        if(doctorTimingRepository.findById(slotId).isPresent()){
+            doctorTimingRepository.deleteById(slotId);
+            return true;
+        }
+
+        return false;
     }
 
     @Override

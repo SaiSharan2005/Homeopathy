@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/doctor-timings")
+@RequestMapping("/api/doctor-timings")
 public class DoctorTimingController {
 
     @Autowired
@@ -35,8 +35,8 @@ public class DoctorTimingController {
     }
 
     @DeleteMapping("/{slotId}")
-    public void deleteDoctorTiming(@PathVariable Long slotId) {
-        doctorTimingService.deleteDoctorTiming(slotId);
+    public boolean deleteDoctorTiming(@PathVariable Long slotId) {
+        return doctorTimingService.deleteDoctorTiming(slotId);
     }
 
     @GetMapping("/{slotId}")
@@ -44,7 +44,7 @@ public class DoctorTimingController {
         return doctorTimingService.getDoctorTiming(slotId);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public List<DoctorTimingDTO> getAllDoctorTimings() {
         return doctorTimingService.getAllDoctorTimings();
     }

@@ -15,6 +15,9 @@ public interface PatientServices {
     User getPatientInfo(String patientId) throws Exception;
     List<User> searchPatients(String keyword) throws Exception;
     long getPatientCount() throws Exception;
-    public User getPatientInfoByUserName(String phoneNumber) throws Exception;
+    User getPatientInfoByUserName(String phoneNumber) throws Exception;
+    List<User> getAllPatients() throws Exception;
+    PatientDetails updatePatientProfile(Long id, PatientDetailsDTO patientDetailsDTO) throws Exception;
 
-}
+    
+    }

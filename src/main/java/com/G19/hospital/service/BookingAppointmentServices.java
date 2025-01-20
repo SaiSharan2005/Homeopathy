@@ -1,5 +1,6 @@
 package com.G19.hospital.service;
 
+import com.G19.hospital.DTO.BookingAppointmentDTO;
 import com.G19.hospital.model.BookingAppointment;
 import com.G19.hospital.model.User; // Updated import to User
 import com.G19.hospital.model.DoctorSchedule;
@@ -8,8 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookingAppointmentServices {
-    BookingAppointment createBookingAppointment(BookingAppointment bookingAppointment) throws Exception;
-    BookingAppointment updateBookingAppointment(Long bookingId, BookingAppointment bookingAppointment) throws Exception;
+    BookingAppointment createBookingAppointment(BookingAppointmentDTO bookingAppointment) throws Exception;
+    BookingAppointment updateBookingAppointment(Long bookingId, BookingAppointmentDTO bookingAppointment) throws Exception;
     BookingAppointment completedAppointment(String tokenId) throws Exception;
     
     void cancelBookingAppointment(Long bookingId) throws Exception;
