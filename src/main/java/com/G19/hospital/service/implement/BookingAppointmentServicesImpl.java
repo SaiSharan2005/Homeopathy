@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.LongFunction;
 
 @Service
 public class BookingAppointmentServicesImpl implements BookingAppointmentServices {
@@ -59,6 +60,10 @@ public class BookingAppointmentServicesImpl implements BookingAppointmentService
                 .orElseThrow(() -> new Exception("Booking appointment not found"));
 
         DoctorSchedule schedule = doctorScheduleServices.getScheduleById(bookingAppointmentDTO.getScheduleId());
+        doctorScheduleServices.cancelSlot(existingBookingAppointment.getScheduleId().getScheduleId());
+        doctorScheduleServices.bookSlot(schedule.getScheduleId());
+
+
         existingBookingAppointment.setScheduleId(schedule);
 
         User doctor = new User();
@@ -69,9 +74,8 @@ public class BookingAppointmentServicesImpl implements BookingAppointmentService
         existingBookingAppointment.setDoctor(doctor);
         existingBookingAppointment.setPatient(patient);
         existingBookingAppointment.setStatus(bookingAppointmentDTO.getStatus());
-
-        doctorScheduleServices.cancelSlot(existingBookingAppointment.getScheduleId().getScheduleId());
-        doctorScheduleServices.bookSlot(schedule.getScheduleId());
+        Long tet = existingBookingAppointment.getScheduleId().getScheduleId();
+        System.out.println(tet);
 
         return bookingAppointmentRepository.save(existingBookingAppointment);
     }

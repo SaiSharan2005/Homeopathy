@@ -4,9 +4,11 @@ import com.G19.hospital.DTO.DoctorDetailsDTO;
 import com.G19.hospital.DTO.DoctorRegisterDTO;
 import com.G19.hospital.exceptions.security.CustomSecurityException;
 import com.G19.hospital.model.DoctorDetails;
+import com.G19.hospital.model.DoctorSchedule;
 import com.G19.hospital.model.Role;
 import com.G19.hospital.model.User;
 import com.G19.hospital.repository.DoctorDetailsRepository;
+import com.G19.hospital.repository.DoctorScheduleRepository;
 import com.G19.hospital.repository.RoleRepository;
 import com.G19.hospital.repository.UserRepository;
 import com.G19.hospital.service.DoctorServices;
@@ -18,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -34,6 +37,9 @@ public class DoctorServicesImplement implements DoctorServices {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private DoctorScheduleRepository doctorScheduleRepository;
 
     @Override
     public User registerDoctor(DoctorRegisterDTO doctorRegisterDTO) throws Exception {
@@ -140,6 +146,15 @@ public class DoctorServicesImplement implements DoctorServices {
         Role doctorRole = roleRepository.findByName("DOCTOR");
         return userRepository.findByRoles(doctorRole);
     }
+    @Override
+public List<User> getAllAvailableDoctors() throws Exception {
+    List<DoctorSchedule> schedules = doctorScheduleRepository.findByBooked(false); // Retrieve unbooked schedules
+    return schedules.stream()
+                    .map(DoctorSchedule::getDoctor)
+                    .distinct()
+                    .collect(Collectors.toList());
+}
+
 
     @Override
     public User getDoctorInfoByUserName(String username) {

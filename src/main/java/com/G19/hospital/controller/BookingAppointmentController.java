@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,58 +35,74 @@ public class BookingAppointmentController {
     @Autowired
     private UserRepository userRepository;
 
-//  @PostMapping
-//     public ResponseEntity<BookingAppointment> createBookingAppointment(@RequestBody BookingAppointmentDTO bookingAppointmentDTO) {
-//         try {
-//             BookingAppointment createdBookingAppointment = bookingAppointmentServices.createBookingAppointment(bookingAppointmentDTO);
-//             return ResponseEntity.ok(createdBookingAppointment);
-//         } catch (Exception e) {
-//             return ResponseEntity.badRequest().build();
-//         }
-//     }
+    // @PostMapping
+    // public ResponseEntity<BookingAppointment>
+    // createBookingAppointment(@RequestBody BookingAppointmentDTO
+    // bookingAppointmentDTO) {
+    // try {
+    // BookingAppointment createdBookingAppointment =
+    // bookingAppointmentServices.createBookingAppointment(bookingAppointmentDTO);
+    // return ResponseEntity.ok(createdBookingAppointment);
+    // } catch (Exception e) {
+    // return ResponseEntity.badRequest().build();
+    // }
+    // }
 
-@PostMapping
-public ResponseEntity<BookingAppointment> createBookingAppointment(@RequestBody BookingAppointmentDTO bookingAppointmentDTO) {
-    try {
-        // Extract the authenticated user's details from the token
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName(); // Assuming the username is the doctor's identifier
+    @PostMapping("/byStaff")
+    public ResponseEntity<BookingAppointment> createBookingAppointmentByStaff(@RequestBody BookingAppointmentDTO bookingAppointmentDTO) {
+        try {
+            BookingAppointment createdBookingAppointment = bookingAppointmentServices.createBookingAppointment(bookingAppointmentDTO);
 
-        // Fetch the doctor (User object) by username
-        User patient = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Patient not found"));
-
-        // Set the doctor ID in the DTO
-        bookingAppointmentDTO.setPatientId(patient.getId());
-
-        // Create the booking appointment
-        BookingAppointment createdBookingAppointment = bookingAppointmentServices.createBookingAppointment(bookingAppointmentDTO);
-
-        return ResponseEntity.ok(createdBookingAppointment);
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.ok(createdBookingAppointment);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
-}
+    @PostMapping
+    public ResponseEntity<BookingAppointment> createBookingAppointment(
+            @RequestBody BookingAppointmentDTO bookingAppointmentDTO) {
+        try {
+            // Extract the authenticated user's details from the token
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName(); // Assuming the username is the doctor's identifier
 
+            // Fetch the doctor (User object) by username
+            User patient = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("Patient not found"));
+
+            // Set the doctor ID in the DTO
+            bookingAppointmentDTO.setPatientId(patient.getId());
+
+            // Create the booking appointment
+            BookingAppointment createdBookingAppointment = bookingAppointmentServices
+                    .createBookingAppointment(bookingAppointmentDTO);
+
+            return ResponseEntity.ok(createdBookingAppointment);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<BookingAppointment> updateBookingAppointment(@PathVariable Long id,
             @RequestBody BookingAppointmentDTO bookingAppointmentDTO) {
         try {
-            BookingAppointment updatedBookingAppointment = bookingAppointmentServices.updateBookingAppointment(id, bookingAppointmentDTO);
+            BookingAppointment updatedBookingAppointment = bookingAppointmentServices.updateBookingAppointment(id,
+                    bookingAppointmentDTO);
             return ResponseEntity.ok(updatedBookingAppointment);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
     }
-    
+
     @Scheduled(cron = "0 0 0 * * ?") // Runs every midnight
     public void updateMissedAppointments() {
         List<BookingAppointment> upcomingAppointments = bookingAppointmentRepository.findUpcomingAppointments();
         LocalDateTime currentTime = LocalDateTime.now(); // Get the current time
 
         for (BookingAppointment appointment : upcomingAppointments) {
-            LocalDateTime endTime = LocalDateTime.of(appointment.getScheduleId().getDate(), appointment.getScheduleId().getEndTime());
+            LocalDateTime endTime = LocalDateTime.of(appointment.getScheduleId().getDate(),
+                    appointment.getScheduleId().getEndTime());
 
             if (endTime.isBefore(currentTime)) { // Compare LocalDateTime objects
                 appointment.setStatus("missed");
@@ -96,15 +114,17 @@ public ResponseEntity<BookingAppointment> createBookingAppointment(@RequestBody 
     }
 
     // @PutMapping("/{id}")
-    // public ResponseEntity<BookingAppointment> updateBookingAppointment(@PathVariable Long id,
-    //         @RequestBody BookingAppointment bookingAppointment) {
-    //     try {
-    //         BookingAppointment updatedBookingAppointment = bookingAppointmentServices.updateBookingAppointment(id,
-    //                 bookingAppointment);
-    //         return ResponseEntity.ok(updatedBookingAppointment);
-    //     } catch (Exception e) {
-    //         return ResponseEntity.notFound().build();
-    //     }
+    // public ResponseEntity<BookingAppointment>
+    // updateBookingAppointment(@PathVariable Long id,
+    // @RequestBody BookingAppointment bookingAppointment) {
+    // try {
+    // BookingAppointment updatedBookingAppointment =
+    // bookingAppointmentServices.updateBookingAppointment(id,
+    // bookingAppointment);
+    // return ResponseEntity.ok(updatedBookingAppointment);
+    // } catch (Exception e) {
+    // return ResponseEntity.notFound().build();
+    // }
     // }
 
     @PostMapping("/completed-appointment/{token}")
@@ -154,26 +174,26 @@ public ResponseEntity<BookingAppointment> createBookingAppointment(@RequestBody 
     }
 
     @GetMapping("/doctor/my-appointments")
-pubulic ResponseEntity<List<BookingAppointment>> getMyAppointments() {
-    try {
-        // Extract the authenticated user's details from the token
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName(); // Assuming the username is the doctor's identifier
+    public ResponseEntity<List<BookingAppointment>> getMyAppointments() {
+        try {
+            // Extract the authenticated user's details from the token
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName(); // Assuming the username is the doctor's identifier
 
-        // Fetch the doctor (User object) by username
-        User doctor = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+            // Fetch the doctor (User object) by username
+            User doctor = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
-        // Fetch the bookings for the authenticated doctor
-        List<BookingAppointment> bookings = bookingAppointmentServices.getBookingsByDoctorId(doctor);
+            // Fetch the bookings for the authenticated doctor
+            List<BookingAppointment> bookings = bookingAppointmentServices.getBookingsByDoctorId(doctor);
 
-        return ResponseEntity.ok(bookings);
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Collections.emptyList());
+            return ResponseEntity.ok(bookings);
+        } catch (Exception e) {
+            // Return an error response with an appropriate message
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.emptyList());
+        }
     }
-}
-
 
     @GetMapping("/patient/{patientId}")
     public ResponseEntity<List<BookingAppointment>> getBookingsByPatientId(@PathVariable Long patientId) {
@@ -185,6 +205,28 @@ pubulic ResponseEntity<List<BookingAppointment>> getMyAppointments() {
         return ResponseEntity.ok(bookings);
     }
 
+    @GetMapping("/patient/my-appointments")
+    public ResponseEntity<List<BookingAppointment>> GegetPatientAppointments() {
+        try {
+            // Extract the authenticated user's details from the token
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName(); // Assuming the username is the doctor's identifier
+
+            // Fetch the doctor (User object) by username
+            User patient = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("Patientd not found"));
+
+            // Fetch the bookings for the authenticated doctor
+            List<BookingAppointment> bookings = bookingAppointmentServices.getBookingsByPatientId(patient);
+
+            return ResponseEntity.ok(bookings);
+        } catch (Exception e) {
+            // Return an error response with an appropriate message
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.emptyList());
+        }
+    }
+
     @GetMapping("/schedule/{scheduleId}")
     public ResponseEntity<List<BookingAppointment>> getBookingsByScheduleId(@PathVariable Long scheduleId) {
         // Assuming scheduleId is Long type
@@ -194,13 +236,14 @@ pubulic ResponseEntity<List<BookingAppointment>> getMyAppointments() {
         List<BookingAppointment> bookings = bookingAppointmentServices.getBookingsByScheduleId(doctorSchedule);
         return ResponseEntity.ok(bookings);
     }
+
     @GetMapping("/token/{token}")
     public ResponseEntity<BookingAppointment> getBookingByToken(@PathVariable String token) {
         Optional<BookingAppointment> booking = bookingAppointmentServices.getBookingByToken(token);
-        return booking.map(ResponseEntity::ok)  // If present, return 200 OK with the BookingAppointment
-                      .orElseGet(() -> ResponseEntity.notFound().build()); // If not present, return 404 Not Found
+        return booking.map(ResponseEntity::ok) // If present, return 200 OK with the BookingAppointment
+                .orElseGet(() -> ResponseEntity.notFound().build()); // If not present, return 404 Not Found
     }
-    
+
     @GetMapping("/count")
     public long AppointmentCount() {
         return bookingAppointmentServices.getAppointmentCount();

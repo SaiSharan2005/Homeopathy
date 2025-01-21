@@ -12,4 +12,8 @@ public interface DoctorScheduleRepository extends JpaRepository<DoctorSchedule, 
     List<DoctorSchedule> findByDoctorAndDate(User doctor, LocalDate date); // Updated parameter type
     List<DoctorSchedule> findByDateAndBooked(LocalDate date, boolean booked);
     DoctorSchedule findByScheduleId(Long scheduleId);
+    boolean existsByDoctorAndBookedFalse(User doctor);
+    List<DoctorSchedule> findByBooked(boolean booked);
+
+
 }

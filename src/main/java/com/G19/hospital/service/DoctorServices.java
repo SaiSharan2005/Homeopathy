@@ -23,6 +23,8 @@ public interface DoctorServices {
 
     User getDoctorInfoByUserName(String username);
 
+    List<User> getAllAvailableDoctors() throws Exception;
+
     
     // Fetch all doctors (based on a role or attribute in User model)
     List<User> getAllDoctors() throws Exception;

@@ -79,6 +79,27 @@ public ResponseEntity<String> createSchedule(
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @GetMapping("/doctor/date/{date}")
+public ResponseEntity<?> getAllSlotsByDateOfHisOwn(
+        @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    try {
+        // Extract the authenticated user's details from the token
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName(); // Assuming username is the unique identifier
+
+        // Fetch the doctor (User object) by username
+        User doctorData = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+
+        // Fetch the schedule for the doctor and date
+        List<DoctorSchedule> data = scheduleService.getScheduleByDoctorAndDate(doctorData, date);
+
+        return ResponseEntity.ok(data);
+    } catch (Exception e) {
+        return new ResponseEntity<>("Failed to fetch schedule: " + e.getMessage(),
+                HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
 
     @GetMapping("byId/{scheduleId}")
     public ResponseEntity<DoctorSchedule> getScheduleById(@PathVariable Long scheduleId) {
@@ -105,4 +126,6 @@ public ResponseEntity<String> createSchedule(
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to book slot: " + e.getMessage());
         }
     }
-}
+
+
+    }
