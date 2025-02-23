@@ -1,16 +1,8 @@
 package com.G19.hospital.model;
 
 import java.time.LocalDate;
-
 import org.hibernate.annotations.ColumnDefault;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 @Entity
 public class BookingAppointment {
@@ -21,11 +13,11 @@ public class BookingAppointment {
 
     @ManyToOne
     @JoinColumn(name = "doctor_id", nullable = false)
-    private User doctor;  // Changed from DoctorRegister to User
+    private User doctor;
 
     @ManyToOne
     @JoinColumn(name = "patient_id", nullable = false)
-    private User patient;  // Changed from PatientRegister to User
+    private User patient;
 
     @ManyToOne
     @JoinColumn(name = "schedule_id", nullable = false)
@@ -34,67 +26,62 @@ public class BookingAppointment {
     @Column(unique = true)
     private String token;
 
-    @Column(unique = false)
     private LocalDate appointDate;
 
     @ColumnDefault("'Upcoming'")
     private String status = "upcoming";
 
+    // New field for prescription image URL
+    @Column(name = "prescription_image_url")
+    private String prescriptionImageUrl;
 
     // Getters and Setters
     public Long getBookingId() {
         return bookingId;
     }
-
     public void setBookingId(Long bookingId) {
         this.bookingId = bookingId;
     }
-
     public User getDoctor() {
-        return doctor;  // Changed return type to User
+        return doctor;
     }
-
-    public void setDoctor(User doctor) {  // Changed parameter type to User
+    public void setDoctor(User doctor) {
         this.doctor = doctor;
     }
-
     public User getPatient() {
-        return patient;  // Changed return type to User
+        return patient;
     }
-
-    public void setPatient(User patient) {  // Changed parameter type to User
+    public void setPatient(User patient) {
         this.patient = patient;
     }
-
     public DoctorSchedule getScheduleId() {
         return schedule;
     }
-
-    public void setScheduleId(DoctorSchedule scheduleId) {
-        this.schedule = scheduleId;
+    public void setScheduleId(DoctorSchedule schedule) {
+        this.schedule = schedule;
     }
-
     public String getToken() {
         return token;
     }
-
     public void setToken(String token) {
         this.token = token;
     }
-
+    public LocalDate getAppointmenDate() {
+        return this.appointDate;
+    }
+    public void setAppointmentDate(LocalDate appointmenDate) {
+        this.appointDate = appointmenDate;
+    }
     public String getStatus() {
         return status;
     }
-
     public void setStatus(String status) {
         this.status = status;
     }
-
-    public LocalDate getAppointmenDate(){
-        return this.appointDate;
+    public String getPrescriptionImageUrl() {
+        return prescriptionImageUrl;
     }
-
-    public void setAppointmentDate(LocalDate appointmenDate){
-        this.appointDate = appointmenDate;
+    public void setPrescriptionImageUrl(String prescriptionImageUrl) {
+        this.prescriptionImageUrl = prescriptionImageUrl;
     }
 }

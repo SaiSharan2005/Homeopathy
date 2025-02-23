@@ -75,14 +75,14 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         advertisementRepository.save(advertisement);
  
     }
-    @Scheduled(cron = "0 0 * * * *") // Runs every hour
-    public void deactivateExpiredAdvertisements() {
-        List<Advertisement> ads = advertisementRepository.findAll();
-        for (Advertisement ad : ads) {
-            if (ad.getEndDate() != null && ad.getEndDate().isBefore(LocalDateTime.now())) {
-                ad.setIsActive(false);
-                advertisementRepository.save(ad);
-            }
-        }
-    }
+//     @Scheduled(cron = "0 0 * * * *") // Runs every hour
+//     public void deactivateExpiredAdvertisements() {
+//         List<Advertisement> ads = advertisementRepository.findAll();
+//         for (Advertisement ad : ads) {
+//             if (ad.getEndDate() != null && ad.getEndDate().isBefore(LocalDateTime.now())) {
+//                 ad.setIsActive(false);
+//                 advertisementRepository.save(ad);
+//             }
+//         }
+//     }
 }
