@@ -28,5 +28,6 @@ public class Category extends AuditableBaseEntity {
     
     // One Category can have many InventoryItems
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private Set<InventoryItem> inventoryItems = new HashSet<>();
 }
