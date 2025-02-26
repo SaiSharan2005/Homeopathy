@@ -1,7 +1,6 @@
 package com.G19.hospital.service;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import com.G19.hospital.DTO.PatientDetailsDTO;
 import com.G19.hospital.DTO.PatientRegisterDTO;

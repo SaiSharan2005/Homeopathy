@@ -2,24 +2,20 @@ package com.G19.hospital.service.security;
 
 import com.G19.hospital.model.Role;
 import com.G19.hospital.model.User;
-import com.G19.hospital.repository.RoleRepository;
+// import com.G19.hospital.repository.RoleRepository;
 import com.G19.hospital.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.error.ErrorAttributes;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.User.UserBuilder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 
@@ -27,8 +23,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
     private  UserRepository userRepository;
-    @Autowired
-    private  RoleRepository roleRepository;
+    // @Autowired
+    // private  RoleRepository roleRepository;
 
     @Transactional
     @Override

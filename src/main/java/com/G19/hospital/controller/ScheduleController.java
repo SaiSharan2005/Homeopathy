@@ -3,7 +3,7 @@ package com.G19.hospital.controller;
 import com.G19.hospital.model.DoctorSchedule;
 import com.G19.hospital.model.User; // Changed to import User instead of DoctorRegister
 import com.G19.hospital.service.DoctorScheduleServices;
-import com.G19.hospital.service.DoctorServices;
+// import com.G19.hospital.service.DoctorServices;
 import com.G19.hospital.repository.UserRepository; // Import UserRepository for fetching User
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+// import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,8 +21,8 @@ import java.util.List;
 @RequestMapping("/api/schedule")
 public class ScheduleController {
 
-    @Autowired
-    private DoctorServices doctorServices;
+    // @Autowired
+    // private DoctorServices doctorServices;
 
     @Autowired
     private DoctorScheduleServices scheduleService;

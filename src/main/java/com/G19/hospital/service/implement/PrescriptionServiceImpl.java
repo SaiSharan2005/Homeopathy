@@ -10,7 +10,7 @@ import com.G19.hospital.repository.UserRepository;
 import com.G19.hospital.service.PrescriptionService;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
@@ -25,7 +25,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     private final BookingAppointmentRepository bookingAppointmentRepository;
     private final Cloudinary cloudinary;
 
-    @Autowired
+    // @Autowired
     public PrescriptionServiceImpl(PrescriptionRepository prescriptionRepository,
                                    UserRepository userRepository,
                                    BookingAppointmentRepository bookingAppointmentRepository,

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import com.G19.hospital.model.User;
 import com.G19.hospital.model.DoctorSchedule;
 import com.G19.hospital.service.DoctorScheduleServices;
-import com.G19.hospital.service.DoctorServices;
+// import com.G19.hospital.service.DoctorServices;
 import com.G19.hospital.repository.UserRepository; // Assuming you have a UserRepository to fetch user data
 
 @RestController
@@ -23,8 +23,8 @@ public class AppointmentSlotController {
     @Autowired
     private DoctorScheduleServices doctorScheduleServices;
 
-    @Autowired
-    private DoctorServices doctorServices;
+    // @Autowired
+    // private DoctorServices doctorServices;
 
     @Autowired
     private UserRepository userRepository; // Inject UserRepository to fetch doctor data

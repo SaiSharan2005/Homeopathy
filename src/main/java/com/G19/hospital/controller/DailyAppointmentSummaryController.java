@@ -3,7 +3,6 @@ package com.G19.hospital.controller;
 import com.G19.hospital.model.DailyAppointmentSummary;
 import com.G19.hospital.service.DailyAppointmentSummaryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;

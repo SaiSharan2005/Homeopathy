@@ -46,8 +46,8 @@ public class StaffServiceImpl implements StaffService {
         do {
             String firstNamePart = staffDTO.getName().substring(0,
                     Math.min(staffDTO.getName().length(), 4));
-            String lastNamePart = staffDTO.getPhoneNumber()
-                    .substring(Math.max(staffDTO.getPhoneNumber().length() - 4, 0));
+            // String lastNamePart = staffDTO.getPhoneNumber()
+            //         .substring(Math.max(staffDTO.getPhoneNumber().length() - 4, 0));
 
             int randomNumber = random.nextInt(9000) + 1000; // Random number between 1000 and 9999
             userId = "A" + firstNamePart + randomNumber;
@@ -100,11 +100,11 @@ public class StaffServiceImpl implements StaffService {
 
     @Override
     public User createMyProfile(StaffDTO staffDTO) throws Exception {
-        String username = getAuthenticatedUsername();
+        // String username = getAuthenticatedUsername();
 
         // Ensure the authenticated user exists
-        User user = userRepository.findByPhoneNumber(username)
-                .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
+        // User user = userRepository.findByPhoneNumber(username)
+        //         .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
 
         // Set the authenticated user's userId
         // staffDTO.setUserId(user.getUserId());
