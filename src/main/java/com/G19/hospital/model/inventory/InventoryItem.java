@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.G19.hospital.model.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Getter
 @Setter
