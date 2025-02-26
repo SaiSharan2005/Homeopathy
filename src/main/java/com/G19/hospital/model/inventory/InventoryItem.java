@@ -41,6 +41,7 @@ public class InventoryItem extends AuditableBaseEntity {
     // Each InventoryItem belongs to a Category
     @ManyToOne
     @JoinColumn(name = "category_id")
+    @JsonBackReference
     private Category category;
     
     // One InventoryItem can have many inventory transactions (logs)
