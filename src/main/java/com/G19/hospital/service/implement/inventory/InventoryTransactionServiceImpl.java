@@ -43,7 +43,7 @@ public class InventoryTransactionServiceImpl implements InventoryTransactionServ
             throw new CustomSecurityException("Failed to create inventory transaction", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+ 
     @Override
     public InventoryTransaction updateTransaction(Long id, InventoryTransactionDto transactionDto) {
         InventoryTransaction existingTransaction = transactionRepository.findById(id)

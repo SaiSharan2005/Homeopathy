@@ -11,22 +11,17 @@ import lombok.*;
 @Table(name = "inventory_records")
 public class InventoryRecord extends AuditableBaseEntity {
 
-    // Quantity of the item in this warehouse
-    @Column(name = "quantity")
+    // Quantity of the item available in this warehouse
+    @Column(name = "quantity", nullable = false)
     private int quantity;
-    
-    // The InventoryItem that this record is for
-    @ManyToOne
-    @JoinColumn(name = "inventory_item_id")
+
+    // The InventoryItem that this record is associated with
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "inventory_item_id", nullable = false)
     private InventoryItem inventoryItem;
-    
+
     // The Warehouse where this record is stored
-    @ManyToOne
-    @JoinColumn(name = "warehouse_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "warehouse_id", nullable = false)
     private Warehouse warehouse;
-    
-    // Getter for quantity (if you wish to add extra logic, otherwise Lombok generates it)
-    public int getQuantity() {
-        return this.quantity;
-    }
 }
