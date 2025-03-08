@@ -1,4 +1,6 @@
 package com.G19.hospital.model.inventory;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,6 +28,7 @@ public class Warehouse extends AuditableBaseEntity {
     private String location;
     
     // One Warehouse can store many InventoryRecords
+    @JsonManagedReference
     @OneToMany(mappedBy = "warehouse", cascade = CascadeType.ALL)
     private Set<InventoryRecord> inventoryRecords = new HashSet<>();
 }
