@@ -1,0 +1,124 @@
+package com.G19.hospital.service.impl.prescription;
+
+import com.G19.hospital.DTO.prescription.PrescriptionDto;
+import com.G19.hospital.DTO.prescription.PrescriptionItemDto;
+import com.G19.hospital.exceptions.security.CustomSecurityException;
+import com.G19.hospital.model.prescription.Prescription;
+import com.G19.hospital.model.prescription.PrescriptionItem;
+import com.G19.hospital.repository.prescription.PrescriptionRepository;
+import com.G19.hospital.service.PrescriptionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class PrescriptionServiceImpl implements PrescriptionService {
+
+    private final PrescriptionRepository prescriptionRepository;
+
+    @Autowired
+    public PrescriptionServiceImpl(PrescriptionRepository prescriptionRepository) {
+        this.prescriptionRepository = prescriptionRepository;
+    }
+
+    @Override
+    public PrescriptionDto createPrescription(PrescriptionDto prescriptionDto) {
+        Prescription prescription = convertToEntity(prescriptionDto);
+        if (prescription.getDateIssued() == null) {
+            prescription.setDateIssued(LocalDateTime.now());
+        }
+        Prescription saved = prescriptionRepository.save(prescription);
+        return convertToDto(saved);
+    }
+
+    @Override
+    public PrescriptionDto updatePrescription(Long prescriptionId, PrescriptionDto prescriptionDto) {
+        Prescription existing = prescriptionRepository.findById(prescriptionId)
+                .orElseThrow(() -> new CustomSecurityException("Prescription not found", HttpStatus.NOT_FOUND));
+        existing.setPrescriptionNumber(prescriptionDto.getPrescriptionNumber());
+        existing.setDateIssued(prescriptionDto.getDateIssued());
+        existing.setGeneralInstructions(prescriptionDto.getGeneralInstructions());
+        // Optionally update prescription items if needed
+        Prescription updated = prescriptionRepository.save(existing);
+        return convertToDto(updated);
+    }
+
+    @Override
+    public void deletePrescription(Long prescriptionId) {
+        Prescription existing = prescriptionRepository.findById(prescriptionId)
+                .orElseThrow(() -> new CustomSecurityException("Prescription not found", HttpStatus.NOT_FOUND));
+        prescriptionRepository.delete(existing);
+    }
+
+    @Override
+    public PrescriptionDto getPrescriptionById(Long prescriptionId) {
+        Prescription prescription = prescriptionRepository.findById(prescriptionId)
+                .orElseThrow(() -> new CustomSecurityException("Prescription not found", HttpStatus.NOT_FOUND));
+        return convertToDto(prescription);
+    }
+
+    @Override
+    public List<PrescriptionDto> getAllPrescriptions() {
+        List<Prescription> prescriptions = prescriptionRepository.findAll();
+        return prescriptions.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public PrescriptionDto addPrescriptionItem(Long prescriptionId, PrescriptionItemDto prescriptionItemDto) {
+        Prescription prescription = prescriptionRepository.findById(prescriptionId)
+                .orElseThrow(() -> new CustomSecurityException("Prescription not found", HttpStatus.NOT_FOUND));
+
+        PrescriptionItem newItem = new PrescriptionItem();
+        newItem.setDosage(prescriptionItemDto.getDosage());
+        newItem.setFrequency(prescriptionItemDto.getFrequency());
+        newItem.setDuration(prescriptionItemDto.getDuration());
+        newItem.setAdditionalInstructions(prescriptionItemDto.getAdditionalInstructions());
+        // TODO: Retrieve and set the InventoryItem using the prescriptionItemDto.getInventoryItemId()
+        // Example: newItem.setInventoryItem(inventoryItemService.findById(prescriptionItemDto.getInventoryItemId()));
+        
+        newItem.setPrescription(prescription);
+        // Add the new item to the prescription's list
+        prescription.getPrescriptionItems().add(newItem);
+        
+        Prescription updated = prescriptionRepository.save(prescription);
+        return convertToDto(updated);
+    }
+
+    // Helper method to convert Prescription entity to DTO
+    private PrescriptionDto convertToDto(Prescription prescription) {
+        PrescriptionDto dto = new PrescriptionDto();
+        dto.setId(prescription.getId());
+        dto.setPrescriptionNumber(prescription.getPrescriptionNumber());
+        dto.setDateIssued(prescription.getDateIssued());
+        dto.setGeneralInstructions(prescription.getGeneralInstructions());
+        if (prescription.getDoctor() != null) {
+            dto.setDoctorId(prescription.getDoctor().getId());
+        }
+        if (prescription.getPatient() != null) {
+            dto.setPatientId(prescription.getPatient().getId());
+        }
+        // TODO: Map prescription items if necessary
+        return dto;
+    }
+
+    // Helper method to convert DTO to Prescription entity
+    private Prescription convertToEntity(PrescriptionDto dto) {
+        Prescription prescription = new Prescription();
+        prescription.setId(dto.getId());
+        prescription.setPrescriptionNumber(dto.getPrescriptionNumber());
+        prescription.setDateIssued(dto.getDateIssued());
+        prescription.setGeneralInstructions(dto.getGeneralInstructions());
+        // TODO: Retrieve and set doctor and patient entities using their IDs
+        // For example:
+        // prescription.setDoctor(userService.findById(dto.getDoctorId()));
+        // prescription.setPatient(userService.findById(dto.getPatientId()));
+        // TODO: Map prescription items if necessary
+        return prescription;
+    }
+}
