@@ -35,12 +35,23 @@ public class InventoryRecordServiceImpl implements InventoryRecordService {
         try {
             InventoryRecord record = new InventoryRecord();
             record.setQuantity(recordDto.getQuantity());
+            
+            // Validate and set InventoryItem
+            if (recordDto.getInventoryItemId() == null) {
+                throw new CustomSecurityException("Inventory item ID must not be null", HttpStatus.BAD_REQUEST);
+            }
             InventoryItem item = inventoryItemRepository.findById(recordDto.getInventoryItemId())
                     .orElseThrow(() -> new CustomSecurityException("Inventory item not found", HttpStatus.NOT_FOUND));
             record.setInventoryItem(item);
+            
+            // Validate and set Warehouse
+            if (recordDto.getWarehouseId() == null) {
+                throw new CustomSecurityException("Warehouse ID must not be null", HttpStatus.BAD_REQUEST);
+            }
             Warehouse warehouse = warehouseRepository.findById(recordDto.getWarehouseId())
                     .orElseThrow(() -> new CustomSecurityException("Warehouse not found", HttpStatus.NOT_FOUND));
             record.setWarehouse(warehouse);
+            
             return inventoryRecordRepository.save(record);
         } catch (Exception ex) {
             log.error("Error creating inventory record: {}", ex.getMessage(), ex);
@@ -50,10 +61,14 @@ public class InventoryRecordServiceImpl implements InventoryRecordService {
 
     @Override
     public InventoryRecord updateInventoryRecord(Long id, InventoryRecordDto recordDto) {
+        if (id == null) {
+            throw new CustomSecurityException("Inventory record ID must not be null", HttpStatus.BAD_REQUEST);
+        }
         InventoryRecord existingRecord = inventoryRecordRepository.findById(id)
                 .orElseThrow(() -> new CustomSecurityException("Inventory record not found with id: " + id, HttpStatus.NOT_FOUND));
         try {
             existingRecord.setQuantity(recordDto.getQuantity());
+            
             if (recordDto.getInventoryItemId() != null) {
                 InventoryItem item = inventoryItemRepository.findById(recordDto.getInventoryItemId())
                         .orElseThrow(() -> new CustomSecurityException("Inventory item not found", HttpStatus.NOT_FOUND));
@@ -73,6 +88,9 @@ public class InventoryRecordServiceImpl implements InventoryRecordService {
 
     @Override
     public void deleteInventoryRecord(Long id) {
+        if (id == null) {
+            throw new CustomSecurityException("Inventory record ID must not be null", HttpStatus.BAD_REQUEST);
+        }
         InventoryRecord existingRecord = inventoryRecordRepository.findById(id)
                 .orElseThrow(() -> new CustomSecurityException("Inventory record not found with id: " + id, HttpStatus.NOT_FOUND));
         try {
@@ -85,12 +103,18 @@ public class InventoryRecordServiceImpl implements InventoryRecordService {
 
     @Override
     public InventoryRecord getInventoryRecordById(Long id) {
+        if (id == null) {
+            throw new CustomSecurityException("Inventory record ID must not be null", HttpStatus.BAD_REQUEST);
+        }
         return inventoryRecordRepository.findById(id)
                 .orElseThrow(() -> new CustomSecurityException("Inventory record not found with id: " + id, HttpStatus.NOT_FOUND));
     }
 
     @Override
     public List<InventoryRecord> getInventoryRecordsByItemId(Long inventoryItemId) {
+        if (inventoryItemId == null) {
+            throw new CustomSecurityException("Inventory item ID must not be null", HttpStatus.BAD_REQUEST);
+        }
         try {
             return inventoryRecordRepository.findByInventoryItemId(inventoryItemId);
         } catch (Exception ex) {
