@@ -1,6 +1,5 @@
 package com.G19.hospital.DTO.prescription;
 
-
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,5 +15,6 @@ public class PrescriptionDto {
     private Long patientId;
     private LocalDateTime dateIssued;
     private String generalInstructions;
+    private Long bookingAppointmentId; // Optional: include if needed
     private List<PrescriptionItemDto> prescriptionItems;
 }
