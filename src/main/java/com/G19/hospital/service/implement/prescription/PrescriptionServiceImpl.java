@@ -101,6 +101,33 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         return convertToDto(updated);
     }
 
+
+    @Override
+public PrescriptionDto getPrescriptionByBookingId(Long bookingId) {
+    Prescription prescription = prescriptionRepository.findByBookingAppointment_BookingId(bookingId)
+        .orElseThrow(() -> new CustomSecurityException("Prescription not found for booking id " + bookingId, HttpStatus.NOT_FOUND));
+    return convertToDto(prescription);
+}
+
+@Override
+public PrescriptionDto getPrescriptionByToken(String token) {
+    Prescription prescription = prescriptionRepository.findByBookingAppointment_Token(token)
+        .orElseThrow(() -> new CustomSecurityException("Prescription not found for token " + token, HttpStatus.NOT_FOUND));
+    return convertToDto(prescription);
+}
+
+@Override
+public List<PrescriptionDto> getPrescriptionsByDoctor(Long doctorId) {
+    List<Prescription> prescriptions = prescriptionRepository.findByDoctor_Id(doctorId);
+    return prescriptions.stream().map(this::convertToDto).collect(Collectors.toList());
+}
+
+@Override
+public List<PrescriptionDto> getPrescriptionsByPatient(Long patientId) {
+    List<Prescription> prescriptions = prescriptionRepository.findByPatient_Id(patientId);
+    return prescriptions.stream().map(this::convertToDto).collect(Collectors.toList());
+}
+
     // Helper method to convert Prescription entity to DTO
 private PrescriptionDto convertToDto(Prescription prescription) {
     PrescriptionDto dto = new PrescriptionDto();
