@@ -7,4 +7,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PrescriptionRepository extends JpaRepository<Prescription, Long> {
     // Add custom query methods if needed
+        Optional<Prescription> findByBookingAppointment_BookingId(Long bookingId);
+    Optional<Prescription> findByBookingAppointment_Token(String token);
+    List<Prescription> findByDoctor_Id(Long doctorId);
+    List<Prescription> findByPatient_Id(Long patientId);
+
 }
