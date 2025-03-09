@@ -5,16 +5,17 @@ import com.G19.hospital.DTO.prescription.PrescriptionItemDto;
 import java.util.List;
 
 public interface PrescriptionService {
-    PrescriptionDto createPrescription(PrescriptionDto prescriptionDto);
-    PrescriptionDto updatePrescription(Long prescriptionId, PrescriptionDto prescriptionDto);
+    Prescription createPrescription(Prescription prescription);
+    Prescription updatePrescription(Long prescriptionId, Prescription prescription);
     void deletePrescription(Long prescriptionId);
-    PrescriptionDto getPrescriptionById(Long prescriptionId);
-    List<PrescriptionDto> getAllPrescriptions();
-    PrescriptionDto addPrescriptionItem(Long prescriptionId, PrescriptionItemDto prescriptionItemDto);
+    Prescription getPrescriptionById(Long prescriptionId);
+    List<Prescription> getAllPrescriptions();
+    Prescription addPrescriptionItem(Long prescriptionId, PrescriptionItem prescriptionItem);
 
     // New methods for finding prescriptions
-    PrescriptionDto getPrescriptionByBookingId(Long bookingId);
-    PrescriptionDto getPrescriptionByToken(String token);
-    List<PrescriptionDto> getPrescriptionsByDoctor(Long doctorId);
-    List<PrescriptionDto> getPrescriptionsByPatient(Long patientId);
+    Prescription getPrescriptionByBookingId(Long bookingId);
+    Prescription getPrescriptionByToken(String token);
+    List<Prescription> getPrescriptionsByDoctor(Long doctorId);
+    List<Prescription> getPrescriptionsByPatient(Long patientId);
 }
+
