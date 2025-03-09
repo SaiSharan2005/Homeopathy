@@ -2,6 +2,7 @@ package com.G19.hospital.model.inventory;
 
 import com.G19.hospital.model.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @Table(name = "inventory_items")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class InventoryItem extends AuditableBaseEntity {
 
     // The user who created the inventory item record (for auditing)

@@ -200,15 +200,16 @@
 //         return prescription;
 //     }
 // }
-
 package com.G19.hospital.service.impl.prescription;
 
+import com.G19.hospital.DTO.prescription.PrescriptionDto;
+import com.G19.hospital.DTO.prescription.PrescriptionItemDto;
 import com.G19.hospital.exceptions.security.CustomSecurityException;
 import com.G19.hospital.model.prescription.Prescription;
 import com.G19.hospital.model.prescription.PrescriptionItem;
 import com.G19.hospital.model.User;
 import com.G19.hospital.model.inventory.InventoryItem;
-import com.G19.hospital.model.BookingAppointment;  // Import BookingAppointment
+import com.G19.hospital.model.BookingAppointment;  
 import com.G19.hospital.repository.prescription.PrescriptionRepository;
 import com.G19.hospital.repository.UserRepository;
 import com.G19.hospital.repository.inventory.InventoryItemRepository;
@@ -217,7 +218,6 @@ import com.G19.hospital.service.PrescriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -241,33 +241,23 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     }
 
     @Override
-    public Prescription createPrescription(Prescription prescription) {
+    public Prescription createPrescription(PrescriptionDto prescriptionDto) {
+        Prescription prescription = convertToEntity(prescriptionDto);
         if (prescription.getDateIssued() == null) {
             prescription.setDateIssued(LocalDateTime.now());
         }
-        // If a booking appointment is provided, verify it exists
-        if (prescription.getBookingAppointment() != null &&
-            prescription.getBookingAppointment().getBookingId() != null) {
-            BookingAppointment booking = bookingAppointmentRepository.findById(
-                    prescription.getBookingAppointment().getBookingId())
-                .orElseThrow(() -> new CustomSecurityException("Booking appointment not found", HttpStatus.NOT_FOUND));
-            prescription.setBookingAppointment(booking);
-        }
-        // Assume that doctor and patient are provided with valid IDs in the request payload.
         return prescriptionRepository.save(prescription);
     }
 
     @Override
-    public Prescription updatePrescription(Long prescriptionId, Prescription prescription) {
+    public Prescription updatePrescription(Long prescriptionId, PrescriptionDto prescriptionDto) {
         Prescription existing = prescriptionRepository.findById(prescriptionId)
                 .orElseThrow(() -> new CustomSecurityException("Prescription not found", HttpStatus.NOT_FOUND));
-        existing.setPrescriptionNumber(prescription.getPrescriptionNumber());
-        existing.setDateIssued(prescription.getDateIssued());
-        existing.setGeneralInstructions(prescription.getGeneralInstructions());
-        if (prescription.getBookingAppointment() != null &&
-            prescription.getBookingAppointment().getBookingId() != null) {
-            BookingAppointment booking = bookingAppointmentRepository.findById(
-                    prescription.getBookingAppointment().getBookingId())
+        existing.setPrescriptionNumber(prescriptionDto.getPrescriptionNumber());
+        existing.setDateIssued(prescriptionDto.getDateIssued());
+        existing.setGeneralInstructions(prescriptionDto.getGeneralInstructions());
+        if (prescriptionDto.getBookingAppointmentId() != null) {
+            BookingAppointment booking = bookingAppointmentRepository.findById(prescriptionDto.getBookingAppointmentId())
                 .orElseThrow(() -> new CustomSecurityException("Booking appointment not found", HttpStatus.NOT_FOUND));
             existing.setBookingAppointment(booking);
         }
@@ -293,23 +283,25 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     }
 
     @Override
-    public Prescription addPrescriptionItem(Long prescriptionId, PrescriptionItem prescriptionItem) {
+    public Prescription addPrescriptionItem(Long prescriptionId, PrescriptionItemDto prescriptionItemDto) {
         Prescription prescription = prescriptionRepository.findById(prescriptionId)
                 .orElseThrow(() -> new CustomSecurityException("Prescription not found", HttpStatus.NOT_FOUND));
 
-        // Validate and set InventoryItem from prescriptionItem
-        if (prescriptionItem.getInventoryItem() != null &&
-            prescriptionItem.getInventoryItem().getId() != null) {
-            InventoryItem inventoryItem = inventoryItemRepository.findById(
-                    prescriptionItem.getInventoryItem().getId())
-                .orElseThrow(() -> new CustomSecurityException("Inventory item not found", HttpStatus.NOT_FOUND));
-            prescriptionItem.setInventoryItem(inventoryItem);
-        } else {
+        PrescriptionItem newItem = new PrescriptionItem();
+        newItem.setDosage(prescriptionItemDto.getDosage());
+        newItem.setFrequency(prescriptionItemDto.getFrequency());
+        newItem.setDuration(prescriptionItemDto.getDuration());
+        newItem.setAdditionalInstructions(prescriptionItemDto.getAdditionalInstructions());
+        
+        // Retrieve and validate the InventoryItem
+        if (prescriptionItemDto.getInventoryItemId() == null) {
             throw new CustomSecurityException("Inventory item ID is required", HttpStatus.BAD_REQUEST);
         }
-
-        prescriptionItem.setPrescription(prescription);
-        prescription.getPrescriptionItems().add(prescriptionItem);
+        InventoryItem inventoryItem = inventoryItemRepository.findById(prescriptionItemDto.getInventoryItemId())
+                .orElseThrow(() -> new CustomSecurityException("Inventory item not found", HttpStatus.NOT_FOUND));
+        newItem.setInventoryItem(inventoryItem);
+        newItem.setPrescription(prescription);
+        prescription.getPrescriptionItems().add(newItem);
         return prescriptionRepository.save(prescription);
     }
 
@@ -333,5 +325,31 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     @Override
     public List<Prescription> getPrescriptionsByPatient(Long patientId) {
         return prescriptionRepository.findByPatient_Id(patientId);
+    }
+
+    // Helper method: convert PrescriptionDto to Prescription entity.
+    private Prescription convertToEntity(PrescriptionDto dto) {
+        Prescription prescription = new Prescription();
+        prescription.setId(dto.getId());
+        prescription.setPrescriptionNumber(dto.getPrescriptionNumber());
+        prescription.setDateIssued(dto.getDateIssued());
+        prescription.setGeneralInstructions(dto.getGeneralInstructions());
+        if (dto.getDoctorId() != null) {
+            User doctor = userRepository.findById(dto.getDoctorId())
+                .orElseThrow(() -> new CustomSecurityException("Doctor not found", HttpStatus.NOT_FOUND));
+            prescription.setDoctor(doctor);
+        }
+        if (dto.getPatientId() != null) {
+            User patient = userRepository.findById(dto.getPatientId())
+                .orElseThrow(() -> new CustomSecurityException("Patient not found", HttpStatus.NOT_FOUND));
+            prescription.setPatient(patient);
+        }
+        if (dto.getBookingAppointmentId() != null) {
+            BookingAppointment booking = bookingAppointmentRepository.findById(dto.getBookingAppointmentId())
+                .orElseThrow(() -> new CustomSecurityException("Booking appointment not found", HttpStatus.NOT_FOUND));
+            prescription.setBookingAppointment(booking);
+        }
+        // Typically, prescription items are added separately.
+        return prescription;
     }
 }

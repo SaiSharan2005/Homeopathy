@@ -1,8 +1,9 @@
 package com.G19.hospital.controller.prescription;
 
+import com.G19.hospital.DTO.prescription.PrescriptionDto;
+import com.G19.hospital.DTO.prescription.PrescriptionItemDto;
 import com.G19.hospital.model.prescription.Prescription;
 import com.G19.hospital.model.prescription.PrescriptionItem;
-import com.G19.hospital.model.User;
 import com.G19.hospital.service.PrescriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,8 +24,8 @@ public class PrescriptionController {
     }
 
     @PostMapping
-    public ResponseEntity<Prescription> createPrescription(@RequestBody Prescription prescription) {
-        Prescription created = prescriptionService.createPrescription(prescription);
+    public ResponseEntity<Prescription> createPrescription(@RequestBody PrescriptionDto prescriptionDto) {
+        Prescription created = prescriptionService.createPrescription(prescriptionDto);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
@@ -41,9 +42,8 @@ public class PrescriptionController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Prescription> updatePrescription(@PathVariable Long id,
-                                                             @RequestBody Prescription prescription) {
-        Prescription updated = prescriptionService.updatePrescription(id, prescription);
+    public ResponseEntity<Prescription> updatePrescription(@PathVariable Long id, @RequestBody PrescriptionDto prescriptionDto) {
+        Prescription updated = prescriptionService.updatePrescription(id, prescriptionDto);
         return new ResponseEntity<>(updated, HttpStatus.OK);
     }
 
@@ -55,10 +55,9 @@ public class PrescriptionController {
 
     // Endpoint to add a prescription item to an existing prescription
     @PostMapping("/{id}/items")
-    public ResponseEntity<Prescription> addPrescriptionItem(
-            @PathVariable Long id,
-            @RequestBody PrescriptionItem prescriptionItem) {
-        Prescription updatedPrescription = prescriptionService.addPrescriptionItem(id, prescriptionItem);
+    public ResponseEntity<Prescription> addPrescriptionItem(@PathVariable Long id,
+                                                            @RequestBody PrescriptionItemDto prescriptionItemDto) {
+        Prescription updatedPrescription = prescriptionService.addPrescriptionItem(id, prescriptionItemDto);
         return new ResponseEntity<>(updatedPrescription, HttpStatus.OK);
     }
 

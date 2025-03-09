@@ -2,14 +2,16 @@ package com.G19.hospital.model.prescription;
 
 import com.G19.hospital.model.BaseEntity;
 import com.G19.hospital.model.User;
+import com.G19.hospital.model.BookingAppointment;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import com.G19.hospital.model.BookingAppointment; // Import BookingAppointment
-
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "prescriptions")
 @Getter
@@ -18,16 +20,13 @@ import java.util.List;
 @AllArgsConstructor
 public class Prescription extends BaseEntity {
 
-    // A unique code for each prescription (useful for audit and reference)
     @Column(name = "prescription_number", nullable = false, unique = true)
     private String prescriptionNumber;
     
-    // Reference to the doctor who issues the prescription
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "doctor_id", nullable = false)
     private User doctor;
     
-    // Reference to the patient for whom the prescription is issued
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", nullable = false)
     private User patient;
@@ -36,18 +35,14 @@ public class Prescription extends BaseEntity {
     @JoinColumn(name = "booking_id")
     private BookingAppointment bookingAppointment;
 
-    
-    // Date and time when the prescription was issued
     @Column(name = "date_issued", nullable = false)
     private LocalDateTime dateIssued;
     
-    // General instructions or notes relevant to the prescription (e.g., overall lifestyle advice)
     @Column(name = "general_instructions", length = 500)
     private String generalInstructions;
     
-    // One-to-many relationship to capture multiple prescribed remedies
+    // Use a unique reference value to fix the bidirectional relationship
     @OneToMany(mappedBy = "prescription", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference(value = "prescription-items")
     private List<PrescriptionItem> prescriptionItems = new ArrayList<>();
-    
-    // Additional constructors, helper methods, or business logic can be added here.
 }
