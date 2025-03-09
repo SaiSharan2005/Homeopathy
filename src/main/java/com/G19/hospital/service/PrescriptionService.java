@@ -11,10 +11,10 @@ public interface PrescriptionService {
     PrescriptionDto getPrescriptionById(Long prescriptionId);
     List<PrescriptionDto> getAllPrescriptions();
     PrescriptionDto addPrescriptionItem(Long prescriptionId, PrescriptionItemDto prescriptionItemDto);
-    Optional<Prescription> findByBookingAppointment_BookingId(Long bookingId);
-    Optional<Prescription> findByBookingAppointment_Token(String token);
-    List<Prescription> findByDoctor_Id(Long doctorId);
-    List<Prescription> findByPatient_Id(Long patientId);
 
-
+    // New methods for finding prescriptions
+    PrescriptionDto getPrescriptionByBookingId(Long bookingId);
+    PrescriptionDto getPrescriptionByToken(String token);
+    List<PrescriptionDto> getPrescriptionsByDoctor(Long doctorId);
+    List<PrescriptionDto> getPrescriptionsByPatient(Long patientId);
 }
