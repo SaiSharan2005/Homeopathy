@@ -5,7 +5,9 @@ import com.G19.hospital.DTO.prescription.PrescriptionItemDto;
 import com.G19.hospital.exceptions.security.CustomSecurityException;
 import com.G19.hospital.model.prescription.Prescription;
 import com.G19.hospital.model.prescription.PrescriptionItem;
+import com.G19.hospital.model.User;
 import com.G19.hospital.repository.prescription.PrescriptionRepository;
+import com.G19.hospital.repository.UserRepository;
 import com.G19.hospital.service.PrescriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,10 +21,12 @@ import java.util.stream.Collectors;
 public class PrescriptionServiceImpl implements PrescriptionService {
 
     private final PrescriptionRepository prescriptionRepository;
+    private final UserRepository userRepository;  // Injected repository to retrieve doctor and patient
 
     @Autowired
-    public PrescriptionServiceImpl(PrescriptionRepository prescriptionRepository) {
+    public PrescriptionServiceImpl(PrescriptionRepository prescriptionRepository, UserRepository userRepository) {
         this.prescriptionRepository = prescriptionRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -42,7 +46,6 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         existing.setPrescriptionNumber(prescriptionDto.getPrescriptionNumber());
         existing.setDateIssued(prescriptionDto.getDateIssued());
         existing.setGeneralInstructions(prescriptionDto.getGeneralInstructions());
-        // Optionally update prescription items if needed
         Prescription updated = prescriptionRepository.save(existing);
         return convertToDto(updated);
     }
@@ -83,7 +86,6 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         // Example: newItem.setInventoryItem(inventoryItemService.findById(prescriptionItemDto.getInventoryItemId()));
         
         newItem.setPrescription(prescription);
-        // Add the new item to the prescription's list
         prescription.getPrescriptionItems().add(newItem);
         
         Prescription updated = prescriptionRepository.save(prescription);
@@ -114,10 +116,17 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         prescription.setPrescriptionNumber(dto.getPrescriptionNumber());
         prescription.setDateIssued(dto.getDateIssued());
         prescription.setGeneralInstructions(dto.getGeneralInstructions());
-        // TODO: Retrieve and set doctor and patient entities using their IDs
-        // For example:
-        // prescription.setDoctor(userService.findById(dto.getDoctorId()));
-        // prescription.setPatient(userService.findById(dto.getPatientId()));
+        // Retrieve and set doctor and patient entities using their IDs
+        if (dto.getDoctorId() != null) {
+            User doctor = userRepository.findById(dto.getDoctorId())
+                .orElseThrow(() -> new CustomSecurityException("Doctor not found", HttpStatus.NOT_FOUND));
+            prescription.setDoctor(doctor);
+        }
+        if (dto.getPatientId() != null) {
+            User patient = userRepository.findById(dto.getPatientId())
+                .orElseThrow(() -> new CustomSecurityException("Patient not found", HttpStatus.NOT_FOUND));
+            prescription.setPatient(patient);
+        }
         // TODO: Map prescription items if necessary
         return prescription;
     }
