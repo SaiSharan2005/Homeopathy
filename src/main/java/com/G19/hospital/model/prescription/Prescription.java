@@ -3,6 +3,8 @@ package com.G19.hospital.model.prescription;
 import com.G19.hospital.model.BaseEntity;
 import com.G19.hospital.model.User;
 import jakarta.persistence.*;
+import com.G19.hospital.model.BookingAppointment; // Import BookingAppointment
+
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
