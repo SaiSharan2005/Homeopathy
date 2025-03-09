@@ -102,21 +102,35 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     }
 
     // Helper method to convert Prescription entity to DTO
-    private PrescriptionDto convertToDto(Prescription prescription) {
-        PrescriptionDto dto = new PrescriptionDto();
-        dto.setId(prescription.getId());
-        dto.setPrescriptionNumber(prescription.getPrescriptionNumber());
-        dto.setDateIssued(prescription.getDateIssued());
-        dto.setGeneralInstructions(prescription.getGeneralInstructions());
-        if (prescription.getDoctor() != null) {
-            dto.setDoctorId(prescription.getDoctor().getId());
-        }
-        if (prescription.getPatient() != null) {
-            dto.setPatientId(prescription.getPatient().getId());
-        }
-        // TODO: Map prescription items if necessary
-        return dto;
+private PrescriptionDto convertToDto(Prescription prescription) {
+    PrescriptionDto dto = new PrescriptionDto();
+    dto.setId(prescription.getId());
+    dto.setPrescriptionNumber(prescription.getPrescriptionNumber());
+    dto.setDateIssued(prescription.getDateIssued());
+    dto.setGeneralInstructions(prescription.getGeneralInstructions());
+    if (prescription.getDoctor() != null) {
+        dto.setDoctorId(prescription.getDoctor().getId());
     }
+    if (prescription.getPatient() != null) {
+        dto.setPatientId(prescription.getPatient().getId());
+    }
+    // Map prescription items if available
+    if (prescription.getPrescriptionItems() != null) {
+        dto.setPrescriptionItems(
+            prescription.getPrescriptionItems().stream().map(item -> {
+                PrescriptionItemDto itemDto = new PrescriptionItemDto();
+                itemDto.setId(item.getId());
+                itemDto.setInventoryItemId(item.getInventoryItem().getId());
+                itemDto.setDosage(item.getDosage());
+                itemDto.setFrequency(item.getFrequency());
+                itemDto.setDuration(item.getDuration());
+                itemDto.setAdditionalInstructions(item.getAdditionalInstructions());
+                return itemDto;
+            }).collect(Collectors.toList())
+        );
+    }
+    return dto;
+}
 
     // Helper method to convert DTO to Prescription entity
     private Prescription convertToEntity(PrescriptionDto dto) {
