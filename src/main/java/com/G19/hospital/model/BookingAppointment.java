@@ -2,11 +2,9 @@ package com.G19.hospital.model;
 
 import java.time.LocalDate;
 import org.hibernate.annotations.ColumnDefault;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class BookingAppointment {
 
     @Id
@@ -56,10 +54,10 @@ public class BookingAppointment {
     public void setPatient(User patient) {
         this.patient = patient;
     }
-    public DoctorSchedule getSchedule() {
+    public DoctorSchedule getScheduleId() {
         return schedule;
     }
-    public void setSchedule(DoctorSchedule schedule) {
+    public void setScheduleId(DoctorSchedule schedule) {
         this.schedule = schedule;
     }
     public String getToken() {
@@ -68,11 +66,11 @@ public class BookingAppointment {
     public void setToken(String token) {
         this.token = token;
     }
-    public LocalDate getAppointDate() {
-        return appointDate;
+    public LocalDate getAppointmenDate() {
+        return this.appointDate;
     }
-    public void setAppointDate(LocalDate appointDate) {
-        this.appointDate = appointDate;
+    public void setAppointmentDate(LocalDate appointmenDate) {
+        this.appointDate = appointmenDate;
     }
     public String getStatus() {
         return status;
