@@ -6,8 +6,10 @@ import com.G19.hospital.exceptions.security.CustomSecurityException;
 import com.G19.hospital.model.prescription.Prescription;
 import com.G19.hospital.model.prescription.PrescriptionItem;
 import com.G19.hospital.model.User;
+import com.G19.hospital.model.inventory.InventoryItem;
 import com.G19.hospital.repository.prescription.PrescriptionRepository;
 import com.G19.hospital.repository.UserRepository;
+import com.G19.hospital.repository.inventory.InventoryItemRepository;
 import com.G19.hospital.service.PrescriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,12 +23,16 @@ import java.util.stream.Collectors;
 public class PrescriptionServiceImpl implements PrescriptionService {
 
     private final PrescriptionRepository prescriptionRepository;
-    private final UserRepository userRepository;  // Injected repository to retrieve doctor and patient
+    private final UserRepository userRepository;
+    private final InventoryItemRepository inventoryItemRepository;
 
     @Autowired
-    public PrescriptionServiceImpl(PrescriptionRepository prescriptionRepository, UserRepository userRepository) {
+    public PrescriptionServiceImpl(PrescriptionRepository prescriptionRepository,
+                                   UserRepository userRepository,
+                                   InventoryItemRepository inventoryItemRepository) {
         this.prescriptionRepository = prescriptionRepository;
         this.userRepository = userRepository;
+        this.inventoryItemRepository = inventoryItemRepository;
     }
 
     @Override
@@ -82,8 +88,11 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         newItem.setFrequency(prescriptionItemDto.getFrequency());
         newItem.setDuration(prescriptionItemDto.getDuration());
         newItem.setAdditionalInstructions(prescriptionItemDto.getAdditionalInstructions());
-        // TODO: Retrieve and set the InventoryItem using the prescriptionItemDto.getInventoryItemId()
-        // Example: newItem.setInventoryItem(inventoryItemService.findById(prescriptionItemDto.getInventoryItemId()));
+        
+        // Retrieve the InventoryItem from the repository
+        InventoryItem inventoryItem = inventoryItemRepository.findById(prescriptionItemDto.getInventoryItemId())
+                .orElseThrow(() -> new CustomSecurityException("Inventory item not found", HttpStatus.NOT_FOUND));
+        newItem.setInventoryItem(inventoryItem);
         
         newItem.setPrescription(prescription);
         prescription.getPrescriptionItems().add(newItem);
@@ -116,7 +125,6 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         prescription.setPrescriptionNumber(dto.getPrescriptionNumber());
         prescription.setDateIssued(dto.getDateIssued());
         prescription.setGeneralInstructions(dto.getGeneralInstructions());
-        // Retrieve and set doctor and patient entities using their IDs
         if (dto.getDoctorId() != null) {
             User doctor = userRepository.findById(dto.getDoctorId())
                 .orElseThrow(() -> new CustomSecurityException("Doctor not found", HttpStatus.NOT_FOUND));
