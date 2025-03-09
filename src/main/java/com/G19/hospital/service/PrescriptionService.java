@@ -12,10 +12,8 @@ public interface PrescriptionService {
     List<Prescription> getAllPrescriptions();
     Prescription addPrescriptionItem(Long prescriptionId, PrescriptionItem prescriptionItem);
 
-    // New methods for finding prescriptions
     Prescription getPrescriptionByBookingId(Long bookingId);
     Prescription getPrescriptionByToken(String token);
     List<Prescription> getPrescriptionsByDoctor(Long doctorId);
     List<Prescription> getPrescriptionsByPatient(Long patientId);
 }
-
