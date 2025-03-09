@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,10 +32,12 @@ public class Prescription extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", nullable = false)
     private User patient;
+    
+@ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "booking_id")
+@JsonIgnore
+private BookingAppointment bookingAppointment;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "booking_id")
-    private BookingAppointment bookingAppointment;
 
     @Column(name = "date_issued", nullable = false)
     private LocalDateTime dateIssued;
