@@ -29,6 +29,11 @@ public class Prescription extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", nullable = false)
     private User patient;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "booking_id")
+    private BookingAppointment bookingAppointment;
+
     
     // Date and time when the prescription was issued
     @Column(name = "date_issued", nullable = false)
