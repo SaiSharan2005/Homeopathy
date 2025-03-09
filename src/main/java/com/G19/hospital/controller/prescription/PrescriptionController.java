@@ -1,90 +1,112 @@
-package com.G19.hospital.controller.prescription;
+import React from 'react';
 
-import com.G19.hospital.DTO.prescription.PrescriptionDto;
-import com.G19.hospital.DTO.prescription.PrescriptionItemDto;
-import com.G19.hospital.service.PrescriptionService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+const PrescriptionDetails = ({ prescription }) => {
+  if (!prescription) {
+    return (
+      <div className="flex items-center justify-center h-screen text-lg font-semibold text-gray-600">
+        No prescription data available
+      </div>
+    );
+  }
 
-import java.util.List;
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-4xl font-bold text-center mb-10 text-gray-800">
+        Prescription Details
+      </h1>
 
-@RestController
-@RequestMapping("/api/prescriptions")
-public class PrescriptionController {
+      {/* Prescription Info Card */}
+      <div className="bg-white rounded-xl shadow-md p-6 mb-10">
+        <h2 className="text-3xl font-semibold mb-4 text-gray-800 border-b pb-2">
+          Prescription Info
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <p className="text-sm text-gray-500">ID</p>
+            <p className="text-lg text-gray-800 font-medium">{prescription.id}</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500">Prescription Number</p>
+            <p className="text-lg text-gray-800 font-medium">{prescription.prescriptionNumber}</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500">Date Issued</p>
+            <p className="text-lg text-gray-800 font-medium">
+              {new Date(prescription.dateIssued).toLocaleString()}
+            </p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500">Doctor ID</p>
+            <p className="text-lg text-gray-800 font-medium">{prescription.doctorId}</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500">Patient ID</p>
+            <p className="text-lg text-gray-800 font-medium">{prescription.patientId}</p>
+          </div>
+          {prescription.bookingAppointmentId && (
+            <div>
+              <p className="text-sm text-gray-500">Booking Appointment ID</p>
+              <p className="text-lg text-gray-800 font-medium">{prescription.bookingAppointmentId}</p>
+            </div>
+          )}
+          <div className="md:col-span-3">
+            <p className="text-sm text-gray-500">General Instructions</p>
+            <p className="text-lg text-gray-800 font-medium">{prescription.generalInstructions}</p>
+          </div>
+        </div>
+      </div>
 
-    private final PrescriptionService prescriptionService;
+      {/* Prescription Items Table */}
+      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+        <div className="bg-gray-200 px-6 py-3">
+          <h2 className="text-2xl font-semibold text-gray-800">Prescription Items</h2>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-300">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  ID
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Dosage
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Frequency
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Duration
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  Additional Instructions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200 bg-white">
+              {prescription.prescriptionItems && prescription.prescriptionItems.length > 0 ? (
+                prescription.prescriptionItems.map((item) => (
+                  <tr key={item.id} className="hover:bg-gray-50 transition-colors duration-200">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{item.id}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{item.dosage}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{item.frequency}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{item.duration}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{item.additionalInstructions}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5" className="px-6 py-4 text-center text-sm text-gray-500">
+                    No prescription items found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
 
-    @Autowired
-    public PrescriptionController(PrescriptionService prescriptionService) {
-        this.prescriptionService = prescriptionService;
-    }
+export default PrescriptionDetails;
 
-    @PostMapping
-    public ResponseEntity<PrescriptionDto> createPrescription(@RequestBody PrescriptionDto prescriptionDto) {
-        PrescriptionDto created = prescriptionService.createPrescription(prescriptionDto);
-        return new ResponseEntity<>(created, HttpStatus.CREATED);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<PrescriptionDto> getPrescriptionById(@PathVariable Long id) {
-        PrescriptionDto prescriptionDto = prescriptionService.getPrescriptionById(id);
-        return new ResponseEntity<>(prescriptionDto, HttpStatus.OK);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<PrescriptionDto>> getAllPrescriptions() {
-        List<PrescriptionDto> prescriptions = prescriptionService.getAllPrescriptions();
-        return new ResponseEntity<>(prescriptions, HttpStatus.OK);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<PrescriptionDto> updatePrescription(@PathVariable Long id,
-                                                                @RequestBody PrescriptionDto prescriptionDto) {
-        PrescriptionDto updated = prescriptionService.updatePrescription(id, prescriptionDto);
-        return new ResponseEntity<>(updated, HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePrescription(@PathVariable Long id) {
-        prescriptionService.deletePrescription(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    // Endpoint to add a prescription item to an existing prescription
-    @PostMapping("/{id}/items")
-    public ResponseEntity<PrescriptionDto> addPrescriptionItem(@PathVariable Long id,
-                                                               @RequestBody PrescriptionItemDto prescriptionItemDto) {
-        PrescriptionDto updatedPrescription = prescriptionService.addPrescriptionItem(id, prescriptionItemDto);
-        return new ResponseEntity<>(updatedPrescription, HttpStatus.OK);
-    }
-
-    // New endpoint: find prescription by Booking Appointment ID
-    @GetMapping("/booking/{bookingId}")
-    public ResponseEntity<PrescriptionDto> getPrescriptionByBookingId(@PathVariable Long bookingId) {
-        PrescriptionDto dto = prescriptionService.getPrescriptionByBookingId(bookingId);
-        return new ResponseEntity<>(dto, HttpStatus.OK);
-    }
-
-    // New endpoint: find prescription by Booking Appointment Token
-    @GetMapping("/token/{token}")
-    public ResponseEntity<PrescriptionDto> getPrescriptionByToken(@PathVariable String token) {
-        PrescriptionDto dto = prescriptionService.getPrescriptionByToken(token);
-        return new ResponseEntity<>(dto, HttpStatus.OK);
-    }
-
-    // New endpoint: find prescriptions by Doctor ID
-    @GetMapping("/doctor/{doctorId}")
-    public ResponseEntity<List<PrescriptionDto>> getPrescriptionsByDoctor(@PathVariable Long doctorId) {
-        List<PrescriptionDto> dtos = prescriptionService.getPrescriptionsByDoctor(doctorId);
-        return new ResponseEntity<>(dtos, HttpStatus.OK);
-    }
-
-    // New endpoint: find prescriptions by Patient ID (i.e., "mummy")
-    @GetMapping("/patient/{patientId}")
-    public ResponseEntity<List<PrescriptionDto>> getPrescriptionsByPatient(@PathVariable Long patientId) {
-        List<PrescriptionDto> dtos = prescriptionService.getPrescriptionsByPatient(patientId);
-        return new ResponseEntity<>(dtos, HttpStatus.OK);
-    }
-}
