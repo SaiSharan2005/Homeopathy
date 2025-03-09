@@ -1,7 +1,7 @@
 package com.G19.hospital.controller.prescription;
 
 import com.G19.hospital.DTO.prescription.PrescriptionDto;
-import com.G19.hospital.DTO.prescription.PrescriptionItemDto;  // Ensure this file exists in com.G19.hospital.dto
+import com.G19.hospital.DTO.prescription.PrescriptionItemDto;
 import com.G19.hospital.service.PrescriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,7 +40,8 @@ public class PrescriptionController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PrescriptionDto> updatePrescription(@PathVariable Long id, @RequestBody PrescriptionDto prescriptionDto) {
+    public ResponseEntity<PrescriptionDto> updatePrescription(@PathVariable Long id,
+                                                                @RequestBody PrescriptionDto prescriptionDto) {
         PrescriptionDto updated = prescriptionService.updatePrescription(id, prescriptionDto);
         return new ResponseEntity<>(updated, HttpStatus.OK);
     }
@@ -51,12 +52,39 @@ public class PrescriptionController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    // New endpoint to add a prescription item to an existing prescription
+    // Endpoint to add a prescription item to an existing prescription
     @PostMapping("/{id}/items")
-    public ResponseEntity<PrescriptionDto> addPrescriptionItem(
-            @PathVariable Long id,
-            @RequestBody PrescriptionItemDto prescriptionItemDto) {
+    public ResponseEntity<PrescriptionDto> addPrescriptionItem(@PathVariable Long id,
+                                                               @RequestBody PrescriptionItemDto prescriptionItemDto) {
         PrescriptionDto updatedPrescription = prescriptionService.addPrescriptionItem(id, prescriptionItemDto);
         return new ResponseEntity<>(updatedPrescription, HttpStatus.OK);
+    }
+
+    // New endpoint: find prescription by Booking Appointment ID
+    @GetMapping("/booking/{bookingId}")
+    public ResponseEntity<PrescriptionDto> getPrescriptionByBookingId(@PathVariable Long bookingId) {
+        PrescriptionDto dto = prescriptionService.getPrescriptionByBookingId(bookingId);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
+    // New endpoint: find prescription by Booking Appointment Token
+    @GetMapping("/token/{token}")
+    public ResponseEntity<PrescriptionDto> getPrescriptionByToken(@PathVariable String token) {
+        PrescriptionDto dto = prescriptionService.getPrescriptionByToken(token);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
+    // New endpoint: find prescriptions by Doctor ID
+    @GetMapping("/doctor/{doctorId}")
+    public ResponseEntity<List<PrescriptionDto>> getPrescriptionsByDoctor(@PathVariable Long doctorId) {
+        List<PrescriptionDto> dtos = prescriptionService.getPrescriptionsByDoctor(doctorId);
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
+    }
+
+    // New endpoint: find prescriptions by Patient ID (i.e., "mummy")
+    @GetMapping("/patient/{patientId}")
+    public ResponseEntity<List<PrescriptionDto>> getPrescriptionsByPatient(@PathVariable Long patientId) {
+        List<PrescriptionDto> dtos = prescriptionService.getPrescriptionsByPatient(patientId);
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 }
