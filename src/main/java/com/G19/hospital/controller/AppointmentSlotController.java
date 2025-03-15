@@ -1,62 +1,58 @@
 package com.G19.hospital.controller;
 
+import java.time.LocalDate;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
-import com.G19.hospital.model.DoctorRegister;
+import com.G19.hospital.model.User;
 import com.G19.hospital.model.DoctorSchedule;
-// import com.G19.hospital.repository.DoctorAuthenticationRepository;
-// import com.G19.hospital.service.BookingAppointmentServices;
-// import com.G19.hospital.service.;
-// import com.G19.hospital.service.DoctorServices;
 import com.G19.hospital.service.DoctorScheduleServices;
-import com.G19.hospital.service.DoctorServices;
-
-import java.sql.Date;
-import java.time.LocalDate;
-
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.http.HttpStatus;
-// import org.springframework.http.ResponseEntity;
-// import org.springframework.web.bind.annotation.PostMapping;
-// import org.springframework.web.bind.annotation.RequestMapping;
-// import org.springframework.web.bind.annotation.RestController;
-
-// import java.time.LocalDate;
-import java.time.LocalTime;
-// import java.util.List;
+// import com.G19.hospital.service.DoctorServices;
+import com.G19.hospital.repository.UserRepository; // Assuming you have a UserRepository to fetch user data
 
 @RestController
-@RequestMapping("/create-appointment-slots")
+@RequestMapping("/api/create-appointment-slots")
 public class AppointmentSlotController {
 
     @Autowired
-    public DoctorScheduleServices doctorScheduleServices;
+    private DoctorScheduleServices doctorScheduleServices;
+
+    // @Autowired
+    // private DoctorServices doctorServices;
 
     @Autowired
-    public DoctorServices doctorServices;
-
+    private UserRepository userRepository; // Inject UserRepository to fetch doctor data
 
     @PostMapping("/date/{date}")
     public ResponseEntity<List<DoctorSchedule>> createAppointmentSlots(
-        @RequestBody DoctorRegister doctorId,
-        @PathVariable LocalDate date) {
+        @PathVariable String date // Date as a path variable
+        // @RequestBody User user // User payload in the request body
+    ) {
+        try {
+            // Extract the authenticated user's details from the token
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName(); // Assuming username is the unique identifier
 
-    try {
-        List<DoctorSchedule> responseEntity = doctorScheduleServices.createScheduleForDate(doctorId, date);
-        return ResponseEntity.ok(responseEntity);
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(null); // Handle error response as needed
+            // Fetch the doctor (User object) by username
+            User doctorData = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("Doctor not found"));
+
+            // Parse the date from the URL
+            LocalDate parsedDate = LocalDate.parse(date);
+
+            // Create appointment slots based on doctor and parsed date
+            List<DoctorSchedule> schedules = doctorScheduleServices.createScheduleForDate(doctorData, parsedDate);
+
+            return ResponseEntity.ok(schedules);
+        } catch (Exception e) {
+            // Handle error response
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
-
-}
 }

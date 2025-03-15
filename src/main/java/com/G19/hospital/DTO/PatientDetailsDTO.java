@@ -2,8 +2,8 @@ package com.G19.hospital.DTO;
 
 public class PatientDetailsDTO {
 
-    private Long id;
-    private String patientId;
+    private Long useId;
+    // private String patientId;
     private Integer age;
     private String gender;
     private String address;
@@ -14,8 +14,8 @@ public class PatientDetailsDTO {
     public PatientDetailsDTO() {}
 
     // Parameterized constructor
-    public PatientDetailsDTO(Long id, Integer age, String gender, String address, String city, String pincode) {
-        this.id = id;
+    public PatientDetailsDTO(Long useId, Integer age, String gender, String address, String city, String pincode) {
+        this.useId = useId;
         this.age = age;
         this.gender = gender;
         this.address = address;
@@ -25,21 +25,21 @@ public class PatientDetailsDTO {
 
     // Getters and Setters
 
-    public Long getId() {
-        return id;
+    public Long getUserId() {
+        return useId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUserId(Long useId) {
+        this.useId = useId;
     }
 
-    public String getPatientId() {
-        return patientId;
-    }
+    // public String getPatientId() {
+    //     return patientId;
+    // }
 
-    public void setPatientId(String patientId) {
-        this.patientId = patientId;
-    }
+    // public void setPatientId(String patientId) {
+    //     this.patientId = patientId;
+    // }
 
     public Integer getAge() {
         return age;

@@ -1,6 +1,11 @@
 package com.G19.hospital.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class AppointmentHistory {
@@ -15,18 +20,17 @@ public class AppointmentHistory {
 
     @ManyToOne
     @JoinColumn(name = "doctor_id", nullable = false)
-    private DoctorRegister doctorId;
+    private User doctor;  // Changed from DoctorRegister to User
 
     @ManyToOne
     @JoinColumn(name = "admin_id", nullable = true)
-    private Staff adminId;
+    private User adminId;
 
     private String role;
     private String action;
     private String reasonForAction;
 
     // Getters and Setters
-
     public Long getId() {
         return id;
     }
@@ -43,19 +47,19 @@ public class AppointmentHistory {
         this.bookingAppointment = bookingAppointment;
     }
 
-    public DoctorRegister getDoctorId() {
-        return doctorId;
+    public User getDoctor() {  // Changed return type to User
+        return doctor;
     }
 
-    public void setDoctorId(DoctorRegister doctorId) {
-        this.doctorId = doctorId;
+    public void setDoctor(User doctor) {  // Changed parameter type to User
+        this.doctor = doctor;
     }
 
-    public Staff getAdminId() {
+    public User getAdminId() {
         return adminId;
     }
 
-    public void setAdminId(Staff adminId) {
+    public void setAdminId(User adminId) {
         this.adminId = adminId;
     }
 

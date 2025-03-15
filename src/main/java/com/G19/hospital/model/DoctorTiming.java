@@ -17,7 +17,7 @@ public class DoctorTiming {
 
     @ManyToOne
     @JoinColumn(name = "doctor_id", nullable = false)
-    private DoctorRegister doctorId;
+    private User doctor;  // Changed from DoctorRegister to User
 
     private LocalTime startTime;
 
@@ -34,12 +34,12 @@ public class DoctorTiming {
         this.slotId = slotId;
     }
 
-    public DoctorRegister getDoctorId() {
-        return doctorId;
+    public User getDoctor() {
+        return doctor;  // Changed return type to User
     }
 
-    public void setDoctorId(DoctorRegister doctorId) {
-        this.doctorId = doctorId;
+    public void setDoctor(User doctor) {  // Changed parameter type to User
+        this.doctor = doctor;
     }
 
     public LocalTime getStartTime() {

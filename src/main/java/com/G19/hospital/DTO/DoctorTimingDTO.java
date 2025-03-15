@@ -2,20 +2,15 @@ package com.G19.hospital.DTO;
 
 import java.time.LocalTime;
 
-import com.G19.hospital.model.DoctorRegister;
-
 public class DoctorTimingDTO {
     private Long slotId;
-    private DoctorRegister doctorId;
+    private Long doctorId; // Change to Long if necessary
     private LocalTime startTime;
     private LocalTime endTime;
     private boolean inUse;
 
-
-    public DoctorTimingDTO() {}
-
-    // Parameterized constructor
-    public DoctorTimingDTO(Long slotId, DoctorRegister doctorId, LocalTime startTime, LocalTime endTime, boolean inUse) {
+    // Constructor
+    public DoctorTimingDTO(Long slotId, Long doctorId, LocalTime startTime, LocalTime endTime, boolean inUse) {
         this.slotId = slotId;
         this.doctorId = doctorId;
         this.startTime = startTime;
@@ -32,11 +27,11 @@ public class DoctorTimingDTO {
         this.slotId = slotId;
     }
 
-    public DoctorRegister getDoctorId() {
+    public Long getDoctorId() {
         return doctorId;
     }
 
-    public void setDoctorId(DoctorRegister doctorId) {
+    public void setDoctorId(Long doctorId) { // Change to Long if necessary
         this.doctorId = doctorId;
     }
 

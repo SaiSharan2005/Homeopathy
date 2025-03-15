@@ -1,12 +1,8 @@
 package com.G19.hospital.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.PreUpdate;
+import jakarta.persistence.*;
 
 @Entity
 public class Advertisement {
@@ -30,77 +26,42 @@ public class Advertisement {
 
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-
-   
+    private LocalDate endDate;
 
     // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Long getId() {
-        return id;
-    }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public String getTitle() {
-        return title;
-    }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    public String getTargetPage() { return targetPage; }
+    public void setTargetPage(String targetPage) { this.targetPage = targetPage; }
 
-    public String getDescription() {
-        return description;
-    }
+    public Boolean getIsActive() { return isActive; }
+    public void setIsActive(Boolean isActive) { this.isActive = isActive; }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public String getTargetPage() {
-        return targetPage;
-    }
-
-    public void setTargetPage(String targetPage) {
-        this.targetPage = targetPage;
-    }
-
-    public Boolean getIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+    public LocalDate getEndDate() { return endDate; }
+    public void setEndDate(LocalDate endDate) { this.endDate = endDate; }
 
     @PreUpdate
     public void setLastUpdate() {
         this.updatedAt = LocalDateTime.now();
+
+        if (endDate != null && endDate.isBefore(LocalDate.now())) {
+            this.isActive = false;
+        }
     }
 }

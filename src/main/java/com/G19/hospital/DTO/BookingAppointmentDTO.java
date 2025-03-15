@@ -1,81 +1,53 @@
 package com.G19.hospital.DTO;
 
-import com.G19.hospital.model.DoctorRegister;
-import com.G19.hospital.model.DoctorSchedule;
-import com.G19.hospital.model.PatientRegister;
-
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
+import java.time.LocalDate;
 
 public class BookingAppointmentDTO {
 
-    private Long bookingId;
-    @OneToMany
-    @JoinColumn(name="doctorId",referencedColumnName = "doctor_id")
-    private DoctorRegister doctorId;
-    
-    @OneToMany
-    @JoinColumn(name="patientId",referencedColumnName = "patient_id")
-    private PatientRegister patientId;
+    private Long doctorId;
+    private Long patientId;
+    private Long scheduleId;
+    private LocalDate appointDate;
+    private String status = "Upcoming";
 
-    @OneToMany
-    @JoinColumn(name="scheduleId",referencedColumnName = "Schedule_id")
-    private DoctorSchedule scheduleId;
-    private String token;
-
-    // Default constructor
-    public BookingAppointmentDTO() {
-    }
-
-    // Parameterized constructor
-    public BookingAppointmentDTO(Long bookingId, DoctorRegister doctorId, PatientRegister patientId, DoctorSchedule scheduleId, String token) {
-        this.bookingId = bookingId;
-        this.doctorId = doctorId;
-        this.patientId = patientId;
-        this.scheduleId = scheduleId;
-        this.token = token;
-    }
+    // Optional field for prescription image URL (mainly used in responses)
+    private String prescriptionImageUrl;
 
     // Getters and Setters
-
-    public Long getBookingId() {
-        return bookingId;
-    }
-
-    public void setBookingId(Long bookingId) {
-        this.bookingId = bookingId;
-    }
-
-    public DoctorRegister getDoctorId() {
+    public Long getDoctorId() {
         return doctorId;
     }
-
-    public void setDoctorId(DoctorRegister doctorId) {
+    public void setDoctorId(Long doctorId) {
         this.doctorId = doctorId;
     }
-
-    public PatientRegister getPatientId() {
+    public Long getPatientId() {
         return patientId;
     }
-
-    public void setPatientId(PatientRegister patientId) {
+    public void setPatientId(Long patientId) {
         this.patientId = patientId;
     }
-
-    public DoctorSchedule getScheduleId() {
+    public Long getScheduleId() {
         return scheduleId;
     }
-
-    public void setScheduleId(DoctorSchedule scheduleId) {
+    public void setScheduleId(Long scheduleId) {
         this.scheduleId = scheduleId;
     }
-
-    public String getToken() {
-        return token;
+    public LocalDate getAppointDate() {
+        return appointDate;
     }
-
-    public void setToken(String token) {
-        this.token = token;
+    public void setAppointDate(LocalDate appointDate) {
+        this.appointDate = appointDate;
     }
-
+    public String getStatus() {
+        return status;
+    }
+    public void setStatus(String status) {
+        this.status = status;
+    }
+    public String getPrescriptionImageUrl() {
+        return prescriptionImageUrl;
+    }
+    public void setPrescriptionImageUrl(String prescriptionImageUrl) {
+        this.prescriptionImageUrl = prescriptionImageUrl;
+    }
 }

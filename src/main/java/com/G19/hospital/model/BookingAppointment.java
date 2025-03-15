@@ -1,7 +1,6 @@
 package com.G19.hospital.model;
 
 import java.time.LocalDate;
-
 import org.hibernate.annotations.ColumnDefault;
 import jakarta.persistence.*;
 
@@ -14,84 +13,75 @@ public class BookingAppointment {
 
     @ManyToOne
     @JoinColumn(name = "doctor_id", nullable = false)
-    private DoctorRegister doctorId;
+    private User doctor;
 
     @ManyToOne
     @JoinColumn(name = "patient_id", nullable = false)
-    private PatientRegister patientId;
+    private User patient;
 
     @ManyToOne
     @JoinColumn(name = "schedule_id", nullable = false)
-    private DoctorSchedule scheduleId;
-    
+    private DoctorSchedule schedule;
+
     @Column(unique = true)
     private String token;
 
-    @Column(unique = false )
     private LocalDate appointDate;
 
     @ColumnDefault("'Upcoming'")
     private String status = "upcoming";
 
+    // New field for prescription image URL
+    @Column(name = "prescription_image_url")
+    private String prescriptionImageUrl;
 
     // Getters and Setters
     public Long getBookingId() {
         return bookingId;
     }
-
     public void setBookingId(Long bookingId) {
         this.bookingId = bookingId;
     }
-
-    public DoctorRegister getDoctorId() {
-        return doctorId;
+    public User getDoctor() {
+        return doctor;
     }
-
-    public void setDoctorId(DoctorRegister doctorId) {
-        this.doctorId = doctorId;
+    public void setDoctor(User doctor) {
+        this.doctor = doctor;
     }
-
-    public PatientRegister getPatientId() {
-        return patientId;
+    public User getPatient() {
+        return patient;
     }
-
-    public void setPatientId(PatientRegister patientId) {
-        this.patientId = patientId;
+    public void setPatient(User patient) {
+        this.patient = patient;
     }
-
     public DoctorSchedule getScheduleId() {
-        return scheduleId;
+        return schedule;
     }
-
-    public void setScheduleId(DoctorSchedule scheduleId) {
-        this.scheduleId = scheduleId;
+    public void setScheduleId(DoctorSchedule schedule) {
+        this.schedule = schedule;
     }
-
     public String getToken() {
         return token;
     }
-
     public void setToken(String token) {
         this.token = token;
     }
-
+    public LocalDate getAppointmenDate() {
+        return this.appointDate;
+    }
+    public void setAppointmentDate(LocalDate appointmenDate) {
+        this.appointDate = appointmenDate;
+    }
     public String getStatus() {
         return status;
     }
-
     public void setStatus(String status) {
         this.status = status;
     }
-
-    public LocalDate getAppointmenDate(){
-        return this.appointDate;
+    public String getPrescriptionImageUrl() {
+        return prescriptionImageUrl;
     }
-    public void setAppointmentDate(LocalDate appointmenDate){
-        this.appointDate = appointmenDate;
-    }
-
-    // Remove or update this method
-    public BookingAppointment orElseThrow(Object object) {
-        throw new UnsupportedOperationException("Unimplemented method 'orElseThrow'");
+    public void setPrescriptionImageUrl(String prescriptionImageUrl) {
+        this.prescriptionImageUrl = prescriptionImageUrl;
     }
 }
