@@ -26,6 +26,19 @@ public class InventoryItem extends AuditableBaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "common_name")
+    private String commonName;
+
+    @Column(name = "source")
+    private String source;
+
+    // Potency: Dilution level, e.g., 6X, 30C, 200CK.
+    @Column(name = "potency")
+    private String potency;
+    // Physical form—pellets, tablets, liquid tinctures, gels, creams
+    @Column(name = "formulation")
+    private String formulation;
+
     @Column(name = "description", length = 1000)
     private String description;
 
@@ -41,7 +54,31 @@ public class InventoryItem extends AuditableBaseEntity {
     @Column(name = "expiry_date")
     private LocalDate expiryDate;
 
-    // Each InventoryItem belongs to a Category (for example, homeopathic remedy category)
+    @Column(name = "storage_conditions")
+    private String storageConditions;
+
+    @Column(name = "indications", length = 1000)
+    private String indications;
+
+    @Column(name = "contraindications", length = 1000)
+    private String contraindications;
+
+    @Column(name = "side_effects", length = 1000)
+    private String sideEffects;
+
+    @Column(name = "usage_instructions", length = 1000)
+    private String usageInstructions;
+
+    @Column(name = "regulatory_status")
+    private String regulatoryStatus;
+
+    @Column(name = "cost_price")
+    private double costPrice;
+
+    @Column(name = "selling_price")
+    private double sellingPrice;
+
+    // Each InventoryItem belongs to a Category (e.g., homeopathic remedy category)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     @JsonBackReference
@@ -56,3 +93,16 @@ public class InventoryItem extends AuditableBaseEntity {
         // Implement the logic to update stock based on the change value
     }
 }
+
+// Common Name: Provides the colloquial name of the remedy for easier identification.
+// Source: Specifies the origin (plant, mineral, animal) of the remedy.
+// Potency: Indicates the dilution level, essential in homeopathy.
+// Formulation: Describes the physical form (e.g., pellet, liquid) of the remedy.
+// Storage Conditions: Details optimal storage requirements to maintain efficacy.
+// Indications: Lists ailments or conditions the remedy addresses.
+// Contraindications: Specifies scenarios where the remedy should not be used.
+// Side Effects: Notes potential adverse reactions.
+// Usage Instructions: Provides guidelines on proper administration.
+// Regulatory Status: Indicates compliance with health regulations.
+// Cost Price & Selling Price: Facilitates financial tracking and pricing strategies.
+
