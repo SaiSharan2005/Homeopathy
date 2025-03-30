@@ -2,7 +2,7 @@ package com.G19.hospital.DTO;
 
 public class DoctorRegisterDTO {
 
-    private String doctorName;
+    private String username;
     private String phoneNumber;
     private String password;
     private String email;
@@ -13,20 +13,20 @@ public class DoctorRegisterDTO {
     public DoctorRegisterDTO() {
     }
 
-    public DoctorRegisterDTO(String doctorName, String phoneNumber, String password, String email, DoctorDetailsDTO doctorDetailsDTO) {
-        this.doctorName = doctorName;
+    public DoctorRegisterDTO(String username, String phoneNumber, String password, String email, DoctorDetailsDTO doctorDetailsDTO) {
+        this.username = username;
         this.phoneNumber = phoneNumber;
         this.password = password;
         this.email = email;
         // this.doctorDetailsDTO = doctorDetailsDTO;
     }
 
-    public String getDoctorName() {
-        return doctorName;
+    public String getusername() {
+        return username;
     }
 
-    public void setDoctorName(String doctorName) {
-        this.doctorName = doctorName;
+    public void setusername(String username) {
+        this.username = username;
     }
 
     public String getPhoneNumber() {
