@@ -48,7 +48,7 @@ public class DoctorServicesImplement implements DoctorServices {
         }
 
         User doctor = new User();
-        doctor.setUsername(doctorRegisterDTO.getDoctorName()); 
+        doctor.setUsername(doctorRegisterDTO.getUsername()); 
         doctor.setEmail(doctorRegisterDTO.getEmail());
         doctor.setPassword(passwordEncoder.encode(doctorRegisterDTO.getPassword()));
         doctor.setPhoneNumber(doctorRegisterDTO.getPhoneNumber());
@@ -61,8 +61,8 @@ public class DoctorServicesImplement implements DoctorServices {
         String userId;
         Random random = new Random();
         do {
-            String firstNamePart = doctorRegisterDTO.getDoctorName().substring(0,
-                Math.min(doctorRegisterDTO.getDoctorName().length(), 4));
+            String firstNamePart = doctorRegisterDTO.getUsername().substring(0,
+                Math.min(doctorRegisterDTO.getUsername().length(), 4));
             String lastNamePart = doctorRegisterDTO.getPhoneNumber()
                     .substring(Math.max(doctorRegisterDTO.getPhoneNumber().length() - 4, 0));
             
