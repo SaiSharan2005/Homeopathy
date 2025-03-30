@@ -200,7 +200,7 @@
 //         return prescription;
 //     }
 // }
-package com.G19.hospital.service.impl.prescription;
+package com.G19.hospital.service.implement.prescription;
 
 import com.G19.hospital.DTO.prescription.PrescriptionDto;
 import com.G19.hospital.DTO.prescription.PrescriptionItemDto;

@@ -30,11 +30,24 @@ public class InventoryItemServiceImpl implements InventoryItemService {
         try {
             InventoryItem item = new InventoryItem();
             item.setName(inventoryItemDto.getName());
+            item.setCommonName(inventoryItemDto.getCommonName());
+            item.setSource(inventoryItemDto.getSource());
+            item.setPotency(inventoryItemDto.getPotency());
+            item.setFormulation(inventoryItemDto.getFormulation());
             item.setDescription(inventoryItemDto.getDescription());
             item.setManufacturer(inventoryItemDto.getManufacturer());
             item.setUnit(inventoryItemDto.getUnit());
             item.setReorderLevel(inventoryItemDto.getReorderLevel());
             item.setExpiryDate(inventoryItemDto.getExpiryDate());
+            item.setStorageConditions(inventoryItemDto.getStorageConditions());
+            item.setIndications(inventoryItemDto.getIndications());
+            item.setContraindications(inventoryItemDto.getContraindications());
+            item.setSideEffects(inventoryItemDto.getSideEffects());
+            item.setUsageInstructions(inventoryItemDto.getUsageInstructions());
+            item.setRegulatoryStatus(inventoryItemDto.getRegulatoryStatus());
+            item.setCostPrice(inventoryItemDto.getCostPrice());
+            item.setSellingPrice(inventoryItemDto.getSellingPrice());
+            
             if (inventoryItemDto.getCategoryId() != null) {
                 Category category = categoryRepository.findById(inventoryItemDto.getCategoryId())
                         .orElseThrow(() -> new CustomSecurityException("Category not found", HttpStatus.NOT_FOUND));
@@ -53,11 +66,24 @@ public class InventoryItemServiceImpl implements InventoryItemService {
                 .orElseThrow(() -> new CustomSecurityException("Inventory item not found with id: " + id, HttpStatus.NOT_FOUND));
         try {
             existingItem.setName(inventoryItemDto.getName());
+            existingItem.setCommonName(inventoryItemDto.getCommonName());
+            existingItem.setSource(inventoryItemDto.getSource());
+            existingItem.setPotency(inventoryItemDto.getPotency());
+            existingItem.setFormulation(inventoryItemDto.getFormulation());
             existingItem.setDescription(inventoryItemDto.getDescription());
             existingItem.setManufacturer(inventoryItemDto.getManufacturer());
             existingItem.setUnit(inventoryItemDto.getUnit());
             existingItem.setReorderLevel(inventoryItemDto.getReorderLevel());
             existingItem.setExpiryDate(inventoryItemDto.getExpiryDate());
+            existingItem.setStorageConditions(inventoryItemDto.getStorageConditions());
+            existingItem.setIndications(inventoryItemDto.getIndications());
+            existingItem.setContraindications(inventoryItemDto.getContraindications());
+            existingItem.setSideEffects(inventoryItemDto.getSideEffects());
+            existingItem.setUsageInstructions(inventoryItemDto.getUsageInstructions());
+            existingItem.setRegulatoryStatus(inventoryItemDto.getRegulatoryStatus());
+            existingItem.setCostPrice(inventoryItemDto.getCostPrice());
+            existingItem.setSellingPrice(inventoryItemDto.getSellingPrice());
+            
             if (inventoryItemDto.getCategoryId() != null) {
                 Category category = categoryRepository.findById(inventoryItemDto.getCategoryId())
                         .orElseThrow(() -> new CustomSecurityException("Category not found", HttpStatus.NOT_FOUND));
@@ -103,7 +129,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
         InventoryItem item = inventoryItemRepository.findById(id)
                 .orElseThrow(() -> new CustomSecurityException("Inventory item not found with id: " + id, HttpStatus.NOT_FOUND));
         try {
-            // Call the business method to update the stock (delta change)
+            // Update stock via business logic method
             item.updateStock(change);
             return inventoryItemRepository.save(item);
         } catch (Exception ex) {
