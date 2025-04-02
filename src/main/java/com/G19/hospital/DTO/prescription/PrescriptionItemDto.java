@@ -13,4 +13,5 @@ public class PrescriptionItemDto {
     private String frequency;
     private String duration;
     private String additionalInstructions;
+    private String quantity;
 }

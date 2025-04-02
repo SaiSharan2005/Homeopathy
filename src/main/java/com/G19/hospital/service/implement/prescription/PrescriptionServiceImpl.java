@@ -207,19 +207,25 @@ import com.G19.hospital.DTO.prescription.PrescriptionItemDto;
 import com.G19.hospital.exceptions.security.CustomSecurityException;
 import com.G19.hospital.model.prescription.Prescription;
 import com.G19.hospital.model.prescription.PrescriptionItem;
+import com.G19.hospital.model.prescription.Payment;
+import com.G19.hospital.model.prescription.PaymentMethod;
+import com.G19.hospital.model.prescription.PaymentStatus;
 import com.G19.hospital.model.User;
 import com.G19.hospital.model.inventory.InventoryItem;
-import com.G19.hospital.model.BookingAppointment;  
+import com.G19.hospital.model.BookingAppointment;
 import com.G19.hospital.repository.prescription.PrescriptionRepository;
 import com.G19.hospital.repository.UserRepository;
 import com.G19.hospital.repository.inventory.InventoryItemRepository;
 import com.G19.hospital.repository.BookingAppointmentRepository;
+import com.G19.hospital.repository.prescription.PaymentRepository;  // NEW: Payment repository
 import com.G19.hospital.service.PrescriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PrescriptionServiceImpl implements PrescriptionService {
@@ -228,16 +234,19 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     private final UserRepository userRepository;
     private final InventoryItemRepository inventoryItemRepository;
     private final BookingAppointmentRepository bookingAppointmentRepository;
+    private final PaymentRepository paymentRepository; // NEW
 
     @Autowired
     public PrescriptionServiceImpl(PrescriptionRepository prescriptionRepository,
                                    UserRepository userRepository,
                                    InventoryItemRepository inventoryItemRepository,
-                                   BookingAppointmentRepository bookingAppointmentRepository) {
+                                   BookingAppointmentRepository bookingAppointmentRepository,
+                                   PaymentRepository paymentRepository) { // NEW
         this.prescriptionRepository = prescriptionRepository;
         this.userRepository = userRepository;
         this.inventoryItemRepository = inventoryItemRepository;
         this.bookingAppointmentRepository = bookingAppointmentRepository;
+        this.paymentRepository = paymentRepository; // NEW
     }
 
     @Override
@@ -287,12 +296,14 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         Prescription prescription = prescriptionRepository.findById(prescriptionId)
                 .orElseThrow(() -> new CustomSecurityException("Prescription not found", HttpStatus.NOT_FOUND));
 
+        // Create and populate the new prescription item
         PrescriptionItem newItem = new PrescriptionItem();
         newItem.setDosage(prescriptionItemDto.getDosage());
         newItem.setFrequency(prescriptionItemDto.getFrequency());
         newItem.setDuration(prescriptionItemDto.getDuration());
         newItem.setAdditionalInstructions(prescriptionItemDto.getAdditionalInstructions());
-        
+        newItem.setQuantity(prescriptionItemDto.getQuantity());
+
         // Retrieve and validate the InventoryItem
         if (prescriptionItemDto.getInventoryItemId() == null) {
             throw new CustomSecurityException("Inventory item ID is required", HttpStatus.BAD_REQUEST);
@@ -302,7 +313,38 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         newItem.setInventoryItem(inventoryItem);
         newItem.setPrescription(prescription);
         prescription.getPrescriptionItems().add(newItem);
-        return prescriptionRepository.save(prescription);
+
+        // Save the updated prescription (which now includes the new item)
+        Prescription updatedPrescription = prescriptionRepository.save(prescription);
+
+        // Calculate the new total amount from all prescription items.
+        // For each item, compute cost = (sellingPrice * quantity)
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        for (PrescriptionItem item : updatedPrescription.getPrescriptionItems()) {
+            BigDecimal qty = new BigDecimal(item.getQuantity()); // Assumes quantity is a valid number string
+            double sellingPrice = item.getInventoryItem().getSellingPrice();
+            BigDecimal price = BigDecimal.valueOf(sellingPrice);
+                        totalAmount = totalAmount.add(price.multiply(qty));
+        }
+
+        // Check if a Payment record exists for this prescription.
+        Payment payment = paymentRepository.findByPrescriptionId(updatedPrescription.getId());
+        if (payment == null) {
+            // Create a new Payment record if one doesn't exist.
+            payment = new Payment();
+            payment.setPrescription(updatedPrescription);
+            // For simplicity, defaulting to CASH method and PAID status.
+            payment.setMethod(PaymentMethod.NOT);
+            payment.setStatus(PaymentStatus.PENDING);
+            payment.setTotalAmount(totalAmount);
+            paymentRepository.save(payment);
+        } else {
+            // If payment already exists, update the total amount.
+            payment.setTotalAmount(totalAmount);
+            paymentRepository.save(payment);
+        }
+
+        return updatedPrescription;
     }
 
     @Override

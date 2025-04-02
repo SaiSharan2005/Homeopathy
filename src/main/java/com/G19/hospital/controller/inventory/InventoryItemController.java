@@ -8,7 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -20,14 +21,19 @@ public class InventoryItemController {
     private InventoryItemService inventoryItemService;
 
     @PostMapping
-    public ResponseEntity<InventoryItem> createInventoryItem(@RequestBody InventoryItemDto inventoryItemDto) {
-        InventoryItem item = inventoryItemService.createInventoryItem(inventoryItemDto);
+    public ResponseEntity<InventoryItem> createInventoryItem(
+            @RequestPart("inventoryItem") InventoryItemDto inventoryItemDto,
+            @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
+        InventoryItem item = inventoryItemService.createInventoryItem(inventoryItemDto, image);
         return new ResponseEntity<>(item, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<InventoryItem> updateInventoryItem(@PathVariable Long id, @RequestBody InventoryItemDto inventoryItemDto) {
-        InventoryItem item = inventoryItemService.updateInventoryItem(id, inventoryItemDto);
+    public ResponseEntity<InventoryItem> updateInventoryItem(
+            @PathVariable Long id,
+            @RequestPart("inventoryItem") InventoryItemDto inventoryItemDto,
+            @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
+        InventoryItem item = inventoryItemService.updateInventoryItem(id, inventoryItemDto, image);
         return ResponseEntity.ok(item);
     }
 
