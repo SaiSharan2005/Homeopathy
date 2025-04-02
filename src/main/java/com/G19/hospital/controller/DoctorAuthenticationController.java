@@ -30,17 +30,18 @@ public class DoctorAuthenticationController {
             return new ResponseEntity<>("Registration failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    @PostMapping("/addProfile")
-    public ResponseEntity<?> addDoctorProfile(@RequestBody DoctorDetailsDTO doctorDetailsDTO) {
+    
+    @PostMapping("/addProfile/{username}")
+    public ResponseEntity<?> addDoctorProfile(@RequestBody DoctorDetailsDTO doctorDetailsDTO,
+                                                @PathVariable("username") String username) {
         try {
-            DoctorDetails doctorProfile = doctorServices.profileDoctor(doctorDetailsDTO);
+            DoctorDetails doctorProfile = doctorServices.profileDoctor(doctorDetailsDTO, username);
             return new ResponseEntity<>(doctorProfile, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>("Profile update failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    
     @GetMapping("/me")
     public ResponseEntity<?> getAuthenticatedPatientDetails() {
         try {
@@ -68,7 +69,7 @@ public class DoctorAuthenticationController {
             // Set the userId in the DTO for profile creation
             doctorDetailsDTO.setUserId(authenticatedDoctor.getId());
 
-            DoctorDetails createdProfile = doctorServices.profileDoctor(doctorDetailsDTO);
+            DoctorDetails createdProfile = doctorServices.profileDoctor(doctorDetailsDTO,username);
             return new ResponseEntity<>(createdProfile, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>("Profile creation failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -107,18 +108,6 @@ public class DoctorAuthenticationController {
         }
     }
 
-    // @PostMapping("/login")
-    // public ResponseEntity<?> loginDoctor(@RequestBody DoctorLoginDTO
-    // loginRequest) {
-    // try {
-    // User doctor = doctorServices.loginDoctor(loginRequest.getPhoneNumber(),
-    // loginRequest.getPassword());
-    // return ResponseEntity.ok(doctor);
-    // } catch (Exception e) {
-    // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed: " +
-    // e.getMessage());
-    // }
-    // }
 
     @GetMapping("/byId/{id}")
     public ResponseEntity<?> getDoctorById(@PathVariable Long id) {

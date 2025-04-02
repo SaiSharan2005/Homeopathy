@@ -16,7 +16,7 @@ public interface DoctorServices {
     User loginDoctor(String phoneNumber, String password) throws Exception;
 
     // Update doctor's profile in DoctorDetails
-    DoctorDetails profileDoctor(DoctorDetailsDTO doctorDetailsDTO) throws Exception;
+    DoctorDetails profileDoctor(DoctorDetailsDTO doctorDetailsDTO,String username) throws Exception;
 
     // Fetch a doctor using doctorId (stored in the User model)
     User getDoctorByDoctorId(Long id ) throws Exception;

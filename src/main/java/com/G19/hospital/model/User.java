@@ -4,10 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-
-import java.util.HashSet;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -23,11 +21,11 @@ public class User extends BaseEntity {
     @Column(name = "username", unique = true)
     private String username;
 
-    @Email(message = "Email Should Be Valid")
+    @Email(message = "Email should be valid")
     @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    @Size(min = 10,message = "Email Should Be Valid")
+    @Size(min = 10, message = "Phone number length must be minimum 10")
     @Column(name = "phoneNumber", unique = true, nullable = false)
     private String phoneNumber;
 
@@ -35,9 +33,13 @@ public class User extends BaseEntity {
     @Column(name = "password")
     private String password;
 
-    @Size(min = 4, message = "User Id length must be minimum 8")
-    @Column(name = "userId")
+    @Size(min = 4, message = "User ID length must be minimum 4")
+    @Column(name = "userId", unique = true)
     private String userId;
+
+    // New field to store the profile picture URL
+    @Column(name = "image_url")
+    private String imageUrl;
 
     @ManyToMany
     @JoinTable(
@@ -47,11 +49,10 @@ public class User extends BaseEntity {
     )
     private Set<Role> roles = new HashSet<>();
 
-    // One-to-One relationships with details entities
+    // One-to-One relationships with additional details for doctors and patients
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private DoctorDetails doctorDetails;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private PatientDetails patientDetails;
-
 }

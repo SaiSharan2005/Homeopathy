@@ -62,11 +62,12 @@ public class AuthServiceImpl implements AuthService {
 
             String userId;
             Random random = new Random();
+            String role = userRegisterDto.getRoles()[0].substring(0, 3);;  
             do {
                 String firstNamePart = user.getUsername().substring(0,
                         Math.min(user.getUsername().length(), 4));
                 int randomNumber = random.nextInt(9000) + 1000; // Random number between 1000 and 9999
-                userId = "D29" + firstNamePart + randomNumber;
+                userId = role + firstNamePart + randomNumber;
             } while (userRepository.existsByUserId(userId));
 
             user.setUserId(userId);
@@ -87,7 +88,7 @@ public class AuthServiceImpl implements AuthService {
         try {
             // Load user details
             Optional<User> optionalUser = userRepository.findByUsername(username);
-
+            // System.out.println(username+"  "+ password);
             if (optionalUser.isEmpty()) {
                 throw new CustomSecurityException(ApiMessages.BAD_CREDENTIALS, HttpStatus.BAD_REQUEST);
             }
