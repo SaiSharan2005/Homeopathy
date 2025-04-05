@@ -55,10 +55,11 @@ public class PaymentServiceImpl implements PaymentService {
         Payment payment = paymentRepository.findById(id)
                 .orElseThrow(() -> new CustomSecurityException("Payment not found", HttpStatus.NOT_FOUND));
 
-        if (payment.getMethod() == PaymentMethod.ONLINE) {
+        // if (payment.getMethod() == PaymentMethod.ONLINE) {
+            payment.setMethod(PaymentMethod.ONLINE);
             payment.setPaymentScreenshotPath(screenshotPath);
             payment.setStatus(PaymentStatus.PAID);
-        }
+        // }
 
         return mapToResponse(paymentRepository.save(payment));
     }
@@ -71,10 +72,19 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public PaymentResponseDTO getPaymentById(Long id) {
+    public Payment getPaymentById(Long id) {
         return paymentRepository.findById(id)
-                .map(this::mapToResponse)
                 .orElseThrow(() -> new CustomSecurityException("Payment not found", HttpStatus.NOT_FOUND));
+    }
+    @Override
+    public Payment paidCashByUser(Long id) {
+        Payment payment = paymentRepository.findById(id)
+                .orElseThrow(() -> new CustomSecurityException("Payment not found", HttpStatus.NOT_FOUND));
+        payment.setMethod(PaymentMethod.CASH);
+        payment.setStatus(PaymentStatus.PAID);
+        
+        return paymentRepository.save(payment);
+
     }
 
     private PaymentResponseDTO mapToResponse(Payment payment) {

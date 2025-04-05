@@ -20,7 +20,6 @@ import java.util.List;
 public class PaymentController {
 
     private final PaymentService paymentService;
-    private static final String UPLOAD_DIR = "uploads/payments/";
 
     @PostMapping
     public ResponseEntity<PaymentResponseDTO> createPayment(@RequestBody PaymentRequestDTO request) {
@@ -46,4 +45,11 @@ public class PaymentController {
     public ResponseEntity<Payment> getPaymentById(@PathVariable Long id) {
         return ResponseEntity.ok(paymentService.getPaymentById(id));
     }
+
+    @PutMapping("/{id}/cash-payment")
+    public ResponseEntity<Payment> cashPaid(
+            @PathVariable Long id){
+                return ResponseEntity.ok(paymentService.paidCashByUser(id));
+    }
+
 }

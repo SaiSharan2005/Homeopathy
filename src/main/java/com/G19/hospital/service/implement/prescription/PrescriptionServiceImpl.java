@@ -334,7 +334,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
             payment = new Payment();
             payment.setPrescription(updatedPrescription);
             // For simplicity, defaulting to CASH method and PAID status.
-            payment.setMethod(PaymentMethod.NOT);
+            payment.setMethod(PaymentMethod.CASH);
             payment.setStatus(PaymentStatus.PENDING);
             payment.setTotalAmount(totalAmount);
             paymentRepository.save(payment);
