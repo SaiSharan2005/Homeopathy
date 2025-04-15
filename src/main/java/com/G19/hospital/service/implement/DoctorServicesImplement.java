@@ -147,6 +147,19 @@ public class DoctorServicesImplement implements DoctorServices {
         }
         return user;
     }
+        
+    @Override
+    public User getDoctorInfo(String userId) throws Exception {
+        User user = userRepository.findByUserId(userId)
+            .orElseThrow(() -> new CustomSecurityException("Doctor not found", HttpStatus.NOT_FOUND));
+        
+        boolean isDoctor = user.getRoles().stream()
+            .anyMatch(role -> role.getName().equalsIgnoreCase("DOCTOR"));
+        if (!isDoctor) {
+            throw new CustomSecurityException("User is not a doctor", HttpStatus.NOT_FOUND);
+        }
+        return user;
+    }
     
 
     @Override

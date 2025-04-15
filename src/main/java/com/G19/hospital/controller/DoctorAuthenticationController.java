@@ -108,7 +108,15 @@ public class DoctorAuthenticationController {
         }
     }
 
-
+    @GetMapping("/{doctorId}")
+    public ResponseEntity<?> getPatientByPatientId(@PathVariable String doctorId) {
+        try {
+            User patient = doctorServices.getDoctorInfo(doctorId);
+            return ResponseEntity.ok(patient);
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("Patient not found: " + e.getMessage());
+        }
+    }
     @GetMapping("/byId/{id}")
     public ResponseEntity<?> getDoctorById(@PathVariable Long id) {
         try {

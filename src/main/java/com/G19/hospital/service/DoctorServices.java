@@ -22,6 +22,7 @@ public interface DoctorServices {
     User getDoctorByDoctorId(Long id ) throws Exception;
 
     User getDoctorInfoByUserName(String username);
+    public User getDoctorInfo(String userId) throws Exception ;
 
     List<User> getAllAvailableDoctors() throws Exception;
 
