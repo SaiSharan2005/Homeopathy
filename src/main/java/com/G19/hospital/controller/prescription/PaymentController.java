@@ -44,6 +44,12 @@ public class PaymentController {
         return ResponseEntity.ok(paymentService.updatePayment(id, imageUrl));
     }
 
+    @PutMapping("/{id}/mark-unpaid")
+    public ResponseEntity<PaymentResponseDTO> markAsUnpaid(@PathVariable Long id) {
+        return ResponseEntity.ok(paymentService.markAsUnpaid(id));
+    }
+
+
     @GetMapping
     public ResponseEntity<List<PaymentResponseDTO>> getAllPayments() {
         return ResponseEntity.ok(paymentService.getAllPayments());
@@ -59,6 +65,12 @@ public class PaymentController {
             @PathVariable Long id){
                 return ResponseEntity.ok(paymentService.paidCashByUser(id));
     }
+
+    @GetMapping("/prescription/{id}")
+public ResponseEntity<PaymentResponseDTO> getPaymentByPrescriptionId(@PathVariable Long id) {
+    return ResponseEntity.ok(paymentService.getPaymentByPrescriptionId(id));
+}
+
 
     @GetMapping("/patient")
     public ResponseEntity<List<PaymentResponseDTO>> getPaymentsForPatient() {

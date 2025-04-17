@@ -328,7 +328,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         }
 
         // Check if a Payment record exists for this prescription.
-        Payment payment = paymentRepository.findByPrescriptionId(updatedPrescription.getId());
+        Payment payment = paymentRepository.findByPrescriptionId(updatedPrescription.getId()).get();
         if (payment == null) {
             // Create a new Payment record if one doesn't exist.
             payment = new Payment();

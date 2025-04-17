@@ -13,10 +13,14 @@ public interface PaymentService {
     PaymentResponseDTO createPayment(PaymentRequestDTO request);
     PaymentResponseDTO updatePayment(Long id, String screenshotPath);
     List<PaymentResponseDTO> getAllPayments();
+    PaymentResponseDTO markAsUnpaid(Long id);
+
+
     Payment getPaymentById(Long id);
     String uploadImage(MultipartFile imageFile) throws IOException ;
     Payment paidCashByUser(Long id) ;
     List<PaymentResponseDTO> getPaymentsForPatient(Long patientId);
     List<PaymentResponseDTO> getPaymentsForDoctor(Long doctorId);
-  
+    PaymentResponseDTO getPaymentByPrescriptionId(Long prescriptionId);
+
 }

@@ -26,6 +26,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final PrescriptionRepository prescriptionRepository;
     private final Cloudinary cloudinary;
 
+
     // Add image upload method
     @Override
     public String uploadImage(MultipartFile imageFile) throws IOException {
@@ -115,7 +116,34 @@ public class PaymentServiceImpl implements PaymentService {
         .toList();
     }
   
-    
-  
+    @Override
+    public PaymentResponseDTO markAsUnpaid(Long id) {
+        Payment p = paymentRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Payment not found"));
+        p.setStatus(PaymentStatus.FAILED);
+        p.setPaymentScreenshotPath(null);
+        Payment updated = paymentRepository.save(p);
+        return toDTO(updated);
+    }
+    private PaymentResponseDTO toDTO(Payment p) {
+        PaymentResponseDTO dto = new PaymentResponseDTO();
+        dto.setId(p.getId());
+        dto.setStatus(p.getStatus());
+        dto.setMethod(p.getMethod());
+        dto.setTotalAmount(p.getTotalAmount());
+        dto.setPaymentScreenshotPath(p.getPaymentScreenshotPath());
+        if (p.getPrescription() != null) {
+            dto.setPrescriptionId(p.getPrescription().getId());
+        }
+        return dto;
+    }
+
+    @Override
+    public PaymentResponseDTO getPaymentByPrescriptionId(Long prescriptionId) {
+        Payment payment = paymentRepository.findByPrescriptionId(prescriptionId)
+            .orElseThrow(() -> new CustomSecurityException("Payment not found for the prescription", HttpStatus.NOT_FOUND));
+        return mapToResponse(payment);
+    }
+      
 }
 
