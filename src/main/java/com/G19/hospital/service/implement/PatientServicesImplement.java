@@ -133,9 +133,8 @@ public class PatientServicesImplement implements PatientServices {
     @Override
     public List<User> getAllPatients() {
         // Search by username (phone number) or email for patients
-        List<User> patients = userRepository.findAll();
-        return patients;
-
+        Role patientRole = roleRepository.findByName("PATIENT");
+        return userRepository.findByRoles(patientRole);
     }
 
     @Override
