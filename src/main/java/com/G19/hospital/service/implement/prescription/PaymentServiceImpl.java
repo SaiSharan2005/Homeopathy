@@ -97,4 +97,25 @@ public class PaymentServiceImpl implements PaymentService {
                 payment.getTotalAmount()
         );
     }
+    @Override
+    public List<PaymentResponseDTO> getPaymentsForPatient(Long patientId) {
+      return paymentRepository
+        .findByPrescriptionPatientId(patientId)
+        .stream()
+        .map(this::mapToResponse)
+        .toList();
+    }
+  
+    @Override
+    public List<PaymentResponseDTO> getPaymentsForDoctor(Long doctorId) {
+      return paymentRepository
+        .findByPrescriptionDoctorId(doctorId)
+        .stream()
+        .map(this::mapToResponse)
+        .toList();
+    }
+  
+    
+  
 }
+

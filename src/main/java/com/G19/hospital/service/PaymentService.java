@@ -16,5 +16,7 @@ public interface PaymentService {
     Payment getPaymentById(Long id);
     String uploadImage(MultipartFile imageFile) throws IOException ;
     Payment paidCashByUser(Long id) ;
-
+    List<PaymentResponseDTO> getPaymentsForPatient(Long patientId);
+    List<PaymentResponseDTO> getPaymentsForDoctor(Long doctorId);
+  
 }
