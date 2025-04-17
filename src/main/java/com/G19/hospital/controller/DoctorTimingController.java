@@ -1,5 +1,6 @@
 package com.G19.hospital.controller;
 
+import com.G19.hospital.DTO.ApiResponseDTO;
 import com.G19.hospital.DTO.DoctorTimingDTO;
 import com.G19.hospital.model.User;
 import com.G19.hospital.service.DoctorTimingService;
@@ -39,7 +40,7 @@ public class DoctorTimingController {
     }
 
     @PostMapping("/multi")
-    public List<DoctorTimingDTO> createDoctorTimings(@RequestBody List<DoctorTimingDTO> doctorTimingDTOs) {
+    public ApiResponseDTO createDoctorTimings(@RequestBody List<DoctorTimingDTO> doctorTimingDTOs) {
         // Extract the authenticated user's details from the token
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName(); // Assuming the username is the doctor's identifier
@@ -74,7 +75,7 @@ public class DoctorTimingController {
     }
 
     @PostMapping("/set-in-use-false")
-    public void setInUseToFalseForDoctor() {  
+    public ApiResponseDTO setInUseToFalseForDoctor() {  
         // Extract the authenticated user's details from the token
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName(); // Assuming the username is the doctor's identifier
@@ -84,13 +85,22 @@ public class DoctorTimingController {
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
     
         // Pass the User object to the service
-        doctorTimingService.setInUseToFalseForDoctor(doctor);
+        return doctorTimingService.setInUseToFalseForDoctor(doctor);
     }
     
+
 
     @GetMapping("/doctor/{doctorId}/in-use")
     public List<DoctorTimingDTO> getDoctorTimingsByDoctorIdAndInUse(@PathVariable Long doctorId) {
         User doctor = userRepository.findById(doctorId)
+                .orElseThrow(() -> new RuntimeException("Doctor not found")); // Fetch User object
+        return doctorTimingService.getDoctorTimingsByDoctorIdAndInUse(doctor); // Pass User object to service
+    }   
+    @GetMapping("/doctor/in-use")
+    public List<DoctorTimingDTO> getDoctorTimingsByDoctorIdAndInUse() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName(); // Assuming the username is the doctor's identifier
+        User doctor = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Doctor not found")); // Fetch User object
         return doctorTimingService.getDoctorTimingsByDoctorIdAndInUse(doctor); // Pass User object to service
     }

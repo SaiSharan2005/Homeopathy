@@ -71,7 +71,30 @@ public class PatientAuthenticationController {
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Patient not found: " + e.getMessage());
         }
+    }@PostMapping("/addProfile/{username}")
+    public ResponseEntity<?> addProfileByUsername(
+            @PathVariable String username,
+            @RequestBody PatientDetailsDTO patientDetailsDTO) {
+        try {
+            // 1) find the user by username
+            User patient = patientServices.getPatientInfoByUserName(username);
+    
+            // 2) set the userId on the DTO
+            patientDetailsDTO.setUserId(patient.getId());
+    
+            // 3) save the profile
+            PatientDetails newProfile = patientServices.profilePatient(patientDetailsDTO);
+    
+            // 4) return it
+            return ResponseEntity.status(HttpStatus.CREATED).body(newProfile);
+        } catch (CustomSecurityException cse) {
+            return ResponseEntity.status(cse.getHttpStatus()).body(cse.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("Failed to add profile: " + ex.getMessage());
+        }
     }
+    
 
     @GetMapping("/{patientId}")
     public ResponseEntity<?> getPatientByPatientId(@PathVariable String patientId) {

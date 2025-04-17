@@ -1,5 +1,6 @@
 package com.G19.hospital.controller;
 
+import com.G19.hospital.DTO.ApiResponseDTO;
 import com.G19.hospital.model.DoctorSchedule;
 import com.G19.hospital.model.User; // Changed to import User instead of DoctorRegister
 import com.G19.hospital.service.DoctorScheduleServices;
@@ -30,27 +31,29 @@ public class ScheduleController {
     @Autowired
     private UserRepository userRepository; // Inject UserRepository
 
-  @PostMapping("/create/{date}")
-public ResponseEntity<String> createSchedule(
-        @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-    try {
-        // Extract the authenticated user's details from the token
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName(); // Assuming the username is the doctor's identifier
+    @PostMapping("/create/{date}")
+    public ResponseEntity<ApiResponseDTO> createSchedule(
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        try {
+            // Extract the authenticated user's details from the token
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName(); // Assuming the username is the doctor's identifier
 
-        // Fetch the doctor (User object) by username
-        User doctorData = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+            // Fetch the doctor (User object) by username
+            User doctorData = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
-        // Create the schedule for the specified date
-        scheduleService.createScheduleForDate(doctorData, date);
+            // Create the schedule for the specified date
+            scheduleService.createScheduleForDate(doctorData, date);
 
-        return ResponseEntity.ok("Schedule created successfully for doctor: " + username + " on " + date);
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Failed to create schedule: " + e.getMessage());
+            ApiResponseDTO response = new ApiResponseDTO(true,
+                    "Schedule created successfully for doctor: " + username + " on " + date);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            ApiResponseDTO response = new ApiResponseDTO(false, "Failed to create schedule: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
-}
 
     @GetMapping("/doctor/{doctorId}")
     public ResponseEntity<?> getAllSlots(@PathVariable Long doctorId) { // Changed from String to Long
@@ -79,27 +82,28 @@ public ResponseEntity<String> createSchedule(
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @GetMapping("/doctor/date/{date}")
-public ResponseEntity<?> getAllSlotsByDateOfHisOwn(
-        @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-    try {
-        // Extract the authenticated user's details from the token
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName(); // Assuming username is the unique identifier
+    public ResponseEntity<?> getAllSlotsByDateOfHisOwn(
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        try {
+            // Extract the authenticated user's details from the token
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName(); // Assuming username is the unique identifier
 
-        // Fetch the doctor (User object) by username
-        User doctorData = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+            // Fetch the doctor (User object) by username
+            User doctorData = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
-        // Fetch the schedule for the doctor and date
-        List<DoctorSchedule> data = scheduleService.getScheduleByDoctorAndDate(doctorData, date);
+            // Fetch the schedule for the doctor and date
+            List<DoctorSchedule> data = scheduleService.getScheduleByDoctorAndDate(doctorData, date);
 
-        return ResponseEntity.ok(data);
-    } catch (Exception e) {
-        return new ResponseEntity<>("Failed to fetch schedule: " + e.getMessage(),
-                HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.ok(data);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Failed to fetch schedule: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
-}
 
     @GetMapping("byId/{scheduleId}")
     public ResponseEntity<DoctorSchedule> getScheduleById(@PathVariable Long scheduleId) {
@@ -112,8 +116,8 @@ public ResponseEntity<?> getAllSlotsByDateOfHisOwn(
 
     @GetMapping("/available/{date}")
     public ResponseEntity<List<DoctorSchedule>> getAvailableSlots(
-        @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) { // Changed from String to
-            List<DoctorSchedule> availableSlots = scheduleService.getAvailableSlots(date);
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) { // Changed from String to
+        List<DoctorSchedule> availableSlots = scheduleService.getAvailableSlots(date);
         return ResponseEntity.ok(availableSlots);
     }
 
@@ -127,5 +131,4 @@ public ResponseEntity<?> getAllSlotsByDateOfHisOwn(
         }
     }
 
-
-    }
+}

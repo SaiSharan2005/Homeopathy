@@ -34,6 +34,10 @@ public class PrescriptionItem extends BaseEntity {
     
     @Column(name = "duration", nullable = false)
     private String duration;
+
+    
+    @Column(name = "quantity", nullable = false)
+    private String quantity;
     
     @Column(name = "additional_instructions", length = 500)
     private String additionalInstructions;

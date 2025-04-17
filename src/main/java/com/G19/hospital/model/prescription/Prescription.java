@@ -33,10 +33,10 @@ public class Prescription extends BaseEntity {
     @JoinColumn(name = "patient_id", nullable = false)
     private User patient;
     
-@ManyToOne(fetch = FetchType.LAZY)
-@JoinColumn(name = "booking_id")
-@JsonIgnore
-private BookingAppointment bookingAppointment;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "booking_id")
+    @JsonIgnore
+    private BookingAppointment bookingAppointment;
 
 
     @Column(name = "date_issued", nullable = false)

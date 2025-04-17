@@ -91,9 +91,9 @@ public class DoctorServicesImplement implements DoctorServices {
     }
 
     @Override
-    public DoctorDetails profileDoctor(DoctorDetailsDTO doctorDetailsDTO) throws Exception {
+    public DoctorDetails profileDoctor(DoctorDetailsDTO doctorDetailsDTO,String username) throws Exception {
         // Find the associated doctor (User)
-        User doctor = userRepository.findById(doctorDetailsDTO.getUserId())
+        User doctor = userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomSecurityException("Doctor not found", HttpStatus.NOT_FOUND));
 
         // Create and populate the DoctorDetails entity
@@ -136,10 +136,31 @@ public class DoctorServicesImplement implements DoctorServices {
     }
     
     @Override
-    public User getDoctorByDoctorId(Long id ) throws Exception {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new CustomSecurityException("Doctor not found", HttpStatus.NOT_FOUND));
+    public User getDoctorByDoctorId(Long id) throws Exception {
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new CustomSecurityException("Doctor not found", HttpStatus.NOT_FOUND));
+        
+        boolean isDoctor = user.getRoles().stream()
+            .anyMatch(role -> role.getName().equalsIgnoreCase("DOCTOR"));
+        if (!isDoctor) {
+            throw new CustomSecurityException("User is not a doctor", HttpStatus.NOT_FOUND);
+        }
+        return user;
     }
+        
+    @Override
+    public User getDoctorInfo(String userId) throws Exception {
+        User user = userRepository.findByUserId(userId)
+            .orElseThrow(() -> new CustomSecurityException("Doctor not found", HttpStatus.NOT_FOUND));
+        
+        boolean isDoctor = user.getRoles().stream()
+            .anyMatch(role -> role.getName().equalsIgnoreCase("DOCTOR"));
+        if (!isDoctor) {
+            throw new CustomSecurityException("User is not a doctor", HttpStatus.NOT_FOUND);
+        }
+        return user;
+    }
+    
 
     @Override
     public List<User> getAllDoctors() throws Exception {

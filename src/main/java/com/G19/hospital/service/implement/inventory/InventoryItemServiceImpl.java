@@ -12,7 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -25,8 +30,17 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private Cloudinary cloudinary;
+
     @Override
-    public InventoryItem createInventoryItem(InventoryItemDto inventoryItemDto) {
+    public String uploadImage(MultipartFile imageFile) throws IOException {
+        Map uploadResult = cloudinary.uploader().upload(imageFile.getBytes(), ObjectUtils.emptyMap());
+        return uploadResult.get("url").toString();
+    }
+
+    @Override
+    public InventoryItem createInventoryItem(InventoryItemDto inventoryItemDto, MultipartFile image) throws IOException {
         try {
             InventoryItem item = new InventoryItem();
             item.setName(inventoryItemDto.getName());
@@ -47,7 +61,13 @@ public class InventoryItemServiceImpl implements InventoryItemService {
             item.setRegulatoryStatus(inventoryItemDto.getRegulatoryStatus());
             item.setCostPrice(inventoryItemDto.getCostPrice());
             item.setSellingPrice(inventoryItemDto.getSellingPrice());
-            
+
+            // Upload image if provided
+            if (image != null && !image.isEmpty()) {
+                String imageUrl = uploadImage(image);
+                item.setImageUrl(imageUrl);
+            }
+
             if (inventoryItemDto.getCategoryId() != null) {
                 Category category = categoryRepository.findById(inventoryItemDto.getCategoryId())
                         .orElseThrow(() -> new CustomSecurityException("Category not found", HttpStatus.NOT_FOUND));
@@ -61,7 +81,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     }
 
     @Override
-    public InventoryItem updateInventoryItem(Long id, InventoryItemDto inventoryItemDto) {
+    public InventoryItem updateInventoryItem(Long id, InventoryItemDto inventoryItemDto, MultipartFile image) throws IOException {
         InventoryItem existingItem = inventoryItemRepository.findById(id)
                 .orElseThrow(() -> new CustomSecurityException("Inventory item not found with id: " + id, HttpStatus.NOT_FOUND));
         try {
@@ -83,7 +103,13 @@ public class InventoryItemServiceImpl implements InventoryItemService {
             existingItem.setRegulatoryStatus(inventoryItemDto.getRegulatoryStatus());
             existingItem.setCostPrice(inventoryItemDto.getCostPrice());
             existingItem.setSellingPrice(inventoryItemDto.getSellingPrice());
-            
+
+            // Upload new image if provided
+            if (image != null && !image.isEmpty()) {
+                String imageUrl = uploadImage(image);
+                existingItem.setImageUrl(imageUrl);
+            }
+
             if (inventoryItemDto.getCategoryId() != null) {
                 Category category = categoryRepository.findById(inventoryItemDto.getCategoryId())
                         .orElseThrow(() -> new CustomSecurityException("Category not found", HttpStatus.NOT_FOUND));
@@ -129,7 +155,6 @@ public class InventoryItemServiceImpl implements InventoryItemService {
         InventoryItem item = inventoryItemRepository.findById(id)
                 .orElseThrow(() -> new CustomSecurityException("Inventory item not found with id: " + id, HttpStatus.NOT_FOUND));
         try {
-            // Update stock via business logic method
             item.updateStock(change);
             return inventoryItemRepository.save(item);
         } catch (Exception ex) {

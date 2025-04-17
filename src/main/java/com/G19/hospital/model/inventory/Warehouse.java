@@ -1,12 +1,11 @@
 package com.G19.hospital.model.inventory;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.HashSet;
 import java.util.Set;
-
 import com.G19.hospital.model.User;
 
 @Getter
@@ -15,6 +14,7 @@ import com.G19.hospital.model.User;
 @AllArgsConstructor
 @Entity
 @Table(name = "warehouses")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Warehouse extends AuditableBaseEntity {
     // Audit fields
     @ManyToOne
@@ -28,7 +28,7 @@ public class Warehouse extends AuditableBaseEntity {
     private String location;
     
     // One Warehouse can store many InventoryRecords
-    @JsonManagedReference
+    @JsonIgnore
     @OneToMany(mappedBy = "warehouse", cascade = CascadeType.ALL)
     private Set<InventoryRecord> inventoryRecords = new HashSet<>();
 }
