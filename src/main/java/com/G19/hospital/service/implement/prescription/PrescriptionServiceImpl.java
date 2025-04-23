@@ -237,7 +237,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     private final PaymentRepository paymentRepository; // NEW
 
     @Autowired
-    public PrescriptionServiceImpl(PrescriptionRepository prescriptionRepository,
+    public PrescriptionServiceImpl(PrescriptionRepository prescriptionRepository, 
                                    UserRepository userRepository,
                                    InventoryItemRepository inventoryItemRepository,
                                    BookingAppointmentRepository bookingAppointmentRepository,
@@ -328,7 +328,8 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         }
 
         // Check if a Payment record exists for this prescription.
-        Payment payment = paymentRepository.findByPrescriptionId(updatedPrescription.getId()).get();
+        Payment payment = paymentRepository.findByPrescriptionId(updatedPrescription.getId()).orElse(null);
+
         if (payment == null) {
             // Create a new Payment record if one doesn't exist.
             payment = new Payment();
