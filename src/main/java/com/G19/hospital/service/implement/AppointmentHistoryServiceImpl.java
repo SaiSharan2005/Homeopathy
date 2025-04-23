@@ -3,12 +3,10 @@ package com.G19.hospital.service.implement;
 import com.G19.hospital.DTO.AppointmentHistoryDTO;
 import com.G19.hospital.model.AppointmentHistory;
 import com.G19.hospital.model.BookingAppointment;
-import com.G19.hospital.model.Staff;
 import com.G19.hospital.model.User;  // Importing User model
 import com.G19.hospital.repository.AppointmentHistoryRepository;
 import com.G19.hospital.repository.BookingAppointmentRepository;
-import com.G19.hospital.repository.UserRepository;  // Assuming you have a UserRepository
-import com.G19.hospital.repository.StaffRepository;
+import com.G19.hospital.repository.UserRepository;
 import com.G19.hospital.service.AppointmentHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,11 +23,7 @@ public class AppointmentHistoryServiceImpl implements AppointmentHistoryService 
     private BookingAppointmentRepository bookingAppointmentRepository;
 
     @Autowired
-    private UserRepository userRepository;  // Replacing DoctorAuthenticationRepository with UserRepository
-
-    @Autowired
-    private StaffRepository staffRepository;
-
+    private UserRepository userRepository;  
     @Override
     public AppointmentHistory addAppointmentHistory(AppointmentHistoryDTO appointmentHistoryDTO) {
         // Retrieve the booking appointment
@@ -41,7 +35,7 @@ public class AppointmentHistoryServiceImpl implements AppointmentHistoryService 
                 .orElseThrow(() -> new RuntimeException("User not found for ID: " + appointmentHistoryDTO.getDoctorId()));
         
         // Retrieve the admin
-        Staff admin = staffRepository.findById(appointmentHistoryDTO.getAdminId())
+        User admin = userRepository.findById(appointmentHistoryDTO.getAdminId())
                 .orElseThrow(() -> new RuntimeException("Staff not found for ID: " + appointmentHistoryDTO.getAdminId()));
 
         // Create and populate the AppointmentHistory entity

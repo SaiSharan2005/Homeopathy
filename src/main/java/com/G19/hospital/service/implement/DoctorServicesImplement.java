@@ -4,9 +4,11 @@ import com.G19.hospital.DTO.DoctorDetailsDTO;
 import com.G19.hospital.DTO.DoctorRegisterDTO;
 import com.G19.hospital.exceptions.security.CustomSecurityException;
 import com.G19.hospital.model.DoctorDetails;
+import com.G19.hospital.model.DoctorSchedule;
 import com.G19.hospital.model.Role;
 import com.G19.hospital.model.User;
 import com.G19.hospital.repository.DoctorDetailsRepository;
+import com.G19.hospital.repository.DoctorScheduleRepository;
 import com.G19.hospital.repository.RoleRepository;
 import com.G19.hospital.repository.UserRepository;
 import com.G19.hospital.service.DoctorServices;
@@ -18,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -35,20 +38,21 @@ public class DoctorServicesImplement implements DoctorServices {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private DoctorScheduleRepository doctorScheduleRepository;
+
     @Override
     public User registerDoctor(DoctorRegisterDTO doctorRegisterDTO) throws Exception {
-        // Check if the phone number already exists in the User repository
         if (userRepository.existsByUsername(doctorRegisterDTO.getPhoneNumber())) {
             throw new CustomSecurityException(ApiMessages.USER_ALREADY_EXISTS, HttpStatus.BAD_REQUEST);
         }
 
-        // Create a new User and set properties from the DoctorRegisterDTO
         User doctor = new User();
-        doctor.setUsername(doctorRegisterDTO.getDoctorName()); // Treat phone number as username
+        doctor.setUsername(doctorRegisterDTO.getUsername()); 
         doctor.setEmail(doctorRegisterDTO.getEmail());
         doctor.setPassword(passwordEncoder.encode(doctorRegisterDTO.getPassword()));
         doctor.setPhoneNumber(doctorRegisterDTO.getPhoneNumber());
-        // Assign the role of "DOCTOR"
+
         Set<Role> roles = new HashSet<>();
         Role doctorRole = roleRepository.findByName("DOCTOR");
         roles.add(doctorRole);
@@ -57,8 +61,8 @@ public class DoctorServicesImplement implements DoctorServices {
         String userId;
         Random random = new Random();
         do {
-            String firstNamePart = doctorRegisterDTO.getDoctorName().substring(0,
-                Math.min(doctorRegisterDTO.getDoctorName().length(), 4));
+            String firstNamePart = doctorRegisterDTO.getUsername().substring(0,
+                Math.min(doctorRegisterDTO.getUsername().length(), 4));
             String lastNamePart = doctorRegisterDTO.getPhoneNumber()
                     .substring(Math.max(doctorRegisterDTO.getPhoneNumber().length() - 4, 0));
             
@@ -87,9 +91,9 @@ public class DoctorServicesImplement implements DoctorServices {
     }
 
     @Override
-    public DoctorDetails profileDoctor(DoctorDetailsDTO doctorDetailsDTO) throws Exception {
+    public DoctorDetails profileDoctor(DoctorDetailsDTO doctorDetailsDTO,String username) throws Exception {
         // Find the associated doctor (User)
-        User doctor = userRepository.findById(doctorDetailsDTO.getDoctorId())
+        User doctor = userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomSecurityException("Doctor not found", HttpStatus.NOT_FOUND));
 
         // Create and populate the DoctorDetails entity
@@ -107,29 +111,88 @@ public class DoctorServicesImplement implements DoctorServices {
         // Save the doctor details
         return doctorDetailsRepository.save(doctorDetails);
     }
-
     @Override
-    public User getDoctorByDoctorId(String doctorId) throws Exception {
-        return userRepository.findByUserId(doctorId)
-                .orElseThrow(() -> new CustomSecurityException("Doctor not found", HttpStatus.NOT_FOUND));
+    public DoctorDetails updateDoctorProfile(DoctorDetailsDTO doctorDetailsDTO) throws Exception {
+        // Find the associated doctor (User)
+        // User doctor = userRepository.findById(doctorDetailsDTO.getUserId())
+        //         .orElseThrow(() -> new CustomSecurityException("Doctor not found", HttpStatus.NOT_FOUND));
+    
+        // Retrieve the existing doctor details
+        DoctorDetails doctorDetails = userRepository.findById(doctorDetailsDTO.getUserId()).get().getDoctorDetails();
+                // .orElseThrow(() -> new CustomSecurityException("Doctor profile not found", HttpStatus.NOT_FOUND));
+    
+        // Update the doctor details
+        doctorDetails.setAge(doctorDetailsDTO.getAge());
+        doctorDetails.setGender(doctorDetailsDTO.getGender());
+        doctorDetails.setAddress(doctorDetailsDTO.getAddress());
+        doctorDetails.setCity(doctorDetailsDTO.getCity());
+        doctorDetails.setPincode(doctorDetailsDTO.getPincode());
+        doctorDetails.setConsultationFee(doctorDetailsDTO.getConsultationFee());
+        doctorDetails.setSpecialization(doctorDetailsDTO.getSpecialization());
+        doctorDetails.setRemuneration(doctorDetailsDTO.getRemuneration());
+    
+        // Save the updated details
+        return doctorDetailsRepository.save(doctorDetails);
     }
+    
+    @Override
+    public User getDoctorByDoctorId(Long id) throws Exception {
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new CustomSecurityException("Doctor not found", HttpStatus.NOT_FOUND));
+        
+        boolean isDoctor = user.getRoles().stream()
+            .anyMatch(role -> role.getName().equalsIgnoreCase("DOCTOR"));
+        if (!isDoctor) {
+            throw new CustomSecurityException("User is not a doctor", HttpStatus.NOT_FOUND);
+        }
+        return user;
+    }
+        
+    @Override
+    public User getDoctorInfo(String userId) throws Exception {
+        User user = userRepository.findByUserId(userId)
+            .orElseThrow(() -> new CustomSecurityException("Doctor not found", HttpStatus.NOT_FOUND));
+        
+        boolean isDoctor = user.getRoles().stream()
+            .anyMatch(role -> role.getName().equalsIgnoreCase("DOCTOR"));
+        if (!isDoctor) {
+            throw new CustomSecurityException("User is not a doctor", HttpStatus.NOT_FOUND);
+        }
+        return user;
+    }
+    
 
     @Override
     public List<User> getAllDoctors() throws Exception {
         Role doctorRole = roleRepository.findByName("DOCTOR");
         return userRepository.findByRoles(doctorRole);
     }
+    @Override
+public List<User> getAllAvailableDoctors() throws Exception {
+    List<DoctorSchedule> schedules = doctorScheduleRepository.findByBooked(false); // Retrieve unbooked schedules
+    return schedules.stream()
+                    .map(DoctorSchedule::getDoctor)
+                    .distinct()
+                    .collect(Collectors.toList());
+}
+
+
+    @Override
+    public User getDoctorInfoByUserName(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Doctor with username " + username + " not found"));
+    }
 
     @Override
     public List<User> searchDoctors(String keyword) throws Exception {
         // Search by username (phone number) or email for doctors
-        Role doctorRole = roleRepository.findByName("Doctor");
+        Role doctorRole = roleRepository.findByName("DOCTOR");
         return userRepository.searchUsers(keyword, doctorRole);
     }
 
     @Override
     public long getDoctorCount() throws Exception {
-        Role doctorRole = roleRepository.findByName("ROLE_DOCTOR");
+        Role doctorRole = roleRepository.findByName("DOCTOR");
         return userRepository.countByRoles(doctorRole);
     }
 }

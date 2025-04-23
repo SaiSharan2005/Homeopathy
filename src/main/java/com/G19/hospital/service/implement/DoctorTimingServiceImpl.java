@@ -1,5 +1,6 @@
 package com.G19.hospital.service.implement;
 
+import com.G19.hospital.DTO.ApiResponseDTO;
 import com.G19.hospital.DTO.DoctorTimingDTO;
 import com.G19.hospital.model.User; // Import User instead of DoctorRegister
 import com.G19.hospital.model.DoctorTiming;
@@ -36,13 +37,14 @@ public class DoctorTimingServiceImpl implements DoctorTimingService {
         return doctorTimingDTO;
     }
 
-    @Override
-    public List<DoctorTimingDTO> createDoctorTimings(List<DoctorTimingDTO> doctorTimingDTOs) {
+ @Override
+public ApiResponseDTO createDoctorTimings(List<DoctorTimingDTO> doctorTimingDTOs) {
+    try {
         List<DoctorTiming> doctorTimings = doctorTimingDTOs.stream().map(dto -> {
             DoctorTiming doctorTiming = new DoctorTiming();
             User doctor = userRepository.findById(dto.getDoctorId())
                     .orElseThrow(() -> new RuntimeException("Doctor not found"));
-            doctorTiming.setDoctor(doctor); // Set the User object
+            doctorTiming.setDoctor(doctor);
             doctorTiming.setStartTime(dto.getStartTime());
             doctorTiming.setEndTime(dto.getEndTime());
             doctorTiming.setInUse(dto.isInUse());
@@ -50,10 +52,11 @@ public class DoctorTimingServiceImpl implements DoctorTimingService {
         }).collect(Collectors.toList());
 
         List<DoctorTiming> savedTimings = doctorTimingRepository.saveAll(doctorTimings);
-        return savedTimings.stream().map(savedTiming -> 
-            new DoctorTimingDTO(savedTiming.getSlotId(), savedTiming.getDoctor().getId(), savedTiming.getStartTime(), savedTiming.getEndTime(), savedTiming.isInUse())
-        ).collect(Collectors.toList());
+        return new ApiResponseDTO(true, "Doctor timings created successfully");
+    } catch (Exception e) {
+        return new ApiResponseDTO(false, "Failed to create doctor timings: " + e.getMessage());
     }
+}
 
     @Override
     public DoctorTimingDTO updateDoctorTiming(Long slotId, DoctorTimingDTO doctorTimingDTO) {
@@ -69,9 +72,25 @@ public class DoctorTimingServiceImpl implements DoctorTimingService {
         return doctorTimingDTO;
     }
 
+    public User getDoctorInfoByUserName(String username) {
+        try {
+            // Logic to retrieve the patient from the database using the phone number
+            return userRepository.findByUsername(username)
+                    .orElseThrow(() -> new Exception("Patient not found"));
+        } catch (Exception e) {
+            // Handle the exception (e.g., log it or throw a specific runtime exception)
+            throw new RuntimeException("Error retrieving patient info: " + e.getMessage());
+        }
+    }
+
     @Override
-    public void deleteDoctorTiming(Long slotId) {
-        doctorTimingRepository.deleteById(slotId);
+    public boolean deleteDoctorTiming(Long slotId) {
+        if(doctorTimingRepository.findById(slotId).isPresent()){
+            doctorTimingRepository.deleteById(slotId);
+            return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -99,11 +118,16 @@ public class DoctorTimingServiceImpl implements DoctorTimingService {
     }
 
     @Override
-    public void setInUseToFalseForDoctor(User doctor) { // Accept User
+    public ApiResponseDTO setInUseToFalseForDoctor(User doctor) { // Accept User
+        try{
         List<DoctorTiming> doctorTimings = doctorTimingRepository.findByDoctor(doctor); // Use User for the query
         for (DoctorTiming doctorTiming : doctorTimings) {
             doctorTiming.setInUse(false);
             doctorTimingRepository.save(doctorTiming);
+        }
+            return new ApiResponseDTO(true, "Doctor timing set to false successfully.");
+        } catch (Exception e) {
+            return new ApiResponseDTO(false, "Failed to set doctor timing to false" + e.getMessage());
         }
     }
 

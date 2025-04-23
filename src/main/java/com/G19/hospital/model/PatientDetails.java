@@ -1,5 +1,7 @@
 package com.G19.hospital.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,8 +19,8 @@ public class PatientDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
-    private String patientId;
+    // @Column(unique = true)
+    // private String patientId;
     private Integer age;
     private String gender;
     private String address;
@@ -27,5 +29,6 @@ public class PatientDetails {
 
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JsonBackReference
     private User user;  
 }

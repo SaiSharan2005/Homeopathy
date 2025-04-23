@@ -16,11 +16,17 @@ public interface DoctorServices {
     User loginDoctor(String phoneNumber, String password) throws Exception;
 
     // Update doctor's profile in DoctorDetails
-    DoctorDetails profileDoctor(DoctorDetailsDTO doctorDetailsDTO) throws Exception;
+    DoctorDetails profileDoctor(DoctorDetailsDTO doctorDetailsDTO,String username) throws Exception;
 
     // Fetch a doctor using doctorId (stored in the User model)
-    User getDoctorByDoctorId(String doctorId) throws Exception;
+    User getDoctorByDoctorId(Long id ) throws Exception;
 
+    User getDoctorInfoByUserName(String username);
+    public User getDoctorInfo(String userId) throws Exception ;
+
+    List<User> getAllAvailableDoctors() throws Exception;
+
+    
     // Fetch all doctors (based on a role or attribute in User model)
     List<User> getAllDoctors() throws Exception;
 
@@ -29,4 +35,6 @@ public interface DoctorServices {
 
     // Get total count of doctors
     long getDoctorCount() throws Exception;
+    DoctorDetails updateDoctorProfile(DoctorDetailsDTO doctorDetailsDTO) throws Exception;
+
 }

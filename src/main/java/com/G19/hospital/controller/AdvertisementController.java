@@ -13,12 +13,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/ads")
+@RequestMapping("/api/ads")
 public class AdvertisementController {
 
     private final String uploadDir = "uploads/";
@@ -31,13 +33,13 @@ public class AdvertisementController {
         return advertisementService.getAllAdvertisements();
     }
 
-  @PostMapping
+    @PostMapping
     public ResponseEntity<Advertisement> createAd(
-        @RequestParam("title") String title,
-        @RequestParam("description") String description,
-        @RequestParam("targetPage") String targetPage,
-        @RequestParam("image") MultipartFile image
-    ) throws IOException {
+            @RequestParam("title") String title,
+            @RequestParam("description") String description,
+            @RequestParam("targetPage") String targetPage,
+            @RequestParam("endDate") String endDate,
+            @RequestParam("image") MultipartFile image) throws IOException {
 
         String imageUrl = advertisementService.uploadImage(image);
         Advertisement ad = new Advertisement();
@@ -45,42 +47,53 @@ public class AdvertisementController {
         ad.setDescription(description);
         ad.setTargetPage(targetPage);
         ad.setImageUrl(imageUrl);
-        // advertisementRepository.save(ad);
-  
+        LocalDate parsed = LocalDate.parse(endDate); // expects "YYYY-MM-DD"
+        ad.setEndDate(parsed);
+
         return ResponseEntity.ok(advertisementService.createAdvertisement(ad));
     }
 
     @GetMapping("/{id}")
     public Advertisement getAdvertisementById(@PathVariable Long id) {
         return advertisementService.getAdvertisementById(id)
-            .orElseThrow(() -> new RuntimeException("Advertisement not found"));
+                .orElseThrow(() -> new RuntimeException("Advertisement not found"));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Advertisement> updateAdvertisement(
-        @PathVariable Long id,
-        @RequestParam(value = "title", required = false) String title,
-        @RequestParam(value = "description", required = false) String description,
-        @RequestParam(value = "targetPage", required = false) String targetPage,
-        @RequestParam(value = "image", required = false) MultipartFile image
-    ) throws IOException {
+            @PathVariable Long id,
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "targetPage", required = false) String targetPage,
+            @RequestParam(value = "endDate", required = false) String endDate,
+            @RequestParam(value = "image", required = false) MultipartFile image) throws IOException {
         Optional<Advertisement> existingAd = advertisementService.getAdvertisementById(id);
         if (existingAd.isPresent()) {
             Advertisement ad = existingAd.get();
-            if (title != null) ad.setTitle(title);
-            if (description != null) ad.setDescription(description);
-            if (targetPage != null) ad.setTargetPage(targetPage);
+            if (title != null)
+                ad.setTitle(title);
+            if (description != null)
+                ad.setDescription(description);
+            if (targetPage != null)
+                ad.setTargetPage(targetPage);
             if (image != null) {
                 String imageUrl = advertisementService.uploadImage(image);
                 ad.setImageUrl(imageUrl);
             }
+            if (endDate != null) {
+                try {
+                    ad.setEndDate(LocalDate.parse(endDate));
+                } catch (DateTimeParseException e) {
+                    return ResponseEntity.badRequest().build();
+                }
+            }
+
             Advertisement updatedAd = advertisementService.updateAdvertisement(id, ad);
             return ResponseEntity.ok(updatedAd);
         } else {
             return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).build();
         }
     }
-
 
     @DeleteMapping("/{id}")
     public void deleteAdvertisement(@PathVariable Long id) {
@@ -96,10 +109,10 @@ public class AdvertisementController {
     public Advertisement getActiveAds(@RequestParam String targetPage) {
         return advertisementService.getActiveAdsForPage(targetPage);
     }
+
     @GetMapping("/{id}/status")
     public ResponseEntity<Void> changeStatus(@PathVariable Long id, @RequestParam Boolean isActive) {
         advertisementService.changeStatus(id, isActive);
         return ResponseEntity.ok().build();
     }
 }
-

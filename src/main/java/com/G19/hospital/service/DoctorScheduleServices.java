@@ -1,6 +1,5 @@
 package com.G19.hospital.service;
 
-import com.G19.hospital.DTO.DoctorScheduleDTO;
 import com.G19.hospital.model.User; // Updated import to User
 import com.G19.hospital.model.DoctorSchedule;
 

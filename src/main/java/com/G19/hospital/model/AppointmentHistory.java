@@ -24,7 +24,7 @@ public class AppointmentHistory {
 
     @ManyToOne
     @JoinColumn(name = "admin_id", nullable = true)
-    private Staff adminId;
+    private User adminId;
 
     private String role;
     private String action;
@@ -55,11 +55,11 @@ public class AppointmentHistory {
         this.doctor = doctor;
     }
 
-    public Staff getAdminId() {
+    public User getAdminId() {
         return adminId;
     }
 
-    public void setAdminId(Staff adminId) {
+    public void setAdminId(User adminId) {
         this.adminId = adminId;
     }
 

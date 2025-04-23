@@ -2,16 +2,9 @@ package com.G19.hospital.exceptions;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
-import java.util.BitSet;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TimeZone;
-
 @Data
 public class ApiError {
     private HttpStatus httpStatus;

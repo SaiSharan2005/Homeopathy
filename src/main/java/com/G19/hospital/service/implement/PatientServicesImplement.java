@@ -20,7 +20,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Random;
 
+// 
 @Service
 public class PatientServicesImplement implements PatientServices {
 
@@ -45,14 +47,17 @@ public class PatientServicesImplement implements PatientServices {
 
         // Create a new User entity
         User patient = new User();
-        patient.setUsername(patientRegisterDTO.getPhoneNumber()); // Treat phone number as username
+        patient.setUsername(patientRegisterDTO.getPatientName()); // Treat phone number as username
         patient.setEmail(patientRegisterDTO.getEmail());
+        patient.setPhoneNumber(patientRegisterDTO.getPhoneNumber());
         patient.setPassword(passwordEncoder.encode(patientRegisterDTO.getPassword()));
 
         // Generate a unique patientId based on logic
-        String firstNamePart = patientRegisterDTO.getPatientName().substring(0, Math.min(patientRegisterDTO.getPatientName().length(), 4));
-        String lastNamePart = patientRegisterDTO.getPhoneNumber().substring(Math.max(patientRegisterDTO.getPhoneNumber().length() - 4, 0));
-        patient.setUserId("P29" + firstNamePart + lastNamePart);  // Set patient ID
+        String firstNamePart = patientRegisterDTO.getPatientName().substring(0,
+                Math.min(patientRegisterDTO.getPatientName().length(), 4));
+        String lastNamePart = patientRegisterDTO.getPhoneNumber()
+                .substring(Math.max(patientRegisterDTO.getPhoneNumber().length() - 4, 0));
+        patient.setUserId("P29" + firstNamePart + lastNamePart); // Set patient ID
 
         // Assign the role of "PATIENT"
         Set<Role> roles = new HashSet<>();
@@ -79,7 +84,7 @@ public class PatientServicesImplement implements PatientServices {
     @Override
     public PatientDetails profilePatient(PatientDetailsDTO patientDetailsDTO) throws Exception {
         // Find the associated patient (User)
-        User patient = userRepository.findByUserId(patientDetailsDTO.getPatientId())
+        User patient = userRepository.findById(patientDetailsDTO.getUserId())
                 .orElseThrow(() -> new Exception("Patient not found"));
 
         // Create and populate the PatientDetails entity
@@ -89,7 +94,7 @@ public class PatientServicesImplement implements PatientServices {
         patientDetails.setAddress(patientDetailsDTO.getAddress());
         patientDetails.setCity(patientDetailsDTO.getCity());
         patientDetails.setPincode(patientDetailsDTO.getPincode());
-        patientDetails.setUser(patient);  // Set the patient (User)
+        patientDetails.setUser(patient); // Set the patient (User)
 
         return patientDetailsRepository.save(patientDetails);
     }
@@ -99,6 +104,17 @@ public class PatientServicesImplement implements PatientServices {
         // Retrieve patient (User) information by patientId
         return userRepository.findByUserId(patientId)
                 .orElseThrow(() -> new CustomSecurityException("Patient not found", HttpStatus.NOT_FOUND));
+    }
+
+    public User getPatientInfoByUserName(String phoneNumber) {
+        try {
+            // Logic to retrieve the patient from the database using the phone number
+            return userRepository.findByUsername(phoneNumber)
+                    .orElseThrow(() -> new Exception("Patient not found"));
+        } catch (Exception e) {
+            // Handle the exception (e.g., log it or throw a specific runtime exception)
+            throw new RuntimeException("Error retrieving patient info: " + e.getMessage());
+        }
     }
 
     @Override
@@ -113,4 +129,29 @@ public class PatientServicesImplement implements PatientServices {
         Role patientRole = roleRepository.findByName("PATIENT");
         return userRepository.searchUsers(keyword, patientRole);
     }
+
+    @Override
+    public List<User> getAllPatients() {
+        // Search by username (phone number) or email for patients
+        Role patientRole = roleRepository.findByName("PATIENT");
+        return userRepository.findByRoles(patientRole);
+    }
+
+    @Override
+    public PatientDetails updatePatientProfile(Long id, PatientDetailsDTO patientDetailsDTO) throws Exception {
+        // Find the profile by ID
+        PatientDetails existingProfile = patientDetailsRepository.findById(id).get();
+                // .orElseThrow(() -> new CustomSecurityException("Profile not found", HttpStatus.NOT_FOUND));
+
+        // Update fields
+        existingProfile.setAge(patientDetailsDTO.getAge());
+        existingProfile.setGender(patientDetailsDTO.getGender());
+        existingProfile.setAddress(patientDetailsDTO.getAddress());
+        existingProfile.setCity(patientDetailsDTO.getCity());
+        existingProfile.setPincode(patientDetailsDTO.getPincode());
+
+        // Save and return updated profile
+        return patientDetailsRepository.save(existingProfile);
+    }
+
 }

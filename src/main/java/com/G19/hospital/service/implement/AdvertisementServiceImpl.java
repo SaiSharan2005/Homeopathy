@@ -46,7 +46,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     advertisementLog.setTimestamp(LocalDateTime.now()); // Set current timestamp
     advertisementLog.setUserId(34); // Assuming staff ID is 34
     advertisementLog.setUserType("Staff");
-
+    
     // Log the activity
     activityLogService.createActivityLog(advertisementLog);
   

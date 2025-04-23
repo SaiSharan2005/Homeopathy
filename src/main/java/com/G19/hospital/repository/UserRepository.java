@@ -33,6 +33,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     // Count the number of users with a specific role (e.g., count all doctors)
     long countByRoles(Role role);
 
+    boolean deleteById(Long id);
     // Search for users (doctors) by name or specialization
     // Adjusted: Assuming specialization might still come from DoctorDetails (if needed)
     @Query("SELECT u FROM User u LEFT JOIN u.doctorDetails d WHERE " +
@@ -40,4 +41,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
            "LOWER(d.specialization) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
            "LOWER(u.userId) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND :role MEMBER OF u.roles")
     List<User> searchUsers(@Param("keyword") String keyword, @Param("role") Role role);
+    boolean existsByEmail(String email);
 }
