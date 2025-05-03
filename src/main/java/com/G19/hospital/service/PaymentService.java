@@ -23,4 +23,13 @@ public interface PaymentService {
     List<PaymentResponseDTO> getPaymentsForDoctor(Long doctorId);
     PaymentResponseDTO getPaymentByPrescriptionId(Long prescriptionId);
 
+
+    PaymentResponseDTO getCurrentPendingPayment();
+PaymentResponseDTO getNextPendingPayment();
+PaymentResponseDTO getLastPendingPayment();
+
+PaymentResponseDTO getPreviousPendingPayment(Long id);
+PaymentResponseDTO getNextPendingPayment(Long id);
+
+
 }

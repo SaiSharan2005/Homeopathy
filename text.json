@@ -1,0 +1,1310 @@
+{
+    "totalPages": 2,
+    "totalElements": 20,
+    "first": false,
+    "last": true,
+    "size": 10,
+    "content": [
+        {
+            "bookingId": 11,
+            "doctor": {
+                "id": 252,
+                "username": "maheshKumar",
+                "email": "maheshKumar@gmail.com",
+                "phoneNumber": "9959584192",
+                "password": "$2a$12$InyevOjAIzf3Ty2idFwktOcbvjtnANGQWCAO5PGMkLWOBI6GRFaKC",
+                "userId": "DOCmahe7857",
+                "imageUrl": "https://cdn-icons-png.flaticon.com/512/194/194931.png",
+                "roles": [
+                    {
+                        "id": 2,
+                        "name": "DOCTOR"
+                    }
+                ],
+                "doctorDetails": {
+                    "id": 52,
+                    "doctorId": null,
+                    "age": 39,
+                    "gender": "Male",
+                    "address": "Osman gunj",
+                    "city": "Hyderabad",
+                    "pincode": "500001",
+                    "consultationFee": 300.0,
+                    "specialization": "Surgeon",
+                    "remuneration": 120000.0
+                },
+                "patientDetails": null
+            },
+            "patient": {
+                "id": 202,
+                "username": "SaiSharan",
+                "email": "duginisaisharan657@gmail.com",
+                "phoneNumber": "9121641029",
+                "password": "$2a$12$BC51kgKyNUMtuWbG7N1it.NpaBbkRgwBzvb8pvMaT2N7DhckuuqfW",
+                "userId": "PATSaiS4505",
+                "imageUrl": "https://cdn.pixabay.com/photo/2016/03/31/19/58/avatar-1295430_960_720.png",
+                "roles": [
+                    {
+                        "id": 1,
+                        "name": "PATIENT"
+                    }
+                ],
+                "doctorDetails": null,
+                "patientDetails": {
+                    "id": 2,
+                    "age": 20,
+                    "gender": "Male",
+                    "address": "Osman gunj",
+                    "city": "Hyderabad",
+                    "pincode": "500001"
+                }
+            },
+            "token": "20250402204814-11",
+            "status": "missed",
+            "prescriptionImageUrl": null,
+            "scheduleId": {
+                "scheduleId": 24,
+                "doctor": {
+                    "id": 252,
+                    "username": "maheshKumar",
+                    "email": "maheshKumar@gmail.com",
+                    "phoneNumber": "9959584192",
+                    "password": "$2a$12$InyevOjAIzf3Ty2idFwktOcbvjtnANGQWCAO5PGMkLWOBI6GRFaKC",
+                    "userId": "DOCmahe7857",
+                    "imageUrl": "https://cdn-icons-png.flaticon.com/512/194/194931.png",
+                    "roles": [
+                        {
+                            "id": 2,
+                            "name": "DOCTOR"
+                        }
+                    ],
+                    "doctorDetails": {
+                        "id": 52,
+                        "doctorId": null,
+                        "age": 39,
+                        "gender": "Male",
+                        "address": "Osman gunj",
+                        "city": "Hyderabad",
+                        "pincode": "500001",
+                        "consultationFee": 300.0,
+                        "specialization": "Surgeon",
+                        "remuneration": 120000.0
+                    },
+                    "patientDetails": null
+                },
+                "slot": {
+                    "slotId": 29,
+                    "doctor": {
+                        "id": 252,
+                        "username": "maheshKumar",
+                        "email": "maheshKumar@gmail.com",
+                        "phoneNumber": "9959584192",
+                        "password": "$2a$12$InyevOjAIzf3Ty2idFwktOcbvjtnANGQWCAO5PGMkLWOBI6GRFaKC",
+                        "userId": "DOCmahe7857",
+                        "imageUrl": "https://cdn-icons-png.flaticon.com/512/194/194931.png",
+                        "roles": [
+                            {
+                                "id": 2,
+                                "name": "DOCTOR"
+                            }
+                        ],
+                        "doctorDetails": {
+                            "id": 52,
+                            "doctorId": null,
+                            "age": 39,
+                            "gender": "Male",
+                            "address": "Osman gunj",
+                            "city": "Hyderabad",
+                            "pincode": "500001",
+                            "consultationFee": 300.0,
+                            "specialization": "Surgeon",
+                            "remuneration": 120000.0
+                        },
+                        "patientDetails": null
+                    },
+                    "startTime": "10:30:00",
+                    "endTime": "11:00:00",
+                    "inUse": true
+                },
+                "date": "2025-04-02",
+                "startTime": "10:30:00",
+                "endTime": "11:00:00",
+                "booked": true
+            },
+            "appointmenDate": "2025-04-02"
+        },
+        {
+            "bookingId": 12,
+            "doctor": {
+                "id": 1,
+                "username": "SamWalton",
+                "email": "duginisaisharan@gmail.com",
+                "phoneNumber": "8125281005",
+                "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                "userId": "D29SamW8891",
+                "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                "roles": [
+                    {
+                        "id": 2,
+                        "name": "DOCTOR"
+                    }
+                ],
+                "doctorDetails": {
+                    "id": 1,
+                    "doctorId": null,
+                    "age": 35,
+                    "gender": "Male",
+                    "address": "456 Elm Street",
+                    "city": "Metropolis",
+                    "pincode": "543210",
+                    "consultationFee": null,
+                    "specialization": null,
+                    "remuneration": null
+                },
+                "patientDetails": null
+            },
+            "patient": {
+                "id": 202,
+                "username": "SaiSharan",
+                "email": "duginisaisharan657@gmail.com",
+                "phoneNumber": "9121641029",
+                "password": "$2a$12$BC51kgKyNUMtuWbG7N1it.NpaBbkRgwBzvb8pvMaT2N7DhckuuqfW",
+                "userId": "PATSaiS4505",
+                "imageUrl": "https://cdn.pixabay.com/photo/2016/03/31/19/58/avatar-1295430_960_720.png",
+                "roles": [
+                    {
+                        "id": 1,
+                        "name": "PATIENT"
+                    }
+                ],
+                "doctorDetails": null,
+                "patientDetails": {
+                    "id": 2,
+                    "age": 20,
+                    "gender": "Male",
+                    "address": "Osman gunj",
+                    "city": "Hyderabad",
+                    "pincode": "500001"
+                }
+            },
+            "token": "20250414191507-12",
+            "status": "completed",
+            "prescriptionImageUrl": null,
+            "scheduleId": {
+                "scheduleId": 42,
+                "doctor": {
+                    "id": 1,
+                    "username": "SamWalton",
+                    "email": "duginisaisharan@gmail.com",
+                    "phoneNumber": "8125281005",
+                    "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                    "userId": "D29SamW8891",
+                    "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                    "roles": [
+                        {
+                            "id": 2,
+                            "name": "DOCTOR"
+                        }
+                    ],
+                    "doctorDetails": {
+                        "id": 1,
+                        "doctorId": null,
+                        "age": 35,
+                        "gender": "Male",
+                        "address": "456 Elm Street",
+                        "city": "Metropolis",
+                        "pincode": "543210",
+                        "consultationFee": null,
+                        "specialization": null,
+                        "remuneration": null
+                    },
+                    "patientDetails": null
+                },
+                "slot": {
+                    "slotId": 23,
+                    "doctor": {
+                        "id": 1,
+                        "username": "SamWalton",
+                        "email": "duginisaisharan@gmail.com",
+                        "phoneNumber": "8125281005",
+                        "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                        "userId": "D29SamW8891",
+                        "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                        "roles": [
+                            {
+                                "id": 2,
+                                "name": "DOCTOR"
+                            }
+                        ],
+                        "doctorDetails": {
+                            "id": 1,
+                            "doctorId": null,
+                            "age": 35,
+                            "gender": "Male",
+                            "address": "456 Elm Street",
+                            "city": "Metropolis",
+                            "pincode": "543210",
+                            "consultationFee": null,
+                            "specialization": null,
+                            "remuneration": null
+                        },
+                        "patientDetails": null
+                    },
+                    "startTime": "14:00:00",
+                    "endTime": "15:00:00",
+                    "inUse": false
+                },
+                "date": "2025-04-14",
+                "startTime": "14:00:00",
+                "endTime": "15:00:00",
+                "booked": true
+            },
+            "appointmenDate": "2025-04-14"
+        },
+        {
+            "bookingId": 13,
+            "doctor": {
+                "id": 1,
+                "username": "SamWalton",
+                "email": "duginisaisharan@gmail.com",
+                "phoneNumber": "8125281005",
+                "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                "userId": "D29SamW8891",
+                "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                "roles": [
+                    {
+                        "id": 2,
+                        "name": "DOCTOR"
+                    }
+                ],
+                "doctorDetails": {
+                    "id": 1,
+                    "doctorId": null,
+                    "age": 35,
+                    "gender": "Male",
+                    "address": "456 Elm Street",
+                    "city": "Metropolis",
+                    "pincode": "543210",
+                    "consultationFee": null,
+                    "specialization": null,
+                    "remuneration": null
+                },
+                "patientDetails": null
+            },
+            "patient": {
+                "id": 202,
+                "username": "SaiSharan",
+                "email": "duginisaisharan657@gmail.com",
+                "phoneNumber": "9121641029",
+                "password": "$2a$12$BC51kgKyNUMtuWbG7N1it.NpaBbkRgwBzvb8pvMaT2N7DhckuuqfW",
+                "userId": "PATSaiS4505",
+                "imageUrl": "https://cdn.pixabay.com/photo/2016/03/31/19/58/avatar-1295430_960_720.png",
+                "roles": [
+                    {
+                        "id": 1,
+                        "name": "PATIENT"
+                    }
+                ],
+                "doctorDetails": null,
+                "patientDetails": {
+                    "id": 2,
+                    "age": 20,
+                    "gender": "Male",
+                    "address": "Osman gunj",
+                    "city": "Hyderabad",
+                    "pincode": "500001"
+                }
+            },
+            "token": "20250415131715-13",
+            "status": "missed",
+            "prescriptionImageUrl": null,
+            "scheduleId": {
+                "scheduleId": 47,
+                "doctor": {
+                    "id": 1,
+                    "username": "SamWalton",
+                    "email": "duginisaisharan@gmail.com",
+                    "phoneNumber": "8125281005",
+                    "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                    "userId": "D29SamW8891",
+                    "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                    "roles": [
+                        {
+                            "id": 2,
+                            "name": "DOCTOR"
+                        }
+                    ],
+                    "doctorDetails": {
+                        "id": 1,
+                        "doctorId": null,
+                        "age": 35,
+                        "gender": "Male",
+                        "address": "456 Elm Street",
+                        "city": "Metropolis",
+                        "pincode": "543210",
+                        "consultationFee": null,
+                        "specialization": null,
+                        "remuneration": null
+                    },
+                    "patientDetails": null
+                },
+                "slot": {
+                    "slotId": 20,
+                    "doctor": {
+                        "id": 1,
+                        "username": "SamWalton",
+                        "email": "duginisaisharan@gmail.com",
+                        "phoneNumber": "8125281005",
+                        "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                        "userId": "D29SamW8891",
+                        "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                        "roles": [
+                            {
+                                "id": 2,
+                                "name": "DOCTOR"
+                            }
+                        ],
+                        "doctorDetails": {
+                            "id": 1,
+                            "doctorId": null,
+                            "age": 35,
+                            "gender": "Male",
+                            "address": "456 Elm Street",
+                            "city": "Metropolis",
+                            "pincode": "543210",
+                            "consultationFee": null,
+                            "specialization": null,
+                            "remuneration": null
+                        },
+                        "patientDetails": null
+                    },
+                    "startTime": "11:00:00",
+                    "endTime": "12:00:00",
+                    "inUse": false
+                },
+                "date": "2025-04-15",
+                "startTime": "11:00:00",
+                "endTime": "12:00:00",
+                "booked": true
+            },
+            "appointmenDate": "2025-04-15"
+        },
+        {
+            "bookingId": 14,
+            "doctor": {
+                "id": 1,
+                "username": "SamWalton",
+                "email": "duginisaisharan@gmail.com",
+                "phoneNumber": "8125281005",
+                "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                "userId": "D29SamW8891",
+                "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                "roles": [
+                    {
+                        "id": 2,
+                        "name": "DOCTOR"
+                    }
+                ],
+                "doctorDetails": {
+                    "id": 1,
+                    "doctorId": null,
+                    "age": 35,
+                    "gender": "Male",
+                    "address": "456 Elm Street",
+                    "city": "Metropolis",
+                    "pincode": "543210",
+                    "consultationFee": null,
+                    "specialization": null,
+                    "remuneration": null
+                },
+                "patientDetails": null
+            },
+            "patient": {
+                "id": 202,
+                "username": "SaiSharan",
+                "email": "duginisaisharan657@gmail.com",
+                "phoneNumber": "9121641029",
+                "password": "$2a$12$BC51kgKyNUMtuWbG7N1it.NpaBbkRgwBzvb8pvMaT2N7DhckuuqfW",
+                "userId": "PATSaiS4505",
+                "imageUrl": "https://cdn.pixabay.com/photo/2016/03/31/19/58/avatar-1295430_960_720.png",
+                "roles": [
+                    {
+                        "id": 1,
+                        "name": "PATIENT"
+                    }
+                ],
+                "doctorDetails": null,
+                "patientDetails": {
+                    "id": 2,
+                    "age": 20,
+                    "gender": "Male",
+                    "address": "Osman gunj",
+                    "city": "Hyderabad",
+                    "pincode": "500001"
+                }
+            },
+            "token": "20250415131911-14",
+            "status": "missed",
+            "prescriptionImageUrl": null,
+            "scheduleId": {
+                "scheduleId": 50,
+                "doctor": {
+                    "id": 1,
+                    "username": "SamWalton",
+                    "email": "duginisaisharan@gmail.com",
+                    "phoneNumber": "8125281005",
+                    "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                    "userId": "D29SamW8891",
+                    "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                    "roles": [
+                        {
+                            "id": 2,
+                            "name": "DOCTOR"
+                        }
+                    ],
+                    "doctorDetails": {
+                        "id": 1,
+                        "doctorId": null,
+                        "age": 35,
+                        "gender": "Male",
+                        "address": "456 Elm Street",
+                        "city": "Metropolis",
+                        "pincode": "543210",
+                        "consultationFee": null,
+                        "specialization": null,
+                        "remuneration": null
+                    },
+                    "patientDetails": null
+                },
+                "slot": {
+                    "slotId": 23,
+                    "doctor": {
+                        "id": 1,
+                        "username": "SamWalton",
+                        "email": "duginisaisharan@gmail.com",
+                        "phoneNumber": "8125281005",
+                        "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                        "userId": "D29SamW8891",
+                        "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                        "roles": [
+                            {
+                                "id": 2,
+                                "name": "DOCTOR"
+                            }
+                        ],
+                        "doctorDetails": {
+                            "id": 1,
+                            "doctorId": null,
+                            "age": 35,
+                            "gender": "Male",
+                            "address": "456 Elm Street",
+                            "city": "Metropolis",
+                            "pincode": "543210",
+                            "consultationFee": null,
+                            "specialization": null,
+                            "remuneration": null
+                        },
+                        "patientDetails": null
+                    },
+                    "startTime": "14:00:00",
+                    "endTime": "15:00:00",
+                    "inUse": false
+                },
+                "date": "2025-04-15",
+                "startTime": "14:00:00",
+                "endTime": "15:00:00",
+                "booked": true
+            },
+            "appointmenDate": "2025-04-15"
+        },
+        {
+            "bookingId": 15,
+            "doctor": {
+                "id": 1,
+                "username": "SamWalton",
+                "email": "duginisaisharan@gmail.com",
+                "phoneNumber": "8125281005",
+                "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                "userId": "D29SamW8891",
+                "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                "roles": [
+                    {
+                        "id": 2,
+                        "name": "DOCTOR"
+                    }
+                ],
+                "doctorDetails": {
+                    "id": 1,
+                    "doctorId": null,
+                    "age": 35,
+                    "gender": "Male",
+                    "address": "456 Elm Street",
+                    "city": "Metropolis",
+                    "pincode": "543210",
+                    "consultationFee": null,
+                    "specialization": null,
+                    "remuneration": null
+                },
+                "patientDetails": null
+            },
+            "patient": {
+                "id": 202,
+                "username": "SaiSharan",
+                "email": "duginisaisharan657@gmail.com",
+                "phoneNumber": "9121641029",
+                "password": "$2a$12$BC51kgKyNUMtuWbG7N1it.NpaBbkRgwBzvb8pvMaT2N7DhckuuqfW",
+                "userId": "PATSaiS4505",
+                "imageUrl": "https://cdn.pixabay.com/photo/2016/03/31/19/58/avatar-1295430_960_720.png",
+                "roles": [
+                    {
+                        "id": 1,
+                        "name": "PATIENT"
+                    }
+                ],
+                "doctorDetails": null,
+                "patientDetails": {
+                    "id": 2,
+                    "age": 20,
+                    "gender": "Male",
+                    "address": "Osman gunj",
+                    "city": "Hyderabad",
+                    "pincode": "500001"
+                }
+            },
+            "token": "20250415132349-15",
+            "status": "missed",
+            "prescriptionImageUrl": null,
+            "scheduleId": {
+                "scheduleId": 49,
+                "doctor": {
+                    "id": 1,
+                    "username": "SamWalton",
+                    "email": "duginisaisharan@gmail.com",
+                    "phoneNumber": "8125281005",
+                    "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                    "userId": "D29SamW8891",
+                    "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                    "roles": [
+                        {
+                            "id": 2,
+                            "name": "DOCTOR"
+                        }
+                    ],
+                    "doctorDetails": {
+                        "id": 1,
+                        "doctorId": null,
+                        "age": 35,
+                        "gender": "Male",
+                        "address": "456 Elm Street",
+                        "city": "Metropolis",
+                        "pincode": "543210",
+                        "consultationFee": null,
+                        "specialization": null,
+                        "remuneration": null
+                    },
+                    "patientDetails": null
+                },
+                "slot": {
+                    "slotId": 22,
+                    "doctor": {
+                        "id": 1,
+                        "username": "SamWalton",
+                        "email": "duginisaisharan@gmail.com",
+                        "phoneNumber": "8125281005",
+                        "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                        "userId": "D29SamW8891",
+                        "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                        "roles": [
+                            {
+                                "id": 2,
+                                "name": "DOCTOR"
+                            }
+                        ],
+                        "doctorDetails": {
+                            "id": 1,
+                            "doctorId": null,
+                            "age": 35,
+                            "gender": "Male",
+                            "address": "456 Elm Street",
+                            "city": "Metropolis",
+                            "pincode": "543210",
+                            "consultationFee": null,
+                            "specialization": null,
+                            "remuneration": null
+                        },
+                        "patientDetails": null
+                    },
+                    "startTime": "13:00:00",
+                    "endTime": "14:00:00",
+                    "inUse": false
+                },
+                "date": "2025-04-15",
+                "startTime": "13:00:00",
+                "endTime": "14:00:00",
+                "booked": true
+            },
+            "appointmenDate": "2025-04-15"
+        },
+        {
+            "bookingId": 16,
+            "doctor": {
+                "id": 1,
+                "username": "SamWalton",
+                "email": "duginisaisharan@gmail.com",
+                "phoneNumber": "8125281005",
+                "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                "userId": "D29SamW8891",
+                "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                "roles": [
+                    {
+                        "id": 2,
+                        "name": "DOCTOR"
+                    }
+                ],
+                "doctorDetails": {
+                    "id": 1,
+                    "doctorId": null,
+                    "age": 35,
+                    "gender": "Male",
+                    "address": "456 Elm Street",
+                    "city": "Metropolis",
+                    "pincode": "543210",
+                    "consultationFee": null,
+                    "specialization": null,
+                    "remuneration": null
+                },
+                "patientDetails": null
+            },
+            "patient": {
+                "id": 202,
+                "username": "SaiSharan",
+                "email": "duginisaisharan657@gmail.com",
+                "phoneNumber": "9121641029",
+                "password": "$2a$12$BC51kgKyNUMtuWbG7N1it.NpaBbkRgwBzvb8pvMaT2N7DhckuuqfW",
+                "userId": "PATSaiS4505",
+                "imageUrl": "https://cdn.pixabay.com/photo/2016/03/31/19/58/avatar-1295430_960_720.png",
+                "roles": [
+                    {
+                        "id": 1,
+                        "name": "PATIENT"
+                    }
+                ],
+                "doctorDetails": null,
+                "patientDetails": {
+                    "id": 2,
+                    "age": 20,
+                    "gender": "Male",
+                    "address": "Osman gunj",
+                    "city": "Hyderabad",
+                    "pincode": "500001"
+                }
+            },
+            "token": "20250416020136-16",
+            "status": "missed",
+            "prescriptionImageUrl": null,
+            "scheduleId": {
+                "scheduleId": 55,
+                "doctor": {
+                    "id": 1,
+                    "username": "SamWalton",
+                    "email": "duginisaisharan@gmail.com",
+                    "phoneNumber": "8125281005",
+                    "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                    "userId": "D29SamW8891",
+                    "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                    "roles": [
+                        {
+                            "id": 2,
+                            "name": "DOCTOR"
+                        }
+                    ],
+                    "doctorDetails": {
+                        "id": 1,
+                        "doctorId": null,
+                        "age": 35,
+                        "gender": "Male",
+                        "address": "456 Elm Street",
+                        "city": "Metropolis",
+                        "pincode": "543210",
+                        "consultationFee": null,
+                        "specialization": null,
+                        "remuneration": null
+                    },
+                    "patientDetails": null
+                },
+                "slot": {
+                    "slotId": 20,
+                    "doctor": {
+                        "id": 1,
+                        "username": "SamWalton",
+                        "email": "duginisaisharan@gmail.com",
+                        "phoneNumber": "8125281005",
+                        "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                        "userId": "D29SamW8891",
+                        "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                        "roles": [
+                            {
+                                "id": 2,
+                                "name": "DOCTOR"
+                            }
+                        ],
+                        "doctorDetails": {
+                            "id": 1,
+                            "doctorId": null,
+                            "age": 35,
+                            "gender": "Male",
+                            "address": "456 Elm Street",
+                            "city": "Metropolis",
+                            "pincode": "543210",
+                            "consultationFee": null,
+                            "specialization": null,
+                            "remuneration": null
+                        },
+                        "patientDetails": null
+                    },
+                    "startTime": "11:00:00",
+                    "endTime": "12:00:00",
+                    "inUse": false
+                },
+                "date": "2025-04-16",
+                "startTime": "11:00:00",
+                "endTime": "12:00:00",
+                "booked": true
+            },
+            "appointmenDate": "2025-04-16"
+        },
+        {
+            "bookingId": 17,
+            "doctor": {
+                "id": 1,
+                "username": "SamWalton",
+                "email": "duginisaisharan@gmail.com",
+                "phoneNumber": "8125281005",
+                "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                "userId": "D29SamW8891",
+                "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                "roles": [
+                    {
+                        "id": 2,
+                        "name": "DOCTOR"
+                    }
+                ],
+                "doctorDetails": {
+                    "id": 1,
+                    "doctorId": null,
+                    "age": 35,
+                    "gender": "Male",
+                    "address": "456 Elm Street",
+                    "city": "Metropolis",
+                    "pincode": "543210",
+                    "consultationFee": null,
+                    "specialization": null,
+                    "remuneration": null
+                },
+                "patientDetails": null
+            },
+            "patient": {
+                "id": 202,
+                "username": "SaiSharan",
+                "email": "duginisaisharan657@gmail.com",
+                "phoneNumber": "9121641029",
+                "password": "$2a$12$BC51kgKyNUMtuWbG7N1it.NpaBbkRgwBzvb8pvMaT2N7DhckuuqfW",
+                "userId": "PATSaiS4505",
+                "imageUrl": "https://cdn.pixabay.com/photo/2016/03/31/19/58/avatar-1295430_960_720.png",
+                "roles": [
+                    {
+                        "id": 1,
+                        "name": "PATIENT"
+                    }
+                ],
+                "doctorDetails": null,
+                "patientDetails": {
+                    "id": 2,
+                    "age": 20,
+                    "gender": "Male",
+                    "address": "Osman gunj",
+                    "city": "Hyderabad",
+                    "pincode": "500001"
+                }
+            },
+            "token": "20250416180658-17",
+            "status": "missed",
+            "prescriptionImageUrl": null,
+            "scheduleId": {
+                "scheduleId": 60,
+                "doctor": {
+                    "id": 1,
+                    "username": "SamWalton",
+                    "email": "duginisaisharan@gmail.com",
+                    "phoneNumber": "8125281005",
+                    "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                    "userId": "D29SamW8891",
+                    "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                    "roles": [
+                        {
+                            "id": 2,
+                            "name": "DOCTOR"
+                        }
+                    ],
+                    "doctorDetails": {
+                        "id": 1,
+                        "doctorId": null,
+                        "age": 35,
+                        "gender": "Male",
+                        "address": "456 Elm Street",
+                        "city": "Metropolis",
+                        "pincode": "543210",
+                        "consultationFee": null,
+                        "specialization": null,
+                        "remuneration": null
+                    },
+                    "patientDetails": null
+                },
+                "slot": {
+                    "slotId": 25,
+                    "doctor": {
+                        "id": 1,
+                        "username": "SamWalton",
+                        "email": "duginisaisharan@gmail.com",
+                        "phoneNumber": "8125281005",
+                        "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                        "userId": "D29SamW8891",
+                        "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                        "roles": [
+                            {
+                                "id": 2,
+                                "name": "DOCTOR"
+                            }
+                        ],
+                        "doctorDetails": {
+                            "id": 1,
+                            "doctorId": null,
+                            "age": 35,
+                            "gender": "Male",
+                            "address": "456 Elm Street",
+                            "city": "Metropolis",
+                            "pincode": "543210",
+                            "consultationFee": null,
+                            "specialization": null,
+                            "remuneration": null
+                        },
+                        "patientDetails": null
+                    },
+                    "startTime": "16:00:00",
+                    "endTime": "17:00:00",
+                    "inUse": false
+                },
+                "date": "2025-04-16",
+                "startTime": "16:00:00",
+                "endTime": "17:00:00",
+                "booked": true
+            },
+            "appointmenDate": "2025-04-16"
+        },
+        {
+            "bookingId": 18,
+            "doctor": {
+                "id": 1,
+                "username": "SamWalton",
+                "email": "duginisaisharan@gmail.com",
+                "phoneNumber": "8125281005",
+                "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                "userId": "D29SamW8891",
+                "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                "roles": [
+                    {
+                        "id": 2,
+                        "name": "DOCTOR"
+                    }
+                ],
+                "doctorDetails": {
+                    "id": 1,
+                    "doctorId": null,
+                    "age": 35,
+                    "gender": "Male",
+                    "address": "456 Elm Street",
+                    "city": "Metropolis",
+                    "pincode": "543210",
+                    "consultationFee": null,
+                    "specialization": null,
+                    "remuneration": null
+                },
+                "patientDetails": null
+            },
+            "patient": {
+                "id": 202,
+                "username": "SaiSharan",
+                "email": "duginisaisharan657@gmail.com",
+                "phoneNumber": "9121641029",
+                "password": "$2a$12$BC51kgKyNUMtuWbG7N1it.NpaBbkRgwBzvb8pvMaT2N7DhckuuqfW",
+                "userId": "PATSaiS4505",
+                "imageUrl": "https://cdn.pixabay.com/photo/2016/03/31/19/58/avatar-1295430_960_720.png",
+                "roles": [
+                    {
+                        "id": 1,
+                        "name": "PATIENT"
+                    }
+                ],
+                "doctorDetails": null,
+                "patientDetails": {
+                    "id": 2,
+                    "age": 20,
+                    "gender": "Male",
+                    "address": "Osman gunj",
+                    "city": "Hyderabad",
+                    "pincode": "500001"
+                }
+            },
+            "token": "20250417142122-18",
+            "status": "missed",
+            "prescriptionImageUrl": null,
+            "scheduleId": {
+                "scheduleId": 65,
+                "doctor": {
+                    "id": 1,
+                    "username": "SamWalton",
+                    "email": "duginisaisharan@gmail.com",
+                    "phoneNumber": "8125281005",
+                    "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                    "userId": "D29SamW8891",
+                    "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                    "roles": [
+                        {
+                            "id": 2,
+                            "name": "DOCTOR"
+                        }
+                    ],
+                    "doctorDetails": {
+                        "id": 1,
+                        "doctorId": null,
+                        "age": 35,
+                        "gender": "Male",
+                        "address": "456 Elm Street",
+                        "city": "Metropolis",
+                        "pincode": "543210",
+                        "consultationFee": null,
+                        "specialization": null,
+                        "remuneration": null
+                    },
+                    "patientDetails": null
+                },
+                "slot": {
+                    "slotId": 22,
+                    "doctor": {
+                        "id": 1,
+                        "username": "SamWalton",
+                        "email": "duginisaisharan@gmail.com",
+                        "phoneNumber": "8125281005",
+                        "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                        "userId": "D29SamW8891",
+                        "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                        "roles": [
+                            {
+                                "id": 2,
+                                "name": "DOCTOR"
+                            }
+                        ],
+                        "doctorDetails": {
+                            "id": 1,
+                            "doctorId": null,
+                            "age": 35,
+                            "gender": "Male",
+                            "address": "456 Elm Street",
+                            "city": "Metropolis",
+                            "pincode": "543210",
+                            "consultationFee": null,
+                            "specialization": null,
+                            "remuneration": null
+                        },
+                        "patientDetails": null
+                    },
+                    "startTime": "13:00:00",
+                    "endTime": "14:00:00",
+                    "inUse": false
+                },
+                "date": "2025-04-17",
+                "startTime": "13:00:00",
+                "endTime": "14:00:00",
+                "booked": true
+            },
+            "appointmenDate": "2025-04-17"
+        },
+        {
+            "bookingId": 19,
+            "doctor": {
+                "id": 1,
+                "username": "SamWalton",
+                "email": "duginisaisharan@gmail.com",
+                "phoneNumber": "8125281005",
+                "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                "userId": "D29SamW8891",
+                "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                "roles": [
+                    {
+                        "id": 2,
+                        "name": "DOCTOR"
+                    }
+                ],
+                "doctorDetails": {
+                    "id": 1,
+                    "doctorId": null,
+                    "age": 35,
+                    "gender": "Male",
+                    "address": "456 Elm Street",
+                    "city": "Metropolis",
+                    "pincode": "543210",
+                    "consultationFee": null,
+                    "specialization": null,
+                    "remuneration": null
+                },
+                "patientDetails": null
+            },
+            "patient": {
+                "id": 202,
+                "username": "SaiSharan",
+                "email": "duginisaisharan657@gmail.com",
+                "phoneNumber": "9121641029",
+                "password": "$2a$12$BC51kgKyNUMtuWbG7N1it.NpaBbkRgwBzvb8pvMaT2N7DhckuuqfW",
+                "userId": "PATSaiS4505",
+                "imageUrl": "https://cdn.pixabay.com/photo/2016/03/31/19/58/avatar-1295430_960_720.png",
+                "roles": [
+                    {
+                        "id": 1,
+                        "name": "PATIENT"
+                    }
+                ],
+                "doctorDetails": null,
+                "patientDetails": {
+                    "id": 2,
+                    "age": 20,
+                    "gender": "Male",
+                    "address": "Osman gunj",
+                    "city": "Hyderabad",
+                    "pincode": "500001"
+                }
+            },
+            "token": "20250417142132-19",
+            "status": "missed",
+            "prescriptionImageUrl": null,
+            "scheduleId": {
+                "scheduleId": 66,
+                "doctor": {
+                    "id": 1,
+                    "username": "SamWalton",
+                    "email": "duginisaisharan@gmail.com",
+                    "phoneNumber": "8125281005",
+                    "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                    "userId": "D29SamW8891",
+                    "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                    "roles": [
+                        {
+                            "id": 2,
+                            "name": "DOCTOR"
+                        }
+                    ],
+                    "doctorDetails": {
+                        "id": 1,
+                        "doctorId": null,
+                        "age": 35,
+                        "gender": "Male",
+                        "address": "456 Elm Street",
+                        "city": "Metropolis",
+                        "pincode": "543210",
+                        "consultationFee": null,
+                        "specialization": null,
+                        "remuneration": null
+                    },
+                    "patientDetails": null
+                },
+                "slot": {
+                    "slotId": 23,
+                    "doctor": {
+                        "id": 1,
+                        "username": "SamWalton",
+                        "email": "duginisaisharan@gmail.com",
+                        "phoneNumber": "8125281005",
+                        "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                        "userId": "D29SamW8891",
+                        "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                        "roles": [
+                            {
+                                "id": 2,
+                                "name": "DOCTOR"
+                            }
+                        ],
+                        "doctorDetails": {
+                            "id": 1,
+                            "doctorId": null,
+                            "age": 35,
+                            "gender": "Male",
+                            "address": "456 Elm Street",
+                            "city": "Metropolis",
+                            "pincode": "543210",
+                            "consultationFee": null,
+                            "specialization": null,
+                            "remuneration": null
+                        },
+                        "patientDetails": null
+                    },
+                    "startTime": "14:00:00",
+                    "endTime": "15:00:00",
+                    "inUse": false
+                },
+                "date": "2025-04-17",
+                "startTime": "14:00:00",
+                "endTime": "15:00:00",
+                "booked": true
+            },
+            "appointmenDate": "2025-04-17"
+        },
+        {
+            "bookingId": 21,
+            "doctor": {
+                "id": 1,
+                "username": "SamWalton",
+                "email": "duginisaisharan@gmail.com",
+                "phoneNumber": "8125281005",
+                "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                "userId": "D29SamW8891",
+                "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                "roles": [
+                    {
+                        "id": 2,
+                        "name": "DOCTOR"
+                    }
+                ],
+                "doctorDetails": {
+                    "id": 1,
+                    "doctorId": null,
+                    "age": 35,
+                    "gender": "Male",
+                    "address": "456 Elm Street",
+                    "city": "Metropolis",
+                    "pincode": "543210",
+                    "consultationFee": null,
+                    "specialization": null,
+                    "remuneration": null
+                },
+                "patientDetails": null
+            },
+            "patient": {
+                "id": 202,
+                "username": "SaiSharan",
+                "email": "duginisaisharan657@gmail.com",
+                "phoneNumber": "9121641029",
+                "password": "$2a$12$BC51kgKyNUMtuWbG7N1it.NpaBbkRgwBzvb8pvMaT2N7DhckuuqfW",
+                "userId": "PATSaiS4505",
+                "imageUrl": "https://cdn.pixabay.com/photo/2016/03/31/19/58/avatar-1295430_960_720.png",
+                "roles": [
+                    {
+                        "id": 1,
+                        "name": "PATIENT"
+                    }
+                ],
+                "doctorDetails": null,
+                "patientDetails": {
+                    "id": 2,
+                    "age": 20,
+                    "gender": "Male",
+                    "address": "Osman gunj",
+                    "city": "Hyderabad",
+                    "pincode": "500001"
+                }
+            },
+            "token": "20250420212755-21",
+            "status": "completed",
+            "prescriptionImageUrl": null,
+            "scheduleId": {
+                "scheduleId": 79,
+                "doctor": {
+                    "id": 1,
+                    "username": "SamWalton",
+                    "email": "duginisaisharan@gmail.com",
+                    "phoneNumber": "8125281005",
+                    "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                    "userId": "D29SamW8891",
+                    "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                    "roles": [
+                        {
+                            "id": 2,
+                            "name": "DOCTOR"
+                        }
+                    ],
+                    "doctorDetails": {
+                        "id": 1,
+                        "doctorId": null,
+                        "age": 35,
+                        "gender": "Male",
+                        "address": "456 Elm Street",
+                        "city": "Metropolis",
+                        "pincode": "543210",
+                        "consultationFee": null,
+                        "specialization": null,
+                        "remuneration": null
+                    },
+                    "patientDetails": null
+                },
+                "slot": {
+                    "slotId": 44,
+                    "doctor": {
+                        "id": 1,
+                        "username": "SamWalton",
+                        "email": "duginisaisharan@gmail.com",
+                        "phoneNumber": "8125281005",
+                        "password": "$2a$12$VWtemO7XyG9mpIOpknRIcuF2daKzwXqoSnoqyzWEL58WaUshgD.lq",
+                        "userId": "D29SamW8891",
+                        "imageUrl": "https://randomuser.me/api/portraits/men/1.jpg",
+                        "roles": [
+                            {
+                                "id": 2,
+                                "name": "DOCTOR"
+                            }
+                        ],
+                        "doctorDetails": {
+                            "id": 1,
+                            "doctorId": null,
+                            "age": 35,
+                            "gender": "Male",
+                            "address": "456 Elm Street",
+                            "city": "Metropolis",
+                            "pincode": "543210",
+                            "consultationFee": null,
+                            "specialization": null,
+                            "remuneration": null
+                        },
+                        "patientDetails": null
+                    },
+                    "startTime": "11:00:00",
+                    "endTime": "12:00:00",
+                    "inUse": true
+                },
+                "date": "2025-04-20",
+                "startTime": "11:00:00",
+                "endTime": "12:00:00",
+                "booked": true
+            },
+            "appointmenDate": "2025-04-20"
+        }
+    ],
+    "number": 1,
+    "sort": {
+        "empty": true,
+        "sorted": false,
+        "unsorted": true
+    },
+    "numberOfElements": 10,
+    "pageable": {
+        "pageNumber": 1,
+        "pageSize": 10,
+        "sort": {
+            "empty": true,
+            "sorted": false,
+            "unsorted": true
+        },
+        "offset": 10,
+        "paged": true,
+        "unpaged": false
+    },
+    "empty": false
+}
+

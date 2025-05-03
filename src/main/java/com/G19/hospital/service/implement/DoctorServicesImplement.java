@@ -15,6 +15,8 @@ import com.G19.hospital.service.DoctorServices;
 import com.G19.hospital.util.Constants.ApiMessages;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -48,7 +50,7 @@ public class DoctorServicesImplement implements DoctorServices {
         }
 
         User doctor = new User();
-        doctor.setUsername(doctorRegisterDTO.getUsername()); 
+        doctor.setUsername(doctorRegisterDTO.getUsername());
         doctor.setEmail(doctorRegisterDTO.getEmail());
         doctor.setPassword(passwordEncoder.encode(doctorRegisterDTO.getPassword()));
         doctor.setPhoneNumber(doctorRegisterDTO.getPhoneNumber());
@@ -62,16 +64,16 @@ public class DoctorServicesImplement implements DoctorServices {
         Random random = new Random();
         do {
             String firstNamePart = doctorRegisterDTO.getUsername().substring(0,
-                Math.min(doctorRegisterDTO.getUsername().length(), 4));
+                    Math.min(doctorRegisterDTO.getUsername().length(), 4));
             String lastNamePart = doctorRegisterDTO.getPhoneNumber()
                     .substring(Math.max(doctorRegisterDTO.getPhoneNumber().length() - 4, 0));
-            
+
             // Add a random number between 1000 and 9999 to ensure uniqueness
             int randomNumber = random.nextInt(9000) + 1000; // Random number between 1000 and 9999
-            userId = "D29" + firstNamePart  + randomNumber;
-    
+            userId = "D29" + firstNamePart + randomNumber;
+
         } while (userRepository.existsByUserId(userId));
-    
+
         doctor.setUserId(userId);// Save the doctor (User) to the repository
         return userRepository.save(doctor);
     }
@@ -91,7 +93,7 @@ public class DoctorServicesImplement implements DoctorServices {
     }
 
     @Override
-    public DoctorDetails profileDoctor(DoctorDetailsDTO doctorDetailsDTO,String username) throws Exception {
+    public DoctorDetails profileDoctor(DoctorDetailsDTO doctorDetailsDTO, String username) throws Exception {
         // Find the associated doctor (User)
         User doctor = userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomSecurityException("Doctor not found", HttpStatus.NOT_FOUND));
@@ -111,16 +113,19 @@ public class DoctorServicesImplement implements DoctorServices {
         // Save the doctor details
         return doctorDetailsRepository.save(doctorDetails);
     }
+
     @Override
     public DoctorDetails updateDoctorProfile(DoctorDetailsDTO doctorDetailsDTO) throws Exception {
         // Find the associated doctor (User)
         // User doctor = userRepository.findById(doctorDetailsDTO.getUserId())
-        //         .orElseThrow(() -> new CustomSecurityException("Doctor not found", HttpStatus.NOT_FOUND));
-    
+        // .orElseThrow(() -> new CustomSecurityException("Doctor not found",
+        // HttpStatus.NOT_FOUND));
+
         // Retrieve the existing doctor details
         DoctorDetails doctorDetails = userRepository.findById(doctorDetailsDTO.getUserId()).get().getDoctorDetails();
-                // .orElseThrow(() -> new CustomSecurityException("Doctor profile not found", HttpStatus.NOT_FOUND));
-    
+        // .orElseThrow(() -> new CustomSecurityException("Doctor profile not found",
+        // HttpStatus.NOT_FOUND));
+
         // Update the doctor details
         doctorDetails.setAge(doctorDetailsDTO.getAge());
         doctorDetails.setGender(doctorDetailsDTO.getGender());
@@ -130,52 +135,63 @@ public class DoctorServicesImplement implements DoctorServices {
         doctorDetails.setConsultationFee(doctorDetailsDTO.getConsultationFee());
         doctorDetails.setSpecialization(doctorDetailsDTO.getSpecialization());
         doctorDetails.setRemuneration(doctorDetailsDTO.getRemuneration());
-    
+
         // Save the updated details
         return doctorDetailsRepository.save(doctorDetails);
     }
-    
+
     @Override
     public User getDoctorByDoctorId(Long id) throws Exception {
         User user = userRepository.findById(id)
-            .orElseThrow(() -> new CustomSecurityException("Doctor not found", HttpStatus.NOT_FOUND));
-        
+                .orElseThrow(() -> new CustomSecurityException("Doctor not found", HttpStatus.NOT_FOUND));
+
         boolean isDoctor = user.getRoles().stream()
-            .anyMatch(role -> role.getName().equalsIgnoreCase("DOCTOR"));
+                .anyMatch(role -> role.getName().equalsIgnoreCase("DOCTOR"));
         if (!isDoctor) {
             throw new CustomSecurityException("User is not a doctor", HttpStatus.NOT_FOUND);
         }
         return user;
     }
-        
+
     @Override
     public User getDoctorInfo(String userId) throws Exception {
         User user = userRepository.findByUserId(userId)
-            .orElseThrow(() -> new CustomSecurityException("Doctor not found", HttpStatus.NOT_FOUND));
-        
+                .orElseThrow(() -> new CustomSecurityException("Doctor not found", HttpStatus.NOT_FOUND));
+
         boolean isDoctor = user.getRoles().stream()
-            .anyMatch(role -> role.getName().equalsIgnoreCase("DOCTOR"));
+                .anyMatch(role -> role.getName().equalsIgnoreCase("DOCTOR"));
         if (!isDoctor) {
             throw new CustomSecurityException("User is not a doctor", HttpStatus.NOT_FOUND);
         }
         return user;
     }
-    
 
     @Override
     public List<User> getAllDoctors() throws Exception {
         Role doctorRole = roleRepository.findByName("DOCTOR");
         return userRepository.findByRoles(doctorRole);
     }
-    @Override
-public List<User> getAllAvailableDoctors() throws Exception {
-    List<DoctorSchedule> schedules = doctorScheduleRepository.findByBooked(false); // Retrieve unbooked schedules
-    return schedules.stream()
-                    .map(DoctorSchedule::getDoctor)
-                    .distinct()
-                    .collect(Collectors.toList());
-}
 
+    @Override
+    public Page<User> getAllDoctors(Pageable pageable) throws Exception {
+        Role doctorRole = roleRepository.findByName("DOCTOR");
+        return userRepository.findByRoles(doctorRole, pageable);
+    }
+
+    @Override
+    public List<User> getAllAvailableDoctors() throws Exception {
+        List<DoctorSchedule> schedules = doctorScheduleRepository.findByBooked(false); // Retrieve unbooked schedules
+        return schedules.stream()
+                .map(DoctorSchedule::getDoctor)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<User> getAllAvailableDoctors(Pageable pageable) throws Exception {
+        // leverage the new repository query
+        return doctorScheduleRepository.findDistinctDoctorsByBookedFalse(pageable);
+    }
 
     @Override
     public User getDoctorInfoByUserName(String username) {
@@ -184,12 +200,10 @@ public List<User> getAllAvailableDoctors() throws Exception {
     }
 
     @Override
-    public List<User> searchDoctors(String keyword) throws Exception {
-        // Search by username (phone number) or email for doctors
+    public Page<User> searchDoctors(String keyword, Pageable pageable) throws Exception {
         Role doctorRole = roleRepository.findByName("DOCTOR");
-        return userRepository.searchUsers(keyword, doctorRole);
+        return userRepository.searchUsers(keyword, doctorRole, pageable);
     }
-
     @Override
     public long getDoctorCount() throws Exception {
         Role doctorRole = roleRepository.findByName("DOCTOR");

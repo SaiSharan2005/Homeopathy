@@ -12,6 +12,8 @@ import com.G19.hospital.model.User;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -171,14 +173,14 @@ public class PatientAuthenticationController {
         }
     }
 
-    @GetMapping("/searchPatient/{keyword}")
-    public ResponseEntity<List<User>> searchPatients(@PathVariable String keyword) {
-        try {
-            List<User> patients = patientServices.searchPatients(keyword);
-            return ResponseEntity.ok(patients);
-        } catch (Exception e) {
-            return ResponseEntity.status(400).body(null);
-        }
+    @GetMapping("/search")
+    public ResponseEntity<Page<User>> searchPatients(
+            @RequestParam String query,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<User> result = patientServices
+                .searchPatients(query, PageRequest.of(page, size));
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/count")
@@ -191,13 +193,28 @@ public class PatientAuthenticationController {
         }
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<?> getallPatient() {
+    // @GetMapping("/all")
+    // public ResponseEntity<?> getallPatient() {
+    //     try {
+    //         List<User> patient = patientServices.getAllPatients();
+    //         return ResponseEntity.ok(patient);
+    //     } catch (Exception e) {
+    //         return new ResponseEntity<>("Failed to fetch doctors: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    //     }
+    // }
+    @GetMapping(value = "/all")
+    public ResponseEntity<?> getAllPatientsPaged(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         try {
-            List<User> patient = patientServices.getAllPatients();
-            return ResponseEntity.ok(patient);
+            Page<User> patientsPage = patientServices
+                .getAllPatients(PageRequest.of(page, size));
+            return ResponseEntity.ok(patientsPage);
         } catch (Exception e) {
-            return new ResponseEntity<>("Failed to fetch doctors: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(
+                "Failed to fetch patients (paged): " + e.getMessage(),
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
     }
 }

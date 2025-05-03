@@ -132,4 +132,32 @@ public class InventoryRecordServiceImpl implements InventoryRecordService {
             throw new CustomSecurityException("Failed to retrieve inventory records", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+        @Override
+    public InventoryRecord increaseQuantity(Long recordId, int amount) {
+        if (amount <= 0) {
+            throw new CustomSecurityException("Increase amount must be positive", HttpStatus.BAD_REQUEST);
+        }
+        InventoryRecord record = inventoryRecordRepository.findById(recordId)
+                .orElseThrow(() -> new CustomSecurityException("Inventory record not found: " + recordId, HttpStatus.NOT_FOUND));
+
+        record.setQuantity(record.getQuantity() + amount);
+        return inventoryRecordRepository.save(record);
+    }
+
+    @Override
+    public InventoryRecord decreaseQuantity(Long recordId, int amount) {
+        if (amount <= 0) {
+            throw new CustomSecurityException("Decrease amount must be positive", HttpStatus.BAD_REQUEST);
+        }
+        InventoryRecord record = inventoryRecordRepository.findById(recordId)
+                .orElseThrow(() -> new CustomSecurityException("Inventory record not found: " + recordId, HttpStatus.NOT_FOUND));
+
+        int newQty = record.getQuantity() - amount;
+        if (newQty < 0) {
+            throw new CustomSecurityException("Insufficient quantity to decrease by " + amount, HttpStatus.BAD_REQUEST);
+        }
+        record.setQuantity(newQty);
+        return inventoryRecordRepository.save(record);
+    }
+
 }

@@ -9,16 +9,20 @@ import com.G19.hospital.service.BookingAppointmentServices;
 import com.G19.hospital.service.DoctorScheduleServices;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class BookingAppointmentServicesImpl implements BookingAppointmentServices {
@@ -33,97 +37,108 @@ public class BookingAppointmentServicesImpl implements BookingAppointmentService
     private Cloudinary cloudinary;
 
     @Override
-    public BookingAppointment createBookingAppointment(BookingAppointmentDTO bookingAppointmentDTO) throws Exception {
-        DoctorSchedule schedule = doctorScheduleServices.getScheduleById(bookingAppointmentDTO.getScheduleId());
-        User doctor = new User();
-        doctor.setId(bookingAppointmentDTO.getDoctorId());
-        User patient = new User();
-        patient.setId(bookingAppointmentDTO.getPatientId());
+    public BookingAppointment createBookingAppointment(BookingAppointmentDTO dto) throws Exception {
+        DoctorSchedule schedule = doctorScheduleServices.getScheduleById(dto.getScheduleId());
+        User doctor = new User(); doctor.setId(dto.getDoctorId());
+        User patient = new User(); patient.setId(dto.getPatientId());
 
-        BookingAppointment bookingAppointment = new BookingAppointment();
-        bookingAppointment.setDoctor(doctor);
-        bookingAppointment.setPatient(patient);
-        bookingAppointment.setScheduleId(schedule);
-        bookingAppointment.setAppointmentDate(schedule.getDate());
-        bookingAppointment.setStatus(bookingAppointmentDTO.getStatus());
-        bookingAppointment = bookingAppointmentRepository.save(bookingAppointment);
-        
-        // Generate the token
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        String formattedDate = now.format(formatter);
-        String uniqueToken = formattedDate + "-" + bookingAppointment.getBookingId();
-        bookingAppointment.setToken(uniqueToken);
+        BookingAppointment ba = new BookingAppointment();
+        ba.setDoctor(doctor);
+        ba.setPatient(patient);
+        ba.setScheduleId(schedule);
+        ba.setAppointmentDate(schedule.getDate());
+        ba.setStatus(dto.getStatus());
+        ba = bookingAppointmentRepository.save(ba);
 
+        // token
+        String timestamp = LocalDateTime.now()
+            .format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        ba.setToken(timestamp + "-" + ba.getBookingId());
         doctorScheduleServices.bookSlot(schedule.getScheduleId());
-
-        return bookingAppointment;
+        return bookingAppointmentRepository.save(ba);
     }
 
     @Override
-    public BookingAppointment updateBookingAppointment(Long bookingId, BookingAppointmentDTO bookingAppointmentDTO) throws Exception {
-        BookingAppointment existingBookingAppointment = bookingAppointmentRepository.findById(bookingId)
-                .orElseThrow(() -> new Exception("Booking appointment not found"));
+    public BookingAppointment updateBookingAppointment(Long id, BookingAppointmentDTO dto) throws Exception {
+        BookingAppointment existing = bookingAppointmentRepository.findById(id)
+            .orElseThrow(() -> new Exception("Booking not found"));
 
-        DoctorSchedule schedule = doctorScheduleServices.getScheduleById(bookingAppointmentDTO.getScheduleId());
-        doctorScheduleServices.cancelSlot(existingBookingAppointment.getScheduleId().getScheduleId());
-        doctorScheduleServices.bookSlot(schedule.getScheduleId());
+        // unbook old slot / book new
+        doctorScheduleServices.cancelSlot(existing.getScheduleId().getScheduleId());
+        DoctorSchedule newSched = doctorScheduleServices.getScheduleById(dto.getScheduleId());
+        doctorScheduleServices.bookSlot(newSched.getScheduleId());
+        existing.setScheduleId(newSched);
 
-        existingBookingAppointment.setScheduleId(schedule);
+        User doctor = new User(); doctor.setId(dto.getDoctorId());
+        User patient = new User(); patient.setId(dto.getPatientId());
+        existing.setDoctor(doctor);
+        existing.setPatient(patient);
+        existing.setStatus(dto.getStatus());
 
-        User doctor = new User();
-        doctor.setId(bookingAppointmentDTO.getDoctorId());
-        User patient = new User();
-        patient.setId(bookingAppointmentDTO.getPatientId());
-
-        existingBookingAppointment.setDoctor(doctor);
-        existingBookingAppointment.setPatient(patient);
-        existingBookingAppointment.setStatus(bookingAppointmentDTO.getStatus());
-
-        return bookingAppointmentRepository.save(existingBookingAppointment);
+        return bookingAppointmentRepository.save(existing);
     }
 
     @Override
-    public BookingAppointment completedAppointment(String tokenId) throws Exception {
-        BookingAppointment existingBookingAppointment = bookingAppointmentRepository.findByToken(tokenId)
-                .orElseThrow(() -> new Exception("Booking appointment not found"));
-        existingBookingAppointment.setStatus("completed");
-        return bookingAppointmentRepository.save(existingBookingAppointment);
+    public BookingAppointment completedAppointment(String token) throws Exception {
+        BookingAppointment ba = bookingAppointmentRepository.findByToken(token)
+            .orElseThrow(() -> new Exception("Booking not found"));
+        ba.setStatus("completed");
+        return bookingAppointmentRepository.save(ba);
     }
-    
+
     @Override
-    public void cancelBookingAppointment(Long bookingId) throws Exception {
-        BookingAppointment bookingAppointment = bookingAppointmentRepository.findByBookingId(bookingId);
-        bookingAppointment.setStatus("cancel");
-        DoctorSchedule schedule = bookingAppointment.getScheduleId();
-        doctorScheduleServices.cancelSlot(schedule.getScheduleId());
-        bookingAppointmentRepository.save(bookingAppointment);
+    public void cancelBookingAppointment(Long id) throws Exception {
+        BookingAppointment ba = bookingAppointmentRepository.findByBookingId(id);
+        ba.setStatus("cancel");
+        doctorScheduleServices.cancelSlot(ba.getScheduleId().getScheduleId());
+        bookingAppointmentRepository.save(ba);
     }
-    
+
+    // plain list
     @Override
     public List<BookingAppointment> getAllBookingAppointments() {
         return bookingAppointmentRepository.findAll();
     }
-
+    // paged
     @Override
-    public BookingAppointment getBookingAppointmentById(Long bookingId) throws Exception {
-        return bookingAppointmentRepository.findById(bookingId)
-                .orElseThrow(() -> new Exception("Booking appointment not found"));
+    public Page<BookingAppointment> getAllBookingAppointments(Pageable pageable) {
+        return bookingAppointmentRepository.findAll(pageable);
     }
 
     @Override
-    public List<BookingAppointment> getBookingsByDoctorId(User doctorId) {
-        return bookingAppointmentRepository.findByDoctor(doctorId);
+    public BookingAppointment getBookingAppointmentById(Long id) throws Exception {
+        return bookingAppointmentRepository.findById(id)
+            .orElseThrow(() -> new Exception("Booking not found"));
     }
 
+    // by doctor
     @Override
-    public List<BookingAppointment> getBookingsByPatientId(User patientId) {
-        return bookingAppointmentRepository.findByPatient(patientId);
+    public List<BookingAppointment> getBookingsByDoctorId(User doctor) {
+        return bookingAppointmentRepository.findByDoctor(doctor);
+    }
+    @Override
+    public Page<BookingAppointment> getBookingsByDoctorId(User doctor, Pageable pageable) {
+        return bookingAppointmentRepository.findByDoctor(doctor, pageable);
     }
 
+    // by patient
     @Override
-    public List<BookingAppointment> getBookingsByScheduleId(DoctorSchedule scheduleId) {
-        return bookingAppointmentRepository.findBySchedule(scheduleId);
+    public List<BookingAppointment> getBookingsByPatientId(User patient) {
+        return bookingAppointmentRepository.findByPatient(patient);
+    }
+    @Override
+    public Page<BookingAppointment> getBookingsByPatientId(User patient, Pageable pageable) {
+        return bookingAppointmentRepository.findByPatient(patient, pageable);
+    }
+
+    // by schedule
+    @Override
+    public List<BookingAppointment> getBookingsByScheduleId(DoctorSchedule schedule) {
+        return bookingAppointmentRepository.findBySchedule(schedule);
+    }
+    @Override
+    public Page<BookingAppointment> getBookingsByScheduleId(DoctorSchedule schedule, Pageable pageable) {
+        return bookingAppointmentRepository.findBySchedule(schedule, pageable);
     }
 
     @Override
@@ -136,21 +151,15 @@ public class BookingAppointmentServicesImpl implements BookingAppointmentService
         return bookingAppointmentRepository.countByAppointDate(LocalDate.now());
     }
 
-    // New method to update/add a prescription image to an existing booking appointment
     @Override
-    public BookingAppointment updatePrescriptionImage(Long bookingId, MultipartFile file) throws Exception {
-        BookingAppointment bookingAppointment = bookingAppointmentRepository.findById(bookingId)
-                .orElseThrow(() -> new Exception("Booking appointment not found"));
+    public BookingAppointment updatePrescriptionImage(Long id, MultipartFile file) throws Exception {
+        BookingAppointment ba = bookingAppointmentRepository.findById(id)
+            .orElseThrow(() -> new Exception("Booking not found"));
         if (file != null && !file.isEmpty()) {
-            try {
-                Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
-                String imageUrl = uploadResult.get("secure_url").toString();
-                bookingAppointment.setPrescriptionImageUrl(imageUrl);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to upload image to Cloudinary", e);
-            }
-            bookingAppointment = bookingAppointmentRepository.save(bookingAppointment);
+            Map<?,?> res = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+            ba.setPrescriptionImageUrl(res.get("secure_url").toString());
+            ba = bookingAppointmentRepository.save(ba);
         }
-        return bookingAppointment;
+        return ba;
     }
 }

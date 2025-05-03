@@ -1,6 +1,10 @@
 package com.G19.hospital.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,10 +34,10 @@ public class DoctorAuthenticationController {
             return new ResponseEntity<>("Registration failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     @PostMapping("/addProfile/{username}")
     public ResponseEntity<?> addDoctorProfile(@RequestBody DoctorDetailsDTO doctorDetailsDTO,
-                                                @PathVariable("username") String username) {
+            @PathVariable("username") String username) {
         try {
             DoctorDetails doctorProfile = doctorServices.profileDoctor(doctorDetailsDTO, username);
             return new ResponseEntity<>(doctorProfile, HttpStatus.CREATED);
@@ -41,7 +45,7 @@ public class DoctorAuthenticationController {
             return new ResponseEntity<>("Profile update failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     @GetMapping("/me")
     public ResponseEntity<?> getAuthenticatedPatientDetails() {
         try {
@@ -69,7 +73,7 @@ public class DoctorAuthenticationController {
             // Set the userId in the DTO for profile creation
             doctorDetailsDTO.setUserId(authenticatedDoctor.getId());
 
-            DoctorDetails createdProfile = doctorServices.profileDoctor(doctorDetailsDTO,username);
+            DoctorDetails createdProfile = doctorServices.profileDoctor(doctorDetailsDTO, username);
             return new ResponseEntity<>(createdProfile, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>("Profile creation failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -117,6 +121,7 @@ public class DoctorAuthenticationController {
             return ResponseEntity.status(404).body("Patient not found: " + e.getMessage());
         }
     }
+
     @GetMapping("/byId/{id}")
     public ResponseEntity<?> getDoctorById(@PathVariable Long id) {
         try {
@@ -131,34 +136,51 @@ public class DoctorAuthenticationController {
         }
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<?> getAllDoctors() {
-        try {
-            List<User> doctors = doctorServices.getAllDoctors();
-            return ResponseEntity.ok(doctors);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Failed to fetch doctors: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+     @GetMapping("/search")
+    public ResponseEntity<Page<User>> searchDoctors(
+            @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
+            @PageableDefault(size = 10) Pageable pageable) throws Exception {
+        Page<User> doctors = doctorServices.searchDoctors(keyword, pageable);
+        return ResponseEntity.ok(doctors);
     }
 
-    @GetMapping("/availableDoctors")
-    public ResponseEntity<?> getAllAvailableDoctors() {
+    // @GetMapping("/all")
+    // public ResponseEntity<?> getAllDoctors() {
+    //     try {
+    //         List<User> doctors = doctorServices.getAllDoctors();
+    //         return ResponseEntity.ok(doctors);
+    //     } catch (Exception e) {
+    //         return new ResponseEntity<>("Failed to fetch doctors: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    //     }
+    // }
+
+    @GetMapping(value = "/all")
+    public ResponseEntity<?> getAllDoctorsPaged(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         try {
-            List<User> availableDoctors = doctorServices.getAllAvailableDoctors();
-            return ResponseEntity.ok(availableDoctors);
+            Page<User> doctorsPage = doctorServices
+                .getAllDoctors(PageRequest.of(page, size));
+            return ResponseEntity.ok(doctorsPage);
         } catch (Exception e) {
-            return new ResponseEntity<>("Failed to fetch available doctors: " + e.getMessage(),
+            return new ResponseEntity<>(
+              "Failed to fetch doctors (paged): " + e.getMessage(),
+              HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+ 
+    @GetMapping(value = "/availableDoctors")
+    public ResponseEntity<?> getAvailableDoctorsPaged(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        try {
+            Page<User> doctorsPage = doctorServices.getAllAvailableDoctors(PageRequest.of(page, size));
+            return ResponseEntity.ok(doctorsPage);
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                    "Failed to fetch available doctors (paged): " + e.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @GetMapping("/searchDoctors/{keyword}")
-    public ResponseEntity<?> searchDoctors(@PathVariable String keyword) {
-        try {
-            List<User> doctors = doctorServices.searchDoctors(keyword);
-            return ResponseEntity.ok(doctors);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Search failed: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

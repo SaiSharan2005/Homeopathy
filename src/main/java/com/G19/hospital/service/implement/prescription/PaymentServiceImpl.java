@@ -6,6 +6,7 @@ import com.G19.hospital.exceptions.security.CustomSecurityException;
 import com.G19.hospital.model.prescription.*;
 import com.G19.hospital.repository.prescription.*;
 import com.G19.hospital.service.PaymentService;
+import com.G19.hospital.service.inventory.InventoryRecordService;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,8 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
     private final PrescriptionRepository prescriptionRepository;
     private final Cloudinary cloudinary;
+    private final InventoryRecordService inventoryRecordService;
+
 
 
     // Add image upload method
@@ -61,7 +64,21 @@ public class PaymentServiceImpl implements PaymentService {
             payment.setPaymentScreenshotPath(screenshotPath);
             payment.setStatus(PaymentStatus.PAID);
         // }
-
+               // --- NEW: decrease inventory for each prescription item ---
+                var prescription = payment.getPrescription();
+                prescription.getPrescriptionItems()
+                   .forEach(pi -> {
+                        Long itemId = pi.getInventoryItem().getId();
+                        int qty    = Integer.parseInt(pi.getQuantity());
+                        // fetch all records for this item, pick first
+                        var records = inventoryRecordService.getInventoryRecordsByItemId(itemId);
+                        if (!records.isEmpty()) {
+                          Long recordId = records.get(0).getId();
+                          inventoryRecordService.decreaseQuantity(recordId, qty);
+                        }
+                    });
+        
+        
         return mapToResponse(paymentRepository.save(payment));
     }
 
@@ -83,7 +100,19 @@ public class PaymentServiceImpl implements PaymentService {
                 .orElseThrow(() -> new CustomSecurityException("Payment not found", HttpStatus.NOT_FOUND));
         payment.setMethod(PaymentMethod.CASH);
         payment.setStatus(PaymentStatus.PAID);
-        
+        var prescription = payment.getPrescription();
+        prescription.getPrescriptionItems()
+           .forEach(pi -> {
+                Long itemId = pi.getInventoryItem().getId();
+                int qty    = Integer.parseInt(pi.getQuantity());
+                // fetch all records for this item, pick first
+                var records = inventoryRecordService.getInventoryRecordsByItemId(itemId);
+                if (!records.isEmpty()) {
+                  Long recordId = records.get(0).getId();
+                  inventoryRecordService.decreaseQuantity(recordId, qty);
+                }
+            });
+
         return paymentRepository.save(payment);
 
     }
@@ -122,6 +151,19 @@ public class PaymentServiceImpl implements PaymentService {
             .orElseThrow(() -> new RuntimeException("Payment not found"));
         p.setStatus(PaymentStatus.FAILED);
         p.setPaymentScreenshotPath(null);
+        // --- NEW: restore inventory for each prescription item ---
+        var prescription = p.getPrescription();
+        prescription.getPrescriptionItems()
+            .forEach(pi -> {
+                Long itemId = pi.getInventoryItem().getId();
+                int qty    = Integer.parseInt(pi.getQuantity());
+                var records = inventoryRecordService.getInventoryRecordsByItemId(itemId);
+                if (!records.isEmpty()) {
+                  Long recordId = records.get(0).getId();
+                  inventoryRecordService.increaseQuantity(recordId, qty);
+                }
+            });
+
         Payment updated = paymentRepository.save(p);
         return toDTO(updated);
     }
@@ -144,6 +186,46 @@ public class PaymentServiceImpl implements PaymentService {
             .orElseThrow(() -> new CustomSecurityException("Payment not found for the prescription", HttpStatus.NOT_FOUND));
         return mapToResponse(payment);
     }
-      
+
+    @Override
+    public PaymentResponseDTO getCurrentPendingPayment() {
+      return paymentRepository
+        .findFirstByStatusOrderByIdAsc(PaymentStatus.PENDING)
+        .map(this::mapToResponse)
+        .orElse(null);
+    }
+    @Override
+    public PaymentResponseDTO getLastPendingPayment() {
+      return paymentRepository
+        .findFirstByStatusOrderByIdDesc(PaymentStatus.PENDING)
+        .map(this::mapToResponse)
+        .orElse(null);
+    }
+  
+    @Override
+    public PaymentResponseDTO getNextPendingPayment() {
+      List<Payment> pending = paymentRepository
+        .findAllByStatusOrderByIdAsc(PaymentStatus.PENDING);
+      if (pending.size() <= 1) return null;
+      return mapToResponse(pending.get(1));
+    }
+  
+    @Override
+    public PaymentResponseDTO getPreviousPendingPayment(Long id) {
+      return paymentRepository
+        .findFirstByStatusAndIdLessThanOrderByIdDesc(PaymentStatus.PENDING, id)
+        .map(this::mapToResponse)
+        .orElse(null);
+    }
+  
+    @Override
+    public PaymentResponseDTO getNextPendingPayment(Long id) {
+      return paymentRepository
+        .findFirstByStatusAndIdGreaterThanOrderByIdAsc(PaymentStatus.PENDING, id)
+        .map(this::mapToResponse)
+        .orElse(null);
+    }
+  
+        
 }
 

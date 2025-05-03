@@ -108,4 +108,40 @@ public ResponseEntity<PaymentResponseDTO> getPaymentByPrescriptionId(@PathVariab
 
         return ResponseEntity.ok(list);
     }
+    @GetMapping("/current")
+    public ResponseEntity<PaymentResponseDTO> getCurrentPendingPayment() {
+        PaymentResponseDTO dto = paymentService.getCurrentPendingPayment();
+        return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.noContent().build();
+    }
+    
+    @GetMapping("/next")
+    public ResponseEntity<PaymentResponseDTO> getNextPendingPayment() {
+        PaymentResponseDTO dto = paymentService.getNextPendingPayment();
+        return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.noContent().build();
+    }
+    
+    @GetMapping("/last")
+    public ResponseEntity<PaymentResponseDTO> getLastPendingPayment() {
+        PaymentResponseDTO dto = paymentService.getLastPendingPayment();
+        return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.noContent().build();
+    }
+    
+    @GetMapping("/{id}/previous")
+    public ResponseEntity<PaymentResponseDTO> previous(@PathVariable Long id) {
+      PaymentResponseDTO dto = paymentService.getPreviousPendingPayment(id);
+      return dto != null
+        ? ResponseEntity.ok(dto)
+        : ResponseEntity.noContent().build();
+    }
+  
+    /** next pending after {id}, or 204 if none */
+    @GetMapping("/{id}/next")
+    public ResponseEntity<PaymentResponseDTO> next(@PathVariable Long id) {
+      PaymentResponseDTO dto = paymentService.getNextPendingPayment(id);
+      return dto != null
+        ? ResponseEntity.ok(dto)
+        : ResponseEntity.noContent().build();
+    }
+  
+  
 }

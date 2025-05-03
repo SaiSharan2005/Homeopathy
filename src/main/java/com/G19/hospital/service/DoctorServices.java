@@ -7,6 +7,9 @@ import com.G19.hospital.model.User;
 
 import java.util.*;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 public interface DoctorServices {
     
     // Register a doctor and save to User repository
@@ -26,12 +29,14 @@ public interface DoctorServices {
 
     List<User> getAllAvailableDoctors() throws Exception;
 
-    
+    Page<User> getAllAvailableDoctors(Pageable pageable) throws Exception;
+
     // Fetch all doctors (based on a role or attribute in User model)
     List<User> getAllDoctors() throws Exception;
+    Page<User> getAllDoctors(Pageable pageable) throws Exception;
 
     // Search doctors using a keyword (can be based on name, specialization, etc.)
-    List<User> searchDoctors(String keyword) throws Exception;
+    Page<User> searchDoctors(String keyword, Pageable pageable) throws Exception;
 
     // Get total count of doctors
     long getDoctorCount() throws Exception;

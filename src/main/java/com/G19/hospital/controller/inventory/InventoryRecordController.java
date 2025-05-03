@@ -54,4 +54,18 @@ public class InventoryRecordController {
         List<InventoryRecord> records = inventoryRecordService.getAllInventoryRecords();
         return ResponseEntity.ok(records);
     }
+    @PutMapping("/{id}/increase")
+    public ResponseEntity<InventoryRecord> increase(
+        @PathVariable Long id,
+        @RequestParam int amount) {
+      return ResponseEntity.ok(inventoryRecordService.increaseQuantity(id, amount));
+    }
+  
+    @PutMapping("/{id}/decrease")
+    public ResponseEntity<InventoryRecord> decrease(
+        @PathVariable Long id,
+        @RequestParam int amount) {
+      return ResponseEntity.ok(inventoryRecordService.decreaseQuantity(id, amount));
+    }
+  
 }

@@ -3,11 +3,17 @@ package com.G19.hospital.service.implement.inventory;
 import com.G19.hospital.DTO.inventory.PurchaseOrderItemDto;
 import com.G19.hospital.exceptions.security.CustomSecurityException;
 import com.G19.hospital.model.inventory.InventoryItem;
+import com.G19.hospital.model.inventory.InventoryRecord;
 import com.G19.hospital.model.inventory.PurchaseOrder;
 import com.G19.hospital.model.inventory.PurchaseOrderItem;
+import com.G19.hospital.model.inventory.Warehouse;
 import com.G19.hospital.repository.inventory.PurchaseOrderItemRepository;
 import com.G19.hospital.repository.inventory.PurchaseOrderRepository;
+import com.G19.hospital.repository.inventory.WarehouseRepository;
 import com.G19.hospital.repository.inventory.InventoryItemRepository;
+import com.G19.hospital.repository.inventory.InventoryRecordRepository;
+import com.G19.hospital.service.inventory.InventoryItemService;
+import com.G19.hospital.service.inventory.InventoryRecordService;
 import com.G19.hospital.service.inventory.PurchaseOrderItemService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,28 +35,65 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
 
     @Autowired
     private InventoryItemRepository inventoryItemRepository;
+    @Autowired
+    private InventoryRecordRepository inventoryRecordRepository;
+    @Autowired
+    private InventoryRecordService inventoryRecordService ;
+    @Autowired
+    private WarehouseRepository warehouseRepository;
 
     @Override
     public PurchaseOrderItem createPurchaseOrderItem(PurchaseOrderItemDto itemDto) {
         try {
-            PurchaseOrderItem item = new PurchaseOrderItem();
-            item.setOrderItemId(itemDto.getOrderItemId());
-            item.setQuantityOrdered(itemDto.getQuantityOrdered());
-            item.setUnitPrice(itemDto.getUnitPrice());
-            PurchaseOrder order = purchaseOrderRepository.findByOrderId(itemDto.getPurchaseOrderId())
-                    .orElseThrow(() -> new CustomSecurityException("Purchase order not found", HttpStatus.NOT_FOUND));
-            item.setPurchaseOrder(order);
-            InventoryItem inventoryItem = inventoryItemRepository.findById(itemDto.getInventoryItemId())
-                    .orElseThrow(() -> new CustomSecurityException("Inventory item not found", HttpStatus.NOT_FOUND));
-            item.setInventoryItem(inventoryItem);
-            return purchaseOrderItemRepository.save(item);
+            // 1) save PO line
+            PurchaseOrderItem line = new PurchaseOrderItem();
+            line.setOrderItemId(itemDto.getOrderItemId());
+            line.setQuantityOrdered(itemDto.getQuantityOrdered());
+            line.setUnitPrice(itemDto.getUnitPrice());
+
+            PurchaseOrder order = purchaseOrderRepository
+                .findByOrderId(itemDto.getPurchaseOrderId())
+                .orElseThrow(() -> new CustomSecurityException(
+                    "Purchase order not found", HttpStatus.NOT_FOUND));
+            line.setPurchaseOrder(order);
+
+            InventoryItem inv = inventoryItemRepository
+                .findById(itemDto.getInventoryItemId())
+                .orElseThrow(() -> new CustomSecurityException(
+                    "Inventory item not found", HttpStatus.NOT_FOUND));
+            line.setInventoryItem(inv);
+
+            line = purchaseOrderItemRepository.save(line);
+
+            // 2) bump stock via helper
+            Warehouse wh = warehouseRepository.findById(1L)
+                .orElseThrow(() -> new CustomSecurityException(
+                    "Default warehouse not found", HttpStatus.NOT_FOUND));
+
+            InventoryRecord rec = inventoryRecordRepository
+                .findByInventoryItemIdAndWarehouseId(inv.getId(), wh.getId())
+                .orElseThrow(() -> new CustomSecurityException(
+                    "Inventory record missing for item="+inv.getId()+" @ warehouse="+wh.getId(),
+                    HttpStatus.NOT_FOUND));
+
+            inventoryRecordService.increaseQuantity(rec.getId(), line.getQuantityOrdered());
+
+            return line;
+
+        } catch (CustomSecurityException cse) {
+            throw cse;
         } catch (Exception ex) {
             log.error("Error creating purchase order item: {}", ex.getMessage(), ex);
-            throw new CustomSecurityException("Failed to create purchase order item", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CustomSecurityException(
+                "Failed to create purchase order item",
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
     }
 
-    @Override
+
+
+  @Override
     public PurchaseOrderItem updatePurchaseOrderItem(Long orderItemId, PurchaseOrderItemDto itemDto) {
         PurchaseOrderItem existingItem = purchaseOrderItemRepository.findById(orderItemId)
                 .orElseThrow(() -> new CustomSecurityException("Purchase order item not found with id: " + orderItemId, HttpStatus.NOT_FOUND));

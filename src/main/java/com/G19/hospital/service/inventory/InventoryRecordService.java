@@ -11,4 +11,8 @@ public interface InventoryRecordService {
     InventoryRecord getInventoryRecordById(Long id);
     List<InventoryRecord> getInventoryRecordsByItemId(Long inventoryItemId);
     List<InventoryRecord> getAllInventoryRecords();
+   InventoryRecord increaseQuantity(Long recordId, int amount);
+   /** Decrease the quantity on an existing record by the given amount (not below zero) */
+    InventoryRecord decreaseQuantity(Long recordId, int amount);
+
 }

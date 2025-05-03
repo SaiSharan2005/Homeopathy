@@ -1,5 +1,16 @@
 package com.G19.hospital.service.implement;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.G19.hospital.DTO.PatientDetailsDTO;
 import com.G19.hospital.DTO.PatientRegisterDTO;
 import com.G19.hospital.exceptions.security.CustomSecurityException;
@@ -11,16 +22,6 @@ import com.G19.hospital.repository.RoleRepository;
 import com.G19.hospital.repository.UserRepository;
 import com.G19.hospital.service.PatientServices;
 import com.G19.hospital.util.Constants.ApiMessages;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.Random;
 
 // 
 @Service
@@ -124,10 +125,11 @@ public class PatientServicesImplement implements PatientServices {
     }
 
     @Override
-    public List<User> searchPatients(String keyword) {
-        // Search by username (phone number) or email for patients
+    public Page<User> searchPatients(String keyword, Pageable pageable) {
+        String kw = (keyword == null ? "" : keyword.trim());
         Role patientRole = roleRepository.findByName("PATIENT");
-        return userRepository.searchUsers(keyword, patientRole);
+
+        return userRepository.searchPatients(kw,patientRole, pageable);
     }
 
     @Override
@@ -135,6 +137,11 @@ public class PatientServicesImplement implements PatientServices {
         // Search by username (phone number) or email for patients
         Role patientRole = roleRepository.findByName("PATIENT");
         return userRepository.findByRoles(patientRole);
+    }
+     @Override
+    public Page<User> getAllPatients(Pageable pageable) {
+        Role patientRole = roleRepository.findByName("PATIENT");
+        return userRepository.findByRoles(patientRole, pageable);
     }
 
     @Override

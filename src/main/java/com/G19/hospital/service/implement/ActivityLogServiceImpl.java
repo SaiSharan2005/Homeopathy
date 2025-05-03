@@ -4,11 +4,15 @@ import com.G19.hospital.model.ActivityLog;
 import com.G19.hospital.repository.ActivityLogRepository;
 import com.G19.hospital.service.ActivityLogService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementation of ActivityLogService using ActivityLogRepository.
+ */
 @Service
 public class ActivityLogServiceImpl implements ActivityLogService {
 
@@ -21,8 +25,8 @@ public class ActivityLogServiceImpl implements ActivityLogService {
     }
 
     @Override
-    public List<ActivityLog> getAllActivityLogs() {
-        return activityLogRepository.findAll();
+    public Page<ActivityLog> getAllActivityLogs(Pageable pageable) {
+        return activityLogRepository.findAll(pageable);
     }
 
     @Override
@@ -32,16 +36,15 @@ public class ActivityLogServiceImpl implements ActivityLogService {
 
     @Override
     public ActivityLog updateActivityLog(Long id, ActivityLog updatedLog) {
-        Optional<ActivityLog> optionalLog = activityLogRepository.findById(id);
-        if (optionalLog.isPresent()) {
-            ActivityLog existingLog = optionalLog.get();
-            existingLog.setUserType(updatedLog.getUserType());
-            existingLog.setUserId(updatedLog.getUserId());
-            existingLog.setMessage(updatedLog.getMessage());
-            existingLog.setTimestamp(updatedLog.getTimestamp());
-            return activityLogRepository.save(existingLog);
-        }
-        return null;
+        return activityLogRepository.findById(id)
+            .map(existing -> {
+                existing.setUserType(updatedLog.getUserType());
+                existing.setUserId(updatedLog.getUserId());
+                existing.setMessage(updatedLog.getMessage());
+                existing.setTimestamp(updatedLog.getTimestamp());
+                return activityLogRepository.save(existing);
+            })
+            .orElse(null);
     }
 
     @Override
