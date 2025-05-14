@@ -39,4 +39,5 @@ public interface BookingAppointmentServices {
 
     // prescription image:
     BookingAppointment updatePrescriptionImage(Long bookingId, MultipartFile file) throws Exception;
+
 }

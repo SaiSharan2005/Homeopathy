@@ -1,5 +1,6 @@
 package com.G19.hospital.controller.prescription;
 
+import com.G19.hospital.DTO.prescription.InstructionDto;
 import com.G19.hospital.DTO.prescription.PrescriptionDto;
 import com.G19.hospital.DTO.prescription.PrescriptionItemDto;
 import com.G19.hospital.model.prescription.Prescription;
@@ -42,7 +43,8 @@ public class PrescriptionController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Prescription> updatePrescription(@PathVariable Long id, @RequestBody PrescriptionDto prescriptionDto) {
+    public ResponseEntity<Prescription> updatePrescription(@PathVariable Long id,
+            @RequestBody PrescriptionDto prescriptionDto) {
         Prescription updated = prescriptionService.updatePrescription(id, prescriptionDto);
         return new ResponseEntity<>(updated, HttpStatus.OK);
     }
@@ -56,7 +58,7 @@ public class PrescriptionController {
     // Endpoint to add a prescription item to an existing prescription
     @PostMapping("/{id}/items")
     public ResponseEntity<Prescription> addPrescriptionItem(@PathVariable Long id,
-                                                            @RequestBody PrescriptionItemDto prescriptionItemDto) {
+            @RequestBody PrescriptionItemDto prescriptionItemDto) {
         Prescription updatedPrescription = prescriptionService.addPrescriptionItem(id, prescriptionItemDto);
         return new ResponseEntity<>(updatedPrescription, HttpStatus.OK);
     }
@@ -88,4 +90,12 @@ public class PrescriptionController {
         List<Prescription> prescriptions = prescriptionService.getPrescriptionsByPatient(patientId);
         return new ResponseEntity<>(prescriptions, HttpStatus.OK);
     }
+
+    @GetMapping("/patient/{patientId}/instructions")
+    public ResponseEntity<List<InstructionDto>> getInstructionsByPatient(
+            @PathVariable Long patientId) {
+        List<InstructionDto> list = prescriptionService.getInstructionsByPatient(patientId);
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
 }

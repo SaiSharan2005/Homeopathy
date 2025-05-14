@@ -4,6 +4,8 @@ import com.G19.hospital.model.prescription.Payment;
 import com.G19.hospital.model.prescription.PaymentStatus;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +34,14 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
   // the pending payment immediately after this id
   Optional<Payment> findFirstByStatusAndIdGreaterThanOrderByIdAsc(
       PaymentStatus status, Long id);
-
+// @Query("""
+//       SELECT p
+//       FROM Payment p
+//       WHERE p.prescription.patient.id = :patientId
+//         AND p.paidAmount < p.totalAmount
+//       """)
+    List<Payment> findByStatusAndPrescriptionPatientId(PaymentStatus status,Long id );
+    // (@Param("patientId") Long patientId);
       
 
 } 

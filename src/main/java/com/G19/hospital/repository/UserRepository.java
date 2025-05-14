@@ -26,6 +26,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     // Check if a user exists by their username (for registration validation)
     boolean existsByUsername(String username);
+    boolean existsByPhoneNumber(String phoneNumber);
 
     // Find a user by their doctor ID (now directly in the User entity)
     Optional<User> findByUserId(String doctorId);

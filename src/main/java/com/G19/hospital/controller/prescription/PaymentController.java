@@ -4,6 +4,7 @@ import com.G19.hospital.DTO.PaymentRequestDTO;
 import com.G19.hospital.DTO.PaymentResponseDTO;
 import com.G19.hospital.model.User;
 import com.G19.hospital.model.prescription.Payment;
+import com.G19.hospital.model.prescription.PaymentStatus;
 import com.G19.hospital.repository.PatientDetailsRepository;
 import com.G19.hospital.repository.UserRepository;
 import com.G19.hospital.service.DoctorServices;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.core.Authentication;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,8 +28,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PaymentController {
     private final PaymentService paymentService;
-    private final UserRepository userRepository;   // service that knows how to find a patient by phone
-    private final DoctorServices doctorServices;     // service that knows how to find a doctor by phone
+    private final UserRepository userRepository; // service that knows how to find a patient by phone
+    private final DoctorServices doctorServices; // service that knows how to find a doctor by phone
 
     @PostMapping
     public ResponseEntity<PaymentResponseDTO> createPayment(@RequestBody PaymentRequestDTO request) {
@@ -38,7 +40,7 @@ public class PaymentController {
     public ResponseEntity<PaymentResponseDTO> completePayment(
             @PathVariable Long id,
             @RequestParam("file") MultipartFile file) throws IOException {
-        
+
         // Upload to Cloudinary instead of local storage
         String imageUrl = paymentService.uploadImage(file);
         return ResponseEntity.ok(paymentService.updatePayment(id, imageUrl));
@@ -48,7 +50,6 @@ public class PaymentController {
     public ResponseEntity<PaymentResponseDTO> markAsUnpaid(@PathVariable Long id) {
         return ResponseEntity.ok(paymentService.markAsUnpaid(id));
     }
-
 
     @GetMapping
     public ResponseEntity<List<PaymentResponseDTO>> getAllPayments() {
@@ -62,31 +63,28 @@ public class PaymentController {
 
     @PutMapping("/{id}/cash-payment")
     public ResponseEntity<Payment> cashPaid(
-            @PathVariable Long id){
-                return ResponseEntity.ok(paymentService.paidCashByUser(id));
+            @PathVariable Long id) {
+        return ResponseEntity.ok(paymentService.paidCashByUser(id));
     }
 
     @GetMapping("/prescription/{id}")
-public ResponseEntity<PaymentResponseDTO> getPaymentByPrescriptionId(@PathVariable Long id) {
-    return ResponseEntity.ok(paymentService.getPaymentByPrescriptionId(id));
-}
-
+    public ResponseEntity<PaymentResponseDTO> getPaymentByPrescriptionId(@PathVariable Long id) {
+        return ResponseEntity.ok(paymentService.getPaymentByPrescriptionId(id));
+    }
 
     @GetMapping("/patient")
     public ResponseEntity<List<PaymentResponseDTO>> getPaymentsForPatient() {
         // 1) get raw Authentication
-        Authentication authentication =
-            SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         // 2) extract username (in your app, the phone number)
         String phone = authentication.getName();
 
         // 3) load the patient by phone
-        User patient = userRepository.findByUsername(phone).get();  // or whatever your method is
+        User patient = userRepository.findByUsername(phone).get(); // or whatever your method is
 
         // 4) fetch payments for that patient
-        List<PaymentResponseDTO> list =
-            paymentService.getPaymentsForPatient(patient.getId());
+        List<PaymentResponseDTO> list = paymentService.getPaymentsForPatient(patient.getId());
 
         return ResponseEntity.ok(list);
     }
@@ -96,52 +94,80 @@ public ResponseEntity<PaymentResponseDTO> getPaymentByPrescriptionId(@PathVariab
      */
     @GetMapping("/doctor")
     public ResponseEntity<List<PaymentResponseDTO>> getPaymentsForDoctor() {
-        Authentication authentication =
-            SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String phone = authentication.getName();
 
         User doctor = doctorServices
-            .getDoctorInfoByUserName(phone);  // or your equivalent
+                .getDoctorInfoByUserName(phone); // or your equivalent
 
-        List<PaymentResponseDTO> list =
-            paymentService.getPaymentsForDoctor(doctor.getId());
+        List<PaymentResponseDTO> list = paymentService.getPaymentsForDoctor(doctor.getId());
 
         return ResponseEntity.ok(list);
     }
+
     @GetMapping("/current")
     public ResponseEntity<PaymentResponseDTO> getCurrentPendingPayment() {
         PaymentResponseDTO dto = paymentService.getCurrentPendingPayment();
         return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.noContent().build();
     }
-    
+
     @GetMapping("/next")
     public ResponseEntity<PaymentResponseDTO> getNextPendingPayment() {
         PaymentResponseDTO dto = paymentService.getNextPendingPayment();
         return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.noContent().build();
     }
-    
+
     @GetMapping("/last")
     public ResponseEntity<PaymentResponseDTO> getLastPendingPayment() {
         PaymentResponseDTO dto = paymentService.getLastPendingPayment();
         return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.noContent().build();
     }
-    
+
     @GetMapping("/{id}/previous")
     public ResponseEntity<PaymentResponseDTO> previous(@PathVariable Long id) {
-      PaymentResponseDTO dto = paymentService.getPreviousPendingPayment(id);
-      return dto != null
-        ? ResponseEntity.ok(dto)
-        : ResponseEntity.noContent().build();
+        PaymentResponseDTO dto = paymentService.getPreviousPendingPayment(id);
+        return dto != null
+                ? ResponseEntity.ok(dto)
+                : ResponseEntity.noContent().build();
     }
-  
+
     /** next pending after {id}, or 204 if none */
     @GetMapping("/{id}/next")
     public ResponseEntity<PaymentResponseDTO> next(@PathVariable Long id) {
-      PaymentResponseDTO dto = paymentService.getNextPendingPayment(id);
-      return dto != null
-        ? ResponseEntity.ok(dto)
-        : ResponseEntity.noContent().build();
+        PaymentResponseDTO dto = paymentService.getNextPendingPayment(id);
+        return dto != null
+                ? ResponseEntity.ok(dto)
+                : ResponseEntity.noContent().build();
     }
-  
-  
+
+    @PutMapping("/{id}/delivery")
+    public ResponseEntity<PaymentResponseDTO> setDelivery(
+            @PathVariable Long id,
+            @RequestParam boolean delivered) {
+        return ResponseEntity.ok(paymentService.setDeliveryStatus(id, delivered));
+    }
+
+    /** 2) Record a partial/full payment amount */
+    @PutMapping("/{id}/pay")
+    public ResponseEntity<PaymentResponseDTO> payAmount(
+            @PathVariable Long id,
+            @RequestParam BigDecimal amount) {
+        return ResponseEntity.ok(paymentService.recordPaymentAmount(id, amount));
+    }
+
+    /** 3) List all due payments for a patient */
+    @GetMapping("/dues/{patientId}")
+    public ResponseEntity<List<PaymentResponseDTO>> duesForPatient(
+            @PathVariable Long patientId) {
+        List<PaymentResponseDTO> dues = paymentService.getDuesForPatient(patientId);
+        return ResponseEntity.ok(dues);
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<PaymentResponseDTO> setStatus(
+            @PathVariable Long id,
+            @RequestParam String status) {
+        return ResponseEntity.ok(paymentService.setStatus(id, PaymentStatus.valueOf(status)));
+    }
+
 }

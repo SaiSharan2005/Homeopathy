@@ -3,8 +3,10 @@ package com.G19.hospital.controller;
 import com.G19.hospital.DTO.UserLoginDto;
 import com.G19.hospital.model.User;
 import com.G19.hospital.DTO.UserRegisterDto;
+import com.G19.hospital.exceptions.security.CustomSecurityException;
 import com.G19.hospital.repository.UserRepository;
 import com.G19.hospital.service.AuthService;
+import com.G19.hospital.util.Constants.ApiMessages;
 import com.G19.hospital.util.Security.AccessToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+
+import jakarta.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 
@@ -39,18 +44,22 @@ public class AuthController {
         return ResponseEntity.ok(accessToken);
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserLoginDto userLoginDto) {
-        Optional<User> userData = userRepository.findByPhoneNumber(userLoginDto.getPhoneNumber());
-    
-        if (userData.isEmpty()) {
-            return ResponseEntity.status(401).body("Login failed: User not found.");
-        }
-    
-        userLoginDto.setUsername(userData.get().getUsername());
-        AccessToken accessToken = authService.login(userLoginDto);
-    
-        return ResponseEntity.ok(accessToken);
+  @PostMapping("/login")
+    public ResponseEntity<AccessToken> login(@Valid @RequestBody UserLoginDto loginDto) {
+        // 1) Lookup by phone number
+        User user = userRepository.findByPhoneNumber(loginDto.getPhoneNumber())
+            .orElseThrow(() ->
+                new CustomSecurityException(
+                    ApiMessages.BAD_CREDENTIALS,
+                    HttpStatus.BAD_REQUEST
+                )
+            );
+
+        // 2) Transfer username into DTO and delegate to AuthService
+        loginDto.setUsername(user.getUsername());
+        AccessToken token = authService.login(loginDto);
+
+        return ResponseEntity.ok(token);
     }
     
     @PostMapping("/addProfilePic")

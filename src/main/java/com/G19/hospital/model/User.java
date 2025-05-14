@@ -14,10 +14,10 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @Table(name = "users")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class User extends BaseEntity {
 
-    @Size(min = 6, message = "Username length must be minimum 6")
+    @Size(min = 3, message = "Username length must be minimum 6")
     @Column(name = "username", unique = true)
     private String username;
 
@@ -41,12 +41,11 @@ public class User extends BaseEntity {
     @Column(name = "image_url")
     private String imageUrl;
 
+    @Column(name = "verified", nullable = false)
+    private boolean verified = false;
+
     @ManyToMany
-    @JoinTable(
-        name = "user_roles",
-        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-        inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
-    )
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles = new HashSet<>();
 
     // One-to-One relationships with additional details for doctors and patients

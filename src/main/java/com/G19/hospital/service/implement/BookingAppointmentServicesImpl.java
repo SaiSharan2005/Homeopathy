@@ -162,4 +162,9 @@ public class BookingAppointmentServicesImpl implements BookingAppointmentService
         }
         return ba;
     }
+
+    // @Override
+    // public Optional<BookingAppointment> getBookingByToken(String token) {
+    //   return repo.findByToken(token);
+    // }
 }

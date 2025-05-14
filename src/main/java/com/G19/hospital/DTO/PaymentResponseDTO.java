@@ -11,18 +11,22 @@ public class PaymentResponseDTO {
     private PaymentStatus status;
     private PaymentMethod method;
     private BigDecimal totalAmount;
+    private BigDecimal paidAmount;
+    private Boolean deliveryStatus;
 
     // Constructors
     public PaymentResponseDTO() {}
     
     public PaymentResponseDTO(Long id, Long prescriptionId, String paymentScreenshotPath, 
-                            PaymentStatus status, PaymentMethod method, BigDecimal totalAmount) {
+                            PaymentStatus status, PaymentMethod method, BigDecimal totalAmount,BigDecimal paidAmount,Boolean deliveryStatus) {
         this.id = id;
         this.prescriptionId = prescriptionId;
         this.paymentScreenshotPath = paymentScreenshotPath;
         this.status = status;
         this.method = method;
         this.totalAmount = totalAmount;
+        this.paidAmount = paidAmount;
+        this.deliveryStatus = deliveryStatus;
     }
 
     // Getters & Setters
@@ -43,4 +47,12 @@ public class PaymentResponseDTO {
     
     public BigDecimal getTotalAmount() { return totalAmount; }
     public void setTotalAmount(BigDecimal totalAmount) { this.totalAmount = totalAmount; }
+
+    public BigDecimal getPaidAmount() { return paidAmount; }
+    public void setPaidAmount(BigDecimal paidAmount) { this.paidAmount = paidAmount; }
+
+    public Boolean getDeliveryStatus() { return deliveryStatus; }
+    public void setDeliveryStatus(Boolean deliveryStatus) { this.deliveryStatus = deliveryStatus; }
+
+
 }

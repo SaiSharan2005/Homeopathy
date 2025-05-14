@@ -1,5 +1,6 @@
 package com.G19.hospital.service;
 
+import com.G19.hospital.DTO.prescription.InstructionDto;
 import com.G19.hospital.DTO.prescription.PrescriptionDto;
 import com.G19.hospital.DTO.prescription.PrescriptionItemDto;
 import com.G19.hospital.model.prescription.Prescription;
@@ -18,4 +19,6 @@ public interface PrescriptionService {
     Prescription getPrescriptionByToken(String token);
     List<Prescription> getPrescriptionsByDoctor(Long doctorId);
     List<Prescription> getPrescriptionsByPatient(Long patientId);
+    List<InstructionDto> getInstructionsByPatient(Long patientId);
+
 }

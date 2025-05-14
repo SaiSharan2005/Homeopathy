@@ -15,4 +15,9 @@ public class ApiMessages {
     public static final String TOKEN_CREATION_FAILED = "Failed to create authentication token";
     public static final String USER_NOT_FOUND = "User not found with the given details";
     public static final String ACCESS_DENIED = "Access denied. You do not have the required permissions";
+    public static final String USERNAME_TAKEN = "Username already taken";
+    public static final String EMAIL_TAKEN = "Email already taken";
+    public static final String PHONE_TAKEN = "Phone Number already Taken";
+    // public static final String EMAIL_TAKEN = "";
+    // public static final String EMAIL_TAKEN = "";
 }

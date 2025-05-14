@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -124,7 +125,9 @@ public class PaymentServiceImpl implements PaymentService {
                 payment.getPaymentScreenshotPath(),
                 payment.getStatus(),
                 payment.getMethod(),
-                payment.getTotalAmount()
+                payment.getTotalAmount(),
+                payment.getPaidAmount(),
+                payment.getDeliveryStatus()
         );
     }
     @Override
@@ -165,7 +168,7 @@ public class PaymentServiceImpl implements PaymentService {
             });
 
         Payment updated = paymentRepository.save(p);
-        return toDTO(updated);
+        return mapToResponse(updated);
     }
     private PaymentResponseDTO toDTO(Payment p) {
         PaymentResponseDTO dto = new PaymentResponseDTO();
@@ -226,6 +229,55 @@ public class PaymentServiceImpl implements PaymentService {
         .orElse(null);
     }
   
-        
+
+    @Override
+    @Transactional
+    public PaymentResponseDTO setDeliveryStatus(Long id, boolean delivered) {
+        Payment p = paymentRepository.findById(id)
+            .orElseThrow(() -> new CustomSecurityException("Payment not found", HttpStatus.NOT_FOUND));
+        p.setDeliveryStatus(delivered);
+        // no inventory change here
+        return mapToResponse(paymentRepository.save(p));
+    }
+
+    @Override
+    @Transactional
+    public PaymentResponseDTO recordPaymentAmount(Long id, BigDecimal amountPaid) {
+        Payment p = paymentRepository.findById(id)
+            .orElseThrow(() -> new CustomSecurityException("Payment not found", HttpStatus.NOT_FOUND));
+
+        BigDecimal newPaid = p.getPaidAmount().add(amountPaid);
+        p.setPaidAmount(newPaid);
+
+        // determine status
+        if (newPaid.compareTo(p.getTotalAmount()) >= 0) {
+            p.setStatus(PaymentStatus.PAID);
+        } else {
+            p.setStatus(PaymentStatus.DUE);
+        }
+
+        // if fully paid, you may trigger inventory decrease here (if not done already)
+        // … your existing inventory logic …
+
+        return mapToResponse(paymentRepository.save(p));
+    }
+    @Override
+    public PaymentResponseDTO setStatus(Long id, PaymentStatus st) {
+    Payment p = paymentRepository.findById(id)
+            .orElseThrow(() -> new CustomSecurityException("Payment not found", HttpStatus.NOT_FOUND));
+    p.setStatus(st);
+    return mapToResponse(paymentRepository.save(p));
+}
+
+
+    @Override
+    public List<PaymentResponseDTO> getDuesForPatient(Long patientId) {
+        return paymentRepository
+            .findByStatusAndPrescriptionPatientId(PaymentStatus.DUE,patientId)
+            .stream()
+            .map(this::mapToResponse)
+            .toList();
+    }
+
 }
 

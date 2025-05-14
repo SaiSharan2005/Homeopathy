@@ -50,8 +50,20 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AccessToken register(UserRegisterDto userRegisterDto) {
+           if (userRepository.existsByUsername(userRegisterDto.getUsername())) {
+            throw new CustomSecurityException(
+                ApiMessages.USERNAME_TAKEN, HttpStatus.BAD_REQUEST);
+        }
+        if (userRepository.existsByEmail(userRegisterDto.getEmail())) {
+            throw new CustomSecurityException(
+                ApiMessages.EMAIL_TAKEN, HttpStatus.BAD_REQUEST);
+        }
+        if (userRepository.existsByPhoneNumber(userRegisterDto.getPhoneNumber())) {
+            throw new CustomSecurityException(
+                ApiMessages.PHONE_TAKEN, HttpStatus.BAD_REQUEST);
+        }
         try {
-            checkUserExistsWithUserName(userRegisterDto.getUsername());
+            // checkUserExistsWithUserName(userRegisterDto.getUsername());
 
             User user = new User();
             user.setEmail(userRegisterDto.getEmail());
@@ -80,40 +92,44 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
-    @Override
-    public AccessToken login(UserLoginDto userLoginDto) {
-        String username = userLoginDto.getUsername();
-        String password = userLoginDto.getPassword();
+       @Override
+    public AccessToken login(UserLoginDto loginDto) {
+        // 1) Fetch by username (populated in controller)
+        User user = userRepository.findByUsername(loginDto.getUsername())
+            .orElseThrow(() -> 
+                new CustomSecurityException(
+                    ApiMessages.BAD_CREDENTIALS,
+                    HttpStatus.BAD_REQUEST
+                )
+            );
 
-        try {
-            // Load user details
-            Optional<User> optionalUser = userRepository.findByUsername(username);
-            // System.out.println(username+"  "+ password);
-            if (optionalUser.isEmpty()) {
-                throw new CustomSecurityException(ApiMessages.BAD_CREDENTIALS, HttpStatus.BAD_REQUEST);
-            }
-
-            User user = optionalUser.get();
-
-            // Verify the password
-            if (!passwordEncoder.matches(password, user.getPassword())) {
-                throw new CustomSecurityException(ApiMessages.BAD_CREDENTIALS, HttpStatus.BAD_REQUEST);
-            }
-
-            // Authenticate the user
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(username, password));
-
-            // Generate and return the token
-            return tokenProvider.createToken(user.getUsername(), user.getRoles());
-        } catch (AuthenticationException ex) {
-            log.error("Authentication failed for user {}: {}", username, ex.getMessage(), ex);
-            throw new CustomSecurityException(ApiMessages.BAD_CREDENTIALS, HttpStatus.BAD_REQUEST);
-        } catch (Exception ex) {
-            log.error("Unexpected error during login for user {}: {}", username, ex.getMessage(), ex);
-            throw new CustomSecurityException(ApiMessages.LOGIN_FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
+        // 2) Verify password
+        if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
+            throw new CustomSecurityException(
+                ApiMessages.BAD_CREDENTIALS,
+                HttpStatus.BAD_REQUEST
+            );
         }
+
+        // 3) Authenticate with Spring Security
+        try {
+            UsernamePasswordAuthenticationToken authToken =
+                new UsernamePasswordAuthenticationToken(
+                    loginDto.getUsername(),
+                    loginDto.getPassword()
+                );
+            authenticationManager.authenticate(authToken);
+        } catch (AuthenticationException ex) {
+            throw new CustomSecurityException(
+                ApiMessages.BAD_CREDENTIALS,
+                HttpStatus.BAD_REQUEST
+            );
+        }
+
+        // 4) Generate JWT
+        return tokenProvider.createToken(user.getUsername(), user.getRoles());
     }
+
 
     private void checkUserExistsWithUserName(String username) {
         if (userRepository.existsByUsername(username)) {

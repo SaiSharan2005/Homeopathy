@@ -20,6 +20,13 @@ public class Payment extends BaseEntity {
     
     @Column(name = "payment_screenshot")
     private String paymentScreenshotPath;
+
+    @Column(name = "delivery_status", nullable = false)
+    private Boolean deliveryStatus = false;
+
+    /** New: how much the patient has actually paid so far */
+    @Column(name = "paid_amount", nullable = false)
+    private BigDecimal paidAmount = BigDecimal.ZERO;
     
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)

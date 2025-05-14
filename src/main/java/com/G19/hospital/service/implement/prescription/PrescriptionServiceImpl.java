@@ -202,6 +202,7 @@
 // }
 package com.G19.hospital.service.implement.prescription;
 
+import com.G19.hospital.DTO.prescription.InstructionDto;
 import com.G19.hospital.DTO.prescription.PrescriptionDto;
 import com.G19.hospital.DTO.prescription.PrescriptionItemDto;
 import com.G19.hospital.exceptions.security.CustomSecurityException;
@@ -395,4 +396,14 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         // Typically, prescription items are added separately.
         return prescription;
     }
+    @Override
+    public List<InstructionDto> getInstructionsByPatient(Long patientId) {
+        return prescriptionRepository
+            .findByPatient_IdOrderByDateIssuedDesc(patientId)
+            .stream()
+            .map(p -> new InstructionDto(p.getDateIssued(), p.getGeneralInstructions()))
+            .collect(Collectors.toList());
+    }
+
+
 }
