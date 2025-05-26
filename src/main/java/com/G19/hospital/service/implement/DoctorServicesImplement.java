@@ -56,7 +56,7 @@ public class DoctorServicesImplement implements DoctorServices {
         doctor.setPhoneNumber(doctorRegisterDTO.getPhoneNumber());
 
         Set<Role> roles = new HashSet<>();
-        Role doctorRole = roleRepository.findByName("DOCTOR");
+        Role doctorRole = roleRepository.findByName("DOCTOR").get();
         roles.add(doctorRole);
         doctor.setRoles(roles);
 
@@ -168,13 +168,13 @@ public class DoctorServicesImplement implements DoctorServices {
 
     @Override
     public List<User> getAllDoctors() throws Exception {
-        Role doctorRole = roleRepository.findByName("DOCTOR");
+        Role doctorRole = roleRepository.findByName("DOCTOR").get();
         return userRepository.findByRoles(doctorRole);
     }
 
     @Override
     public Page<User> getAllDoctors(Pageable pageable) throws Exception {
-        Role doctorRole = roleRepository.findByName("DOCTOR");
+        Role doctorRole = roleRepository.findByName("DOCTOR").get();
         return userRepository.findByRoles(doctorRole, pageable);
     }
 
@@ -201,12 +201,12 @@ public class DoctorServicesImplement implements DoctorServices {
 
     @Override
     public Page<User> searchDoctors(String keyword, Pageable pageable) throws Exception {
-        Role doctorRole = roleRepository.findByName("DOCTOR");
+        Role doctorRole = roleRepository.findByName("DOCTOR").get();
         return userRepository.searchUsers(keyword, doctorRole, pageable);
     }
     @Override
     public long getDoctorCount() throws Exception {
-        Role doctorRole = roleRepository.findByName("DOCTOR");
+        Role doctorRole = roleRepository.findByName("DOCTOR").get();
         return userRepository.countByRoles(doctorRole);
     }
 }

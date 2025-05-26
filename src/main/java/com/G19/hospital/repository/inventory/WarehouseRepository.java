@@ -11,4 +11,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface WarehouseRepository extends JpaRepository<Warehouse, Long> {
     Optional<Warehouse> findById(Long wareHouseId);
+        boolean existsByName(String name);
+
 }

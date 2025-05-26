@@ -8,4 +8,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     // JpaRepository already provides findById, so no additional custom method is required.
     // Optionally, you can define custom queries if needed.
     Optional<Category> findByName(String name);
+    Boolean existsByName(String name);
+
 }

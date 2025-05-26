@@ -62,7 +62,7 @@ public class PatientServicesImplement implements PatientServices {
 
         // Assign the role of "PATIENT"
         Set<Role> roles = new HashSet<>();
-        Role patientRole = roleRepository.findByName("PATIENT");
+        Role patientRole = roleRepository.findByName("PATIENT").get();
         roles.add(patientRole);
         patient.setRoles(roles);
 
@@ -120,14 +120,14 @@ public class PatientServicesImplement implements PatientServices {
 
     @Override
     public long getPatientCount() {
-        Role patientRole = roleRepository.findByName("PATIENT");
+        Role patientRole = roleRepository.findByName("PATIENT").get();
         return userRepository.countByRoles(patientRole);
     }
 
     @Override
     public Page<User> searchPatients(String keyword, Pageable pageable) {
         String kw = (keyword == null ? "" : keyword.trim());
-        Role patientRole = roleRepository.findByName("PATIENT");
+        Role patientRole = roleRepository.findByName("PATIENT").get();
 
         return userRepository.searchPatients(kw,patientRole, pageable);
     }
@@ -135,12 +135,12 @@ public class PatientServicesImplement implements PatientServices {
     @Override
     public List<User> getAllPatients() {
         // Search by username (phone number) or email for patients
-        Role patientRole = roleRepository.findByName("PATIENT");
+        Role patientRole = roleRepository.findByName("PATIENT").get();
         return userRepository.findByRoles(patientRole);
     }
      @Override
     public Page<User> getAllPatients(Pageable pageable) {
-        Role patientRole = roleRepository.findByName("PATIENT");
+        Role patientRole = roleRepository.findByName("PATIENT").get();
         return userRepository.findByRoles(patientRole, pageable);
     }
 

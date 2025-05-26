@@ -30,7 +30,7 @@ public class AdminServiceImpl implements AdminService {
         u.setPhoneNumber(dto.getPhoneNumber());
         u.setPassword(passwordEncoder.encode(dto.getPassword()));
 
-        Role adminRole = roleRepo.findByName("ADMIN");
+        Role adminRole = roleRepo.findByName("ADMIN").get();
         u.setRoles(Collections.singleton(adminRole));
 
         // generate unique userId
@@ -72,7 +72,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public List<User> getAllStaff() {
-        Role staffRole = roleRepo.findByName("ADMIN");
+        Role staffRole = roleRepo.findByName("ADMIN").get();
         return userRepo.findByRoles(staffRole);
     }
 
@@ -110,7 +110,7 @@ public class AdminServiceImpl implements AdminService {
 
         Set<Role> roles = new HashSet<>();
         for (String name : roleNames) {
-            Role r = roleRepo.findByName(name);
+            Role r = roleRepo.findByName(name).get();
             if (r == null) {
                 throw new RuntimeException("Unknown role: " + name);
             }
@@ -124,7 +124,7 @@ public class AdminServiceImpl implements AdminService {
     public void removeUserRole(Long userId, String roleName) {
         User u = userRepo.findById(userId)
             .orElseThrow(() -> new RuntimeException("User not found"));
-        Role r = roleRepo.findByName(roleName);
+        Role r = roleRepo.findByName(roleName).get();
         if (r == null) {
             throw new RuntimeException("Role not found: " + roleName);
         }
@@ -136,7 +136,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public List<User> getUsersByRole(String roleName) {
-        Role r = roleRepo.findByName(roleName);
+        Role r = roleRepo.findByName(roleName).get();
         if (r == null) {
             throw new RuntimeException("Role not found: " + roleName);
         }

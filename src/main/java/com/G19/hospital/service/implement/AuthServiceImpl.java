@@ -141,7 +141,7 @@ public class AuthServiceImpl implements AuthService {
         try {
             Set<Role> userRoles = new HashSet<>();
             for (String role : roles) {
-                Role roleEntity = roleRepository.findByName(role);
+                Role roleEntity = roleRepository.findByName(role).get();
                 if (roleEntity == null) {
                     throw new CustomSecurityException(String.format("Role '%s' not found", role), HttpStatus.BAD_REQUEST);
                 }

@@ -928,3 +928,22 @@ VALUES
   ('2025-04-16 00:00:00', '2025-04-16 00:00:00', 95, 13, 1),
   ('2025-04-16 00:00:00', '2025-04-16 00:00:00', 85, 14, 1),
   ('2025-04-16 00:00:00', '2025-04-16 00:00:00', 100, 15, 1);
+
+
+
+
+  INSERT INTO warehouses (
+  id,
+  created_at,
+  updated_at,
+  location,
+  name,
+  created_by_id
+) VALUES (
+  1,
+  '2025-04-02 10:32:01',
+  '2025-04-02 10:32:01',
+  'Hyderabad, India',
+  'Hyderabad Main Warehouse',
+  NULL
+);
