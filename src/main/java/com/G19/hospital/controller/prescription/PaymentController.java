@@ -5,10 +5,8 @@ import com.G19.hospital.DTO.PaymentResponseDTO;
 import com.G19.hospital.model.User;
 import com.G19.hospital.model.prescription.Payment;
 import com.G19.hospital.model.prescription.PaymentStatus;
-import com.G19.hospital.repository.PatientDetailsRepository;
 import com.G19.hospital.repository.UserRepository;
 import com.G19.hospital.service.DoctorServices;
-import com.G19.hospital.service.PatientServices;
 import com.G19.hospital.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.core.Authentication;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 @RestController

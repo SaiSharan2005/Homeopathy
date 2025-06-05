@@ -4,9 +4,8 @@ import com.G19.hospital.DTO.prescription.InstructionDto;
 import com.G19.hospital.DTO.prescription.PrescriptionDto;
 import com.G19.hospital.DTO.prescription.PrescriptionItemDto;
 import com.G19.hospital.model.prescription.Prescription;
-import com.G19.hospital.model.prescription.PrescriptionItem;
 import com.G19.hospital.service.PrescriptionService;
-import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +18,7 @@ public class PrescriptionController {
 
     private final PrescriptionService prescriptionService;
 
-    @Autowired
+    // @Autowired
     public PrescriptionController(PrescriptionService prescriptionService) {
         this.prescriptionService = prescriptionService;
     }
