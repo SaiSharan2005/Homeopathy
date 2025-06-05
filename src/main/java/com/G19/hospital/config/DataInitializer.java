@@ -114,7 +114,6 @@ public class DataInitializer implements CommandLineRunner {
         if (!categoryRepo.existsByName(analgesics.getName())) {
             categoryService.createCategory(analgesics);
         }
-        // add more categories here as needed...
     }
 
     private void seedSuppliers() {
@@ -137,6 +136,5 @@ public class DataInitializer implements CommandLineRunner {
         if (!warehouseRepo.existsByName(hydMain.getName())) {
             warehouseService.createWarehouse(hydMain);
         }
-        // add more warehouses here as needed...
     }
 }

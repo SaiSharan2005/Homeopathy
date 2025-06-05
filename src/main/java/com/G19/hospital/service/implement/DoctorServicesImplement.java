@@ -65,8 +65,8 @@ public class DoctorServicesImplement implements DoctorServices {
         do {
             String firstNamePart = doctorRegisterDTO.getUsername().substring(0,
                     Math.min(doctorRegisterDTO.getUsername().length(), 4));
-            String lastNamePart = doctorRegisterDTO.getPhoneNumber()
-                    .substring(Math.max(doctorRegisterDTO.getPhoneNumber().length() - 4, 0));
+            // String lastNamePart = doctorRegisterDTO.getPhoneNumber()
+            //         .substring(Math.max(doctorRegisterDTO.getPhoneNumber().length() - 4, 0));
 
             // Add a random number between 1000 and 9999 to ensure uniqueness
             int randomNumber = random.nextInt(9000) + 1000; // Random number between 1000 and 9999

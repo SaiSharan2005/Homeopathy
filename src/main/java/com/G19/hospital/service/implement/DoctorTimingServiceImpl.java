@@ -51,7 +51,10 @@ public ApiResponseDTO createDoctorTimings(List<DoctorTimingDTO> doctorTimingDTOs
             return doctorTiming;
         }).collect(Collectors.toList());
 
-        List<DoctorTiming> savedTimings = doctorTimingRepository.saveAll(doctorTimings);
+        // List<DoctorTiming> savedTimings = doctorTimingRepository.saveAll(doctorTimings);
+        doctorTimingRepository.saveAll(doctorTimings);
+
+
         return new ApiResponseDTO(true, "Doctor timings created successfully");
     } catch (Exception e) {
         return new ApiResponseDTO(false, "Failed to create doctor timings: " + e.getMessage());

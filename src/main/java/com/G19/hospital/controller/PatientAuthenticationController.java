@@ -9,7 +9,6 @@ import com.G19.hospital.model.PatientDetails;
 import com.G19.hospital.model.User;
 // import com.G19.hospital.repository.PatientDetailsRepository;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

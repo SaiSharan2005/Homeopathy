@@ -15,17 +15,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.Random;
 @Service
@@ -131,11 +127,11 @@ public class AuthServiceImpl implements AuthService {
     }
 
 
-    private void checkUserExistsWithUserName(String username) {
-        if (userRepository.existsByUsername(username)) {
-            throw new CustomSecurityException(ApiMessages.USER_ALREADY_EXISTS, HttpStatus.BAD_REQUEST);
-        }
-    }
+    // private void checkUserExistsWithUserName(String username) {
+    //     if (userRepository.existsByUsername(username)) {
+    //         throw new CustomSecurityException(ApiMessages.USER_ALREADY_EXISTS, HttpStatus.BAD_REQUEST);
+    //     }
+    // }
 
     private Set<Role> getRoles(String[] roles) {
         try {

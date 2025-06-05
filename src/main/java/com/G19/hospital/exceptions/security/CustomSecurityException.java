@@ -1,7 +1,6 @@
 package com.G19.hospital.exceptions.security;
 
 
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 

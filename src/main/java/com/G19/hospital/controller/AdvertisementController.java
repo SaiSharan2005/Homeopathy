@@ -10,20 +10,16 @@ import com.G19.hospital.model.Advertisement;
 import com.G19.hospital.service.AdvertisementService;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/ads")
 public class AdvertisementController {
 
-    private final String uploadDir = "uploads/";
+    // private final String uploadDir = "uploads/";
 
     @Autowired
     private AdvertisementService advertisementService;

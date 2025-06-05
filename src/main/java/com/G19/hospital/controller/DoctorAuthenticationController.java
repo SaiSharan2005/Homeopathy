@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import java.util.List;
 
 import com.G19.hospital.DTO.DoctorDetailsDTO;
 import com.G19.hospital.DTO.DoctorRegisterDTO;
