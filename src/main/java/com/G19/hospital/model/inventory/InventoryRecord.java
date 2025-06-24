@@ -1,5 +1,6 @@
 package com.G19.hospital.model.inventory;
 
+import com.G19.hospital.model.inventory.InventoryItem;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;

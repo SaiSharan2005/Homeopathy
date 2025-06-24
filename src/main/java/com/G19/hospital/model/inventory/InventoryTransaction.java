@@ -1,6 +1,8 @@
 package com.G19.hospital.model.inventory;
 
 import com.G19.hospital.model.User;
+import com.G19.hospital.model.inventory.InventoryItem;
+
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;

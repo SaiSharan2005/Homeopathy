@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.G19.hospital.model.User;
+import com.G19.hospital.model.inventory.InventoryItem;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Getter

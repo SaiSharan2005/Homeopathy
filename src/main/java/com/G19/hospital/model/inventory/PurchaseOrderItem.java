@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
 
+import com.G19.hospital.model.inventory.InventoryItem;
+
 @Getter
 @Setter
 @NoArgsConstructor
