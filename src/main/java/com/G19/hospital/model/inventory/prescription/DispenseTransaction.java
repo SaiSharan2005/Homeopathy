@@ -3,10 +3,7 @@ package com.G19.hospital.model.inventory.prescription;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
-import com.G19.hospital.model.BookingAppointment;
 import com.G19.hospital.model.User;
 import com.G19.hospital.model.inventory.StockAndBatchTracking.Batch;
 import com.G19.hospital.model.inventory.core.AuditableBaseEntity;

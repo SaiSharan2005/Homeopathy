@@ -1,6 +1,5 @@
 package com.G19.hospital.model.inventory.prescription;
 
-import com.G19.hospital.model.inventory.StockAndBatchTracking.Batch;
 import com.G19.hospital.model.inventory.core.AuditableBaseEntity;
 import com.G19.hospital.model.inventory.core.InventoryItem;
 
@@ -14,7 +13,7 @@ import lombok.*;
 @Entity
 @Table(name = "prescription_items", indexes = {
         @Index(name = "idx_rx_item_drug", columnList = "drug_id"),
-        @Index(name = "idx_rx_item_batch", columnList = "batch_id")
+        // @Index(name = "idx_rx_item_batch", columnList = "batch_id")
 })
 public class PrescriptionItem extends AuditableBaseEntity {
 

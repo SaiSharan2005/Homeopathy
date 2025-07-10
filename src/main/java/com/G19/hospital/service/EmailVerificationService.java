@@ -16,7 +16,7 @@ import java.util.Random;
 @Service
 public class EmailVerificationService {
 
-    private static final int    CODE_LENGTH    = 4;
+    // private static final int    CODE_LENGTH    = 4;
     private static final int    EXPIRE_MINUTES = 10;
 
     @Autowired

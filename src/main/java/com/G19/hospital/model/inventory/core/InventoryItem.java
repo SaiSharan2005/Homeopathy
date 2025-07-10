@@ -1,18 +1,12 @@
 package com.G19.hospital.model.inventory.core;
 
 import com.G19.hospital.model.User;
-import com.G19.hospital.model.inventory.InventoryRecord;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -73,7 +67,7 @@ public class InventoryItem extends AuditableBaseEntity {
 
     @Column(name = "image_url")
     private String imageUrl;
-    @Column(name = "image_url")
+    @Column(name = "selling_price")
     private BigDecimal sellingPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -5,7 +5,6 @@ import com.G19.hospital.DTO.Questioneres.QuestionSetDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 
 public interface QuestionSetService {
     QuestionSetDto createQuestionSet(QuestionSetDto dto);

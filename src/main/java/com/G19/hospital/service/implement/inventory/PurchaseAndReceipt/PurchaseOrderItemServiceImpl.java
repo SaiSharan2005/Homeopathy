@@ -139,7 +139,7 @@ public class PurchaseOrderItemServiceImpl implements PurchaseOrderItemService {
     @Override
     public List<PurchaseOrderItem> getPurchaseOrderItemsByOrderId(Long orderId) {
         try {
-            return purchaseOrderItemRepository.findByPurchaseOrderOrderId(orderId);
+            return purchaseOrderItemRepository.findByPurchaseOrder_OrderId(orderId);
         } catch (Exception ex) {
             log.error("Error retrieving purchase order items: {}", ex.getMessage(), ex);
             throw new CustomSecurityException("Failed to retrieve purchase order items", HttpStatus.INTERNAL_SERVER_ERROR);
