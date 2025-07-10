@@ -1,10 +1,10 @@
 package com.G19.hospital.service;
 
-import com.G19.hospital.model.User; // Updated import to User
-import com.G19.hospital.model.DoctorSchedule;
-
 import java.time.LocalDate;
 import java.util.List;
+
+import com.G19.hospital.model.DoctorSchedule;
+import com.G19.hospital.model.User;
 
 public interface DoctorScheduleServices {
     List<DoctorSchedule> createScheduleForDate(User doctorId, LocalDate date); // Updated parameter type to User

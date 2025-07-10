@@ -2,8 +2,8 @@ package com.G19.hospital.service.implement;
 
 import com.G19.hospital.DTO.ApiResponseDTO;
 import com.G19.hospital.DTO.DoctorTimingDTO;
-import com.G19.hospital.model.User; // Import User instead of DoctorRegister
 import com.G19.hospital.model.DoctorTiming;
+import com.G19.hospital.model.User;
 import com.G19.hospital.repository.DoctorTimingRepository;
 import com.G19.hospital.repository.UserRepository;
 import com.G19.hospital.service.DoctorTimingService;

@@ -1,8 +1,10 @@
 package com.G19.hospital.repository;
 
-import com.G19.hospital.model.User; // Import User instead of DoctorRegister
-import com.G19.hospital.model.DoctorTiming;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.G19.hospital.model.DoctorTiming;
+import com.G19.hospital.model.User;
+
 import java.util.List;
 
 public interface DoctorTimingRepository extends JpaRepository<DoctorTiming, Long> {

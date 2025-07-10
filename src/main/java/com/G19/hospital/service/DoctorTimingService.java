@@ -2,7 +2,8 @@ package com.G19.hospital.service;
 
 import com.G19.hospital.DTO.ApiResponseDTO;
 import com.G19.hospital.DTO.DoctorTimingDTO;
-import com.G19.hospital.model.User; // Import User instead of DoctorRegister
+import com.G19.hospital.model.User;
+
 import java.util.List;
 
 public interface DoctorTimingService {

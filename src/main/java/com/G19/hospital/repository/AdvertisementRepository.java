@@ -1,12 +1,12 @@
 package com.G19.hospital.repository;
-import com.G19.hospital.model.Advertisement;
-
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import com.G19.hospital.model.Advertisement;
 
 public interface AdvertisementRepository extends JpaRepository<Advertisement, Long> {
     Advertisement findByTargetPageAndIsActive(String targetPage, Boolean isActive);

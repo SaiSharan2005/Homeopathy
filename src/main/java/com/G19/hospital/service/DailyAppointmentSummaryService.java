@@ -1,8 +1,8 @@
 package com.G19.hospital.service;
 
-import com.G19.hospital.model.DailyAppointmentSummary;
-
 import java.time.LocalDate;
+
+import com.G19.hospital.model.DailyAppointmentSummary;
 
 public interface DailyAppointmentSummaryService {
     DailyAppointmentSummary saveSummary(DailyAppointmentSummary summary);

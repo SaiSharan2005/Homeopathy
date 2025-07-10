@@ -2,10 +2,11 @@ package com.G19.hospital.controller;
 
 import com.G19.hospital.DTO.ApiResponseDTO;
 import com.G19.hospital.model.DoctorSchedule;
-import com.G19.hospital.model.User; // Changed to import User instead of DoctorRegister
+import com.G19.hospital.model.User;
 import com.G19.hospital.service.DoctorScheduleServices;
 // import com.G19.hospital.service.DoctorServices;
 import com.G19.hospital.repository.UserRepository; // Import UserRepository for fetching User
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;

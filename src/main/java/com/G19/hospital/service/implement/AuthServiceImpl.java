@@ -1,10 +1,10 @@
 package com.G19.hospital.service.implement;
 
-import com.G19.hospital.model.Role;
-import com.G19.hospital.model.User;
 import com.G19.hospital.DTO.UserLoginDto;
 import com.G19.hospital.DTO.UserRegisterDto;
 import com.G19.hospital.exceptions.security.CustomSecurityException;
+import com.G19.hospital.model.Role;
+import com.G19.hospital.model.User;
 import com.G19.hospital.repository.RoleRepository;
 import com.G19.hospital.repository.UserRepository;
 import com.G19.hospital.service.AuthService;

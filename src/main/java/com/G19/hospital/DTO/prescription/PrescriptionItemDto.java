@@ -1,17 +1,13 @@
 package com.G19.hospital.DTO.prescription;
 
-import lombok.*;
+import lombok.Data;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class PrescriptionItemDto {
-    private Long id;
-    private Long inventoryItemId;
-    private String dosage;
+    private Long inventoryItemId;    // InventoryItem PK
+    private Long batchId;            // which Batch to pull from
     private String frequency;
     private String duration;
+    private int quantity;
     private String additionalInstructions;
-    private String quantity;
 }

@@ -1,8 +1,8 @@
 package com.G19.hospital.service.implement;
 
-import com.G19.hospital.model.User;  // Updated import to User
 import com.G19.hospital.model.DoctorSchedule;
 import com.G19.hospital.model.DoctorTiming;
+import com.G19.hospital.model.User;
 import com.G19.hospital.repository.DoctorScheduleRepository;
 import com.G19.hospital.repository.DoctorTimingRepository;
 import com.G19.hospital.service.DoctorScheduleServices;

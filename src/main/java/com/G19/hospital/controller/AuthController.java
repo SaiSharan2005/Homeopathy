@@ -1,9 +1,9 @@
 package com.G19.hospital.controller;
 
 import com.G19.hospital.DTO.UserLoginDto;
-import com.G19.hospital.model.User;
 import com.G19.hospital.DTO.UserRegisterDto;
 import com.G19.hospital.exceptions.security.CustomSecurityException;
+import com.G19.hospital.model.User;
 import com.G19.hospital.repository.UserRepository;
 import com.G19.hospital.service.AuthService;
 import com.G19.hospital.util.Constants.ApiMessages;

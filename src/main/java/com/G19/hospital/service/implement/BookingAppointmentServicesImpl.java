@@ -2,8 +2,8 @@ package com.G19.hospital.service.implement;
 
 import com.G19.hospital.DTO.BookingAppointmentDTO;
 import com.G19.hospital.model.BookingAppointment;
-import com.G19.hospital.model.User;
 import com.G19.hospital.model.DoctorSchedule;
+import com.G19.hospital.model.User;
 import com.G19.hospital.repository.BookingAppointmentRepository;
 import com.G19.hospital.service.BookingAppointmentServices;
 import com.G19.hospital.service.DoctorScheduleServices;

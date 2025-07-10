@@ -5,6 +5,7 @@ import com.G19.hospital.DTO.DoctorTimingDTO;
 import com.G19.hospital.model.User;
 import com.G19.hospital.service.DoctorTimingService;
 import com.G19.hospital.repository.UserRepository; // Import UserRepository
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;

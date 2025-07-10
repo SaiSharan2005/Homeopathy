@@ -1,7 +1,8 @@
 package com.G19.hospital.repository;
 
-import com.G19.hospital.model.VerificationToken;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.G19.hospital.model.VerificationToken;
 
 import java.util.Optional;
 

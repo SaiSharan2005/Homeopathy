@@ -3,6 +3,7 @@ package com.G19.hospital.service;
 
 import com.G19.hospital.model.VerificationToken;
 import com.G19.hospital.repository.VerificationTokenRepository;
+
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

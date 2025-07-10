@@ -4,6 +4,7 @@ import com.G19.hospital.model.Role;
 import com.G19.hospital.model.User;
 // import com.G19.hospital.repository.RoleRepository;
 import com.G19.hospital.repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.core.GrantedAuthority;

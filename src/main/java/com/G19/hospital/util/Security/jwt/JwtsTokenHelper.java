@@ -1,7 +1,7 @@
 package com.G19.hospital.util.Security.jwt;
 
-import com.G19.hospital.model.Role;
 import com.G19.hospital.exceptions.security.CustomSecurityException;
+import com.G19.hospital.model.Role;
 import com.G19.hospital.util.Constants.ApiMessages;
 import com.G19.hospital.util.Security.AccessToken;
 import com.G19.hospital.util.Security.SecretKey;

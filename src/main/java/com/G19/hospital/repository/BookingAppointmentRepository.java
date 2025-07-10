@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.G19.hospital.model.BookingAppointment;
-import com.G19.hospital.model.User;
 import com.G19.hospital.model.DoctorSchedule;
+import com.G19.hospital.model.User;
 
 import java.time.LocalDate;
 import java.util.List;

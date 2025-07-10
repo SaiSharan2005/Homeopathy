@@ -1,14 +1,12 @@
-// src/main/java/com/G19/hospital/DTO/prescription/InstructionDto.java
 package com.G19.hospital.DTO.prescription;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.Data;
 import java.time.LocalDateTime;
 
-@Getter @Setter @AllArgsConstructor
+@Data
+@AllArgsConstructor
 public class InstructionDto {
-    private LocalDateTime dateIssued;
-    private String generalInstructions;
+    private LocalDateTime rxDate;
+    private String notes;
 }

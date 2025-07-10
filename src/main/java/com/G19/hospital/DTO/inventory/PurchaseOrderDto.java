@@ -1,24 +1,21 @@
+
+
+// src/main/java/com/G19/hospital/DTO/inventory/PurchaseOrderDto.java
 package com.G19.hospital.DTO.inventory;
 
-import lombok.*;
+import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.G19.hospital.model.inventory.PurchaseOrderStatus;
+import com.G19.hospital.model.inventory.PurchaseAndReceipt.PurchaseOrderStatus;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class PurchaseOrderDto {
-    // Optional business identifier; if your system auto-generates it, you may omit it in the create request.
-    private Long orderId;
-    private LocalDateTime orderDate;
-    private PurchaseOrderStatus status;
-    private BigDecimal totalAmount;
-    // Supplier reference (assumed to be an existing supplier's id)
-    private Long supplierId;
-    // Optionally, a list of order item DTOs
-    private List<PurchaseOrderItemDto> purchaseOrderItems;
+    private Long orderId;                       // null on create
+    private Long supplierId;                    // required
+    private LocalDateTime orderDate;            // optional (defaults to now)
+    private PurchaseOrderStatus status;         // optional (defaults to CREATED)
+    private BigDecimal totalAmount;             // computed by server
+    private List<PurchaseOrderItemDto> items;   // at least one
 }
