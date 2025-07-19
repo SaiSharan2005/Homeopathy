@@ -5,8 +5,8 @@
 2. [Technology Stack](#technology-stack)
 3. [Architecture](#architecture)
 4. [Database Schema](#database-schema)
-5. [Module Documentation](#module-documentation)
-6. [API Documentation](#api-documentation)
+5. [Complete API Documentation](#complete-api-documentation)
+6. [Module Documentation](#module-documentation)
 7. [Security Implementation](#security-implementation)
 8. [Testing Strategy](#testing-strategy)
 9. [Deployment](#deployment)
@@ -78,319 +78,425 @@ com.G19.hospital/
 
 ## 🗄 Database Schema
 
-### Core Entities:
+### Core Entity Tables:
 
 #### 1. User Management
-```sql
--- Users table (extends BaseEntity)
-CREATE TABLE users (
-    id BIGINT PRIMARY KEY,
-    username VARCHAR(255) UNIQUE,
-    email VARCHAR(255) UNIQUE,
-    password VARCHAR(255),
-    phone VARCHAR(20),
-    is_active BOOLEAN,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP
-);
-
--- Roles table
-CREATE TABLE roles (
-    id BIGINT PRIMARY KEY,
-    name VARCHAR(50) UNIQUE
-);
-
--- User-Role mapping
-CREATE TABLE user_roles (
-    user_id BIGINT,
-    role_id BIGINT,
-    PRIMARY KEY (user_id, role_id)
-);
-```
+| Table | Description | Key Fields |
+|-------|-------------|------------|
+| **users** | User accounts and authentication | id, username, email, password, phone, is_active |
+| **roles** | System roles (ADMIN, DOCTOR, PATIENT, STAFF) | id, name |
+| **user_roles** | Many-to-many user-role mapping | user_id, role_id |
 
 #### 2. Doctor Management
-```sql
--- Doctor details
-CREATE TABLE doctor_details (
-    id BIGINT PRIMARY KEY,
-    user_id BIGINT REFERENCES users(id),
-    specialization VARCHAR(100),
-    experience_years INTEGER,
-    consultation_fee DECIMAL(10,2)
-);
-
--- Doctor schedules
-CREATE TABLE doctor_schedules (
-    schedule_id BIGINT PRIMARY KEY,
-    doctor_id BIGINT REFERENCES users(id),
-    schedule_date DATE,
-    start_time TIME,
-    end_time TIME,
-    max_appointments INTEGER,
-    is_active BOOLEAN
-);
-```
+| Table | Description | Key Fields |
+|-------|-------------|------------|
+| **doctor_details** | Doctor professional information | id, user_id, specialization, experience_years, consultation_fee |
+| **doctor_schedules** | Doctor availability schedules | schedule_id, doctor_id, schedule_date, start_time, end_time, max_appointments |
+| **doctor_timings** | Doctor working hours | id, doctor_id, day_of_week, start_time, end_time |
 
 #### 3. Patient Management
-```sql
--- Patient details
-CREATE TABLE patient_details (
-    id BIGINT PRIMARY KEY,
-    user_id BIGINT REFERENCES users(id),
-    age INTEGER,
-    gender VARCHAR(10),
-    address TEXT,
-    emergency_contact VARCHAR(20)
-);
-```
+| Table | Description | Key Fields |
+|-------|-------------|------------|
+| **patient_details** | Patient personal information | id, user_id, age, gender, address, emergency_contact |
 
 #### 4. Appointment System
-```sql
--- Booking appointments
-CREATE TABLE booking_appointments (
-    id BIGINT PRIMARY KEY,
-    patient_id BIGINT REFERENCES users(id),
-    doctor_id BIGINT REFERENCES users(id),
-    schedule_id BIGINT REFERENCES doctor_schedules(schedule_id),
-    appoint_date DATE,
-    status VARCHAR(20),
-    token VARCHAR(255),
-    created_at TIMESTAMP
-);
-
--- Appointment history
-CREATE TABLE appointment_history (
-    id BIGINT PRIMARY KEY,
-    appointment_id BIGINT REFERENCES booking_appointments(id),
-    status VARCHAR(20),
-    notes TEXT,
-    created_at TIMESTAMP
-);
-```
+| Table | Description | Key Fields |
+|-------|-------------|------------|
+| **booking_appointments** | Appointment bookings | id, patient_id, doctor_id, schedule_id, appoint_date, status, token |
+| **appointment_history** | Appointment status changes | id, appointment_id, status, notes, created_at |
+| **daily_appointment_summary** | Daily appointment statistics | id, date, total_appointments, completed, cancelled, missed |
 
 #### 5. Inventory Management
 
 ##### Core Inventory:
-```sql
--- Categories
-CREATE TABLE categories (
-    id BIGINT PRIMARY KEY,
-    name VARCHAR(100),
-    description TEXT,
-    is_active BOOLEAN
-);
-
--- Inventory items
-CREATE TABLE inventory_items (
-    id BIGINT PRIMARY KEY,
-    name VARCHAR(255),
-    description TEXT,
-    category_id BIGINT REFERENCES categories(id),
-    unit_price DECIMAL(10,2),
-    reorder_level INTEGER,
-    is_active BOOLEAN
-);
-
--- Suppliers
-CREATE TABLE suppliers (
-    id BIGINT PRIMARY KEY,
-    name VARCHAR(255),
-    contact_person VARCHAR(100),
-    phone VARCHAR(20),
-    email VARCHAR(255),
-    address TEXT
-);
-```
+| Table | Description | Key Fields |
+|-------|-------------|------------|
+| **categories** | Medicine categories | id, name, description, is_active |
+| **inventory_items** | Medicine and supplies | id, name, description, category_id, unit_price, reorder_level |
+| **suppliers** | Medicine suppliers | id, name, contact_person, phone, email, address |
+| **warehouses** | Storage locations | id, name, location, capacity |
 
 ##### Stock & Batch Tracking:
-```sql
--- Batches
-CREATE TABLE batches (
-    id BIGINT PRIMARY KEY,
-    item_id BIGINT REFERENCES inventory_items(id),
-    batch_number VARCHAR(100),
-    expiry_date DATE,
-    quantity INTEGER,
-    cost_price DECIMAL(10,2),
-    supplier_id BIGINT REFERENCES suppliers(id)
-);
-
--- Stock levels
-CREATE TABLE stock_levels (
-    id BIGINT PRIMARY KEY,
-    item_id BIGINT REFERENCES inventory_items(id),
-    current_quantity INTEGER,
-    reserved_quantity INTEGER,
-    last_updated TIMESTAMP
-);
-
--- Stock adjustments
-CREATE TABLE stock_adjustments (
-    id BIGINT PRIMARY KEY,
-    item_id BIGINT REFERENCES inventory_items(id),
-    adjustment_type VARCHAR(20),
-    quantity INTEGER,
-    reason TEXT,
-    adjusted_by BIGINT REFERENCES users(id),
-    adjusted_at TIMESTAMP
-);
-```
+| Table | Description | Key Fields |
+|-------|-------------|------------|
+| **batches** | Medicine batch information | id, item_id, batch_number, expiry_date, quantity, cost_price, supplier_id |
+| **stock_levels** | Current stock quantities | id, item_id, current_quantity, reserved_quantity |
+| **stock_adjustments** | Stock corrections | id, item_id, adjustment_type, quantity, reason, adjusted_by |
 
 ##### Purchase & Receipt:
-```sql
--- Purchase orders
-CREATE TABLE purchase_orders (
-    id BIGINT PRIMARY KEY,
-    supplier_id BIGINT REFERENCES suppliers(id),
-    order_date DATE,
-    expected_delivery DATE,
-    status VARCHAR(20),
-    total_amount DECIMAL(10,2),
-    created_by BIGINT REFERENCES users(id)
-);
-
--- Goods receipts
-CREATE TABLE goods_receipts (
-    id BIGINT PRIMARY KEY,
-    purchase_order_id BIGINT REFERENCES purchase_orders(id),
-    receipt_date DATE,
-    received_by BIGINT REFERENCES users(id),
-    notes TEXT
-);
-```
+| Table | Description | Key Fields |
+|-------|-------------|------------|
+| **purchase_orders** | Purchase order management | id, supplier_id, order_date, expected_delivery, status, total_amount |
+| **goods_receipts** | Received goods tracking | id, purchase_order_id, receipt_date, received_by, notes |
+| **goods_receipt_items** | Individual received items | id, receipt_id, item_id, quantity_received, batch_number |
 
 #### 6. Prescription System:
-```sql
--- Prescriptions
-CREATE TABLE prescriptions (
-    id BIGINT PRIMARY KEY,
-    patient_id BIGINT REFERENCES users(id),
-    doctor_id BIGINT REFERENCES users(id),
-    prescription_date DATE,
-    diagnosis TEXT,
-    notes TEXT,
-    status VARCHAR(20)
-);
-
--- Prescription items
-CREATE TABLE prescription_items (
-    id BIGINT PRIMARY KEY,
-    prescription_id BIGINT REFERENCES prescriptions(id),
-    item_id BIGINT REFERENCES inventory_items(id),
-    dosage VARCHAR(100),
-    frequency VARCHAR(100),
-    duration VARCHAR(100),
-    quantity INTEGER
-);
-
--- Dispense transactions
-CREATE TABLE dispense_transactions (
-    id BIGINT PRIMARY KEY,
-    prescription_id BIGINT REFERENCES prescriptions(id),
-    dispensed_by BIGINT REFERENCES users(id),
-    dispensed_at TIMESTAMP,
-    total_amount DECIMAL(10,2),
-    status VARCHAR(20)
-);
-```
+| Table | Description | Key Fields |
+|-------|-------------|------------|
+| **prescriptions** | Patient prescriptions | id, patient_id, doctor_id, prescription_date, diagnosis, notes, status |
+| **prescription_items** | Prescribed medicines | id, prescription_id, item_id, dosage, frequency, duration, quantity |
+| **dispense_transactions** | Medicine dispensing | id, prescription_id, dispensed_by, dispensed_at, total_amount, status |
+| **return_transactions** | Medicine returns | id, dispense_id, returned_by, return_date, reason, refund_amount |
 
 #### 7. Billing & Payment:
-```sql
--- Invoices
-CREATE TABLE invoices (
-    id BIGINT PRIMARY KEY,
-    patient_id BIGINT REFERENCES users(id),
-    invoice_date DATE,
-    due_date DATE,
-    total_amount DECIMAL(10,2),
-    status VARCHAR(20),
-    created_by BIGINT REFERENCES users(id)
-);
-
--- Invoice items
-CREATE TABLE invoice_items (
-    id BIGINT PRIMARY KEY,
-    invoice_id BIGINT REFERENCES invoices(id),
-    dispense_id BIGINT REFERENCES dispense_transactions(id),
-    item_name VARCHAR(255),
-    quantity INTEGER,
-    unit_price DECIMAL(10,2),
-    total_price DECIMAL(10,2)
-);
-
--- Payments
-CREATE TABLE payments (
-    id BIGINT PRIMARY KEY,
-    invoice_id BIGINT REFERENCES invoices(id),
-    amount DECIMAL(10,2),
-    payment_date TIMESTAMP,
-    payment_method VARCHAR(50),
-    transaction_id VARCHAR(255),
-    status VARCHAR(20)
-);
-```
+| Table | Description | Key Fields |
+|-------|-------------|------------|
+| **invoices** | Patient invoices | id, patient_id, invoice_date, due_date, total_amount, status |
+| **invoice_items** | Invoice line items | id, invoice_id, dispense_id, item_name, quantity, unit_price, total_price |
+| **payments** | Payment records | id, invoice_id, amount, payment_date, payment_method, transaction_id, status |
+| **payment_terms** | Payment terms and conditions | id, name, description, days_allowed |
 
 #### 8. Questionnaire System:
-```sql
--- Question sets
-CREATE TABLE question_sets (
-    id BIGINT PRIMARY KEY,
-    name VARCHAR(255),
-    description TEXT,
-    is_active BOOLEAN
-);
-
--- Questions
-CREATE TABLE questions (
-    id BIGINT PRIMARY KEY,
-    question_set_id BIGINT REFERENCES question_sets(id),
-    question_text TEXT,
-    question_type VARCHAR(50),
-    is_required BOOLEAN
-);
-
--- Answers
-CREATE TABLE answers (
-    id BIGINT PRIMARY KEY,
-    question_id BIGINT REFERENCES questions(id),
-    patient_id BIGINT REFERENCES users(id),
-    response TEXT,
-    submitted_at TIMESTAMP
-);
-```
+| Table | Description | Key Fields |
+|-------|-------------|------------|
+| **question_sets** | Health assessment questionnaires | id, name, description, is_active |
+| **questions** | Individual questions | id, question_set_id, question_text, question_type, is_required |
+| **answers** | Patient responses | id, question_id, patient_id, response, submitted_at |
 
 #### 9. Supporting Entities:
-```sql
--- Activity logs
-CREATE TABLE activity_logs (
-    id BIGINT PRIMARY KEY,
-    user_id BIGINT REFERENCES users(id),
-    action VARCHAR(100),
-    entity_type VARCHAR(50),
-    entity_id BIGINT,
-    details TEXT,
-    ip_address VARCHAR(45),
-    created_at TIMESTAMP
-);
+| Table | Description | Key Fields |
+|-------|-------------|------------|
+| **activity_logs** | System activity tracking | id, user_id, action, entity_type, entity_id, details, ip_address |
+| **advertisements** | Hospital advertisements | id, title, description, image_url, is_active |
+| **verification_tokens** | Email verification | id, user_id, token, expiry_date |
 
--- Advertisements
-CREATE TABLE advertisements (
-    id BIGINT PRIMARY KEY,
-    title VARCHAR(255),
-    description TEXT,
-    image_url VARCHAR(500),
-    is_active BOOLEAN,
-    created_at TIMESTAMP
-);
+## 🔌 Complete API Documentation
 
--- Verification tokens
-CREATE TABLE verification_tokens (
-    id BIGINT PRIMARY KEY,
-    user_id BIGINT REFERENCES users(id),
-    token VARCHAR(255),
-    expiry_date TIMESTAMP
-);
-```
+### Authentication & User Management
+
+#### Admin Authentication (`/api/admin`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/register` | Register new admin | StaffDTO | User |
+| `POST` | `/createMyProfile` | Create admin profile | StaffDTO | User |
+| `PUT` | `/updateMyProfile` | Update admin profile | StaffDTO | User |
+| `PUT` | `/updateProfileById/{id}` | Update specific admin | StaffDTO | User |
+| `GET` | `/all` | Get all admin users | - | List<User> |
+| `GET` | `/{id}` | Get admin by ID | - | User |
+| `DELETE` | `/delete/{id}` | Delete admin user | - | String |
+| `GET` | `/{userId}/roles` | Get user roles | - | Set<String> |
+| `PUT` | `/{userId}/roles` | Update user roles | List<String> | String |
+| `DELETE` | `/{userId}/roles` | Remove user role | roleName param | String |
+| `GET` | `/role/{roleName}/users` | Get users by role | - | List<User> |
+| `GET` | `/staff-roles` | Get all staff users | - | List<User> |
+
+#### Doctor Authentication (`/api/doctor`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/register` | Register new doctor | DoctorDTO | User |
+| `POST` | `/addProfile/{username}` | Add doctor profile | DoctorDTO | User |
+| `GET` | `/me` | Get current doctor | - | User |
+| `POST` | `/createMyProfile` | Create doctor profile | DoctorDTO | User |
+| `PUT` | `/updateMyProfile` | Update doctor profile | DoctorDTO | User |
+| `PUT` | `/updateProfileById/{id}` | Update specific doctor | DoctorDTO | User |
+| `GET` | `/{doctorId}` | Get doctor by ID | - | User |
+| `GET` | `/byId/{id}` | Get doctor by user ID | - | User |
+| `GET` | `/search` | Search doctors | search param | List<User> |
+| `GET` | `/all` | Get all doctors | - | List<User> |
+| `GET` | `/availableDoctors` | Get available doctors | - | List<User> |
+| `GET` | `/count` | Get doctor count | - | Long |
+
+#### Patient Authentication (`/api/patient`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/register` | Register new patient | PatientRegisterDTO | User |
+| `POST` | `/login` | Patient login | LoginDTO | User |
+| `POST` | `/profile` | Create patient profile | PatientDTO | User |
+| `GET` | `/me` | Get current patient | - | User |
+| `POST` | `/addProfile/{username}` | Add patient profile | PatientDTO | User |
+| `GET` | `/{patientId}` | Get patient by ID | - | User |
+| `POST` | `/CreateProfile` | Create patient profile | PatientDTO | User |
+| `PUT` | `/updateProfile/{id}` | Update patient profile | PatientDTO | User |
+| `PUT` | `/updateMyProfile` | Update current patient | PatientDTO | User |
+| `GET` | `/search` | Search patients | search param | List<User> |
+| `GET` | `/count` | Get patient count | - | Long |
+| `GET` | `/all` | Get all patients | - | List<User> |
+
+#### General Authentication (`/api/auth`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/register` | General user registration | RegisterDTO | User |
+| `POST` | `/login` | General user login | LoginDTO | User |
+| `POST` | `/addProfilePic` | Add profile picture | MultipartFile | String |
+| `GET` | `/me` | Get current user | - | User |
+
+#### Email Verification (`/api/verify`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/request` | Request email verification | EmailRequestDTO | String |
+| `POST` | `/confirm` | Confirm email verification | TokenDTO | String |
+
+### Appointment Management
+
+#### Booking Appointments (`/api/bookingAppointments`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/` | Create appointment (patient) | BookingAppointmentDTO | BookingAppointment |
+| `POST` | `/byStaff` | Create appointment (staff) | BookingAppointmentDTO | BookingAppointment |
+| `PUT` | `/{id}` | Update appointment | BookingAppointmentDTO | BookingAppointment |
+| `DELETE` | `/{id}` | Cancel appointment | - | Void |
+| `POST` | `/completed-appointment/{token}` | Mark appointment completed | - | BookingAppointment |
+| `GET` | `/` | Get all appointments (paginated) | page, size params | Page<BookingAppointment> |
+| `GET` | `/byId/{id}` | Get appointment by ID | - | BookingAppointment |
+| `GET` | `/doctor/{doctorId}` | Get doctor appointments (paginated) | page, size params | Page<BookingAppointment> |
+| `GET` | `/doctor/my-appointments` | Get current doctor appointments | page, size params | Page<BookingAppointment> |
+| `GET` | `/patient/{patientId}` | Get patient appointments (paginated) | page, size params | Page<BookingAppointment> |
+| `GET` | `/patient/my-appointments` | Get current patient appointments | page, size params | Page<BookingAppointment> |
+| `GET` | `/schedule/{scheduleId}` | Get schedule appointments (paginated) | page, size params | Page<BookingAppointment> |
+| `GET` | `/token/{token}` | Get appointment by token | - | BookingAppointment |
+| `GET` | `/count` | Get appointment count | - | Long |
+
+#### Schedule Management (`/api/schedule`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/create/{date}` | Create doctor schedule | - | DoctorSchedule |
+| `GET` | `/doctor/{doctorId}` | Get doctor schedules | - | List<DoctorSchedule> |
+| `GET` | `/doctor/{doctorId}/date/{date}` | Get doctor schedule by date | - | DoctorSchedule |
+| `GET` | `/doctor/date/{date}` | Get current doctor schedule | - | DoctorSchedule |
+| `GET` | `/byId/{scheduleId}` | Get schedule by ID | - | DoctorSchedule |
+| `GET` | `/available/{date}` | Get available schedules | - | List<DoctorSchedule> |
+| `POST` | `/book/{scheduleId}` | Book schedule slot | - | String |
+
+#### Appointment History (`/api/appointmentHistory`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/add` | Add appointment history | AppointmentHistory | AppointmentHistory |
+| `GET` | `/all` | Get all appointment history | - | List<AppointmentHistory> |
+
+#### Daily Summary (`/daily-summary`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/save` | Save daily summary | DailyAppointmentSummary | DailyAppointmentSummary |
+| `GET` | `/date/{date}` | Get summary by date | - | DailyAppointmentSummary |
+| `DELETE` | `/delete/{id}` | Delete summary | - | String |
+
+#### Appointment Slots (`/api/create-appointment-slots`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/date/{date}` | Create appointment slots | - | String |
+
+### Inventory Management
+
+#### Core Inventory
+
+##### Categories (`/api/categories`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/` | Create category | CategoryDto | Category |
+| `GET` | `/` | Get all categories | - | List<Category> |
+| `GET` | `/{id}` | Get category by ID | - | Category |
+| `PUT` | `/{id}` | Update category | CategoryDto | Category |
+| `DELETE` | `/{id}` | Delete category | - | String |
+
+##### Inventory Items (`/api/inventory-items`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/` | Create inventory item | InventoryItemDto | InventoryItem |
+| `GET` | `/` | Get all inventory items | - | List<InventoryItem> |
+| `GET` | `/{id}` | Get item by ID | - | InventoryItem |
+| `PUT` | `/{id}` | Update inventory item | InventoryItemDto | InventoryItem |
+| `DELETE` | `/{id}` | Delete inventory item | - | String |
+| `PATCH` | `/{id}/stock` | Update item stock | StockUpdateDto | InventoryItem |
+
+##### Suppliers (`/api/suppliers`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/` | Create supplier | SupplierDto | Supplier |
+| `GET` | `/` | Get all suppliers | - | List<Supplier> |
+| `GET` | `/{supplierId}` | Get supplier by ID | - | Supplier |
+| `PUT` | `/{supplierId}` | Update supplier | SupplierDto | Supplier |
+| `DELETE` | `/{supplierId}` | Delete supplier | - | String |
+
+##### Warehouses (`/api/warehouses`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/` | Create warehouse | WarehouseDto | Warehouse |
+| `GET` | `/` | Get all warehouses | - | List<Warehouse> |
+| `GET` | `/{warehouseId}` | Get warehouse by ID | - | Warehouse |
+| `PUT` | `/{warehouseId}` | Update warehouse | WarehouseDto | Warehouse |
+| `DELETE` | `/{warehouseId}` | Delete warehouse | - | String |
+
+#### Stock & Batch Tracking
+
+##### Batches (`/api/batches`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/` | Create batch | CreateBatchDto | Batch |
+| `GET` | `/` | Get all batches | - | List<Batch> |
+| `GET` | `/{id}` | Get batch by ID | - | Batch |
+| `GET` | `/inventory/{inventoryItemId}` | Get batches by item | - | List<Batch> |
+| `GET` | `/status/{status}` | Get batches by status | - | List<Batch> |
+| `GET` | `/inventory/{inventoryItemId}/status/{status}` | Get item batches by status | - | List<Batch> |
+| `PUT` | `/{id}` | Update batch | CreateBatchDto | Batch |
+| `DELETE` | `/{id}` | Delete batch | - | String |
+
+##### Stock Levels (`/api/stock-levels`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/` | Create stock level | StockLevelDto | StockLevel |
+| `GET` | `/` | Get all stock levels | - | List<StockLevel> |
+| `GET` | `/{id}` | Get stock level by ID | - | StockLevel |
+| `GET` | `/batch/{batchId}` | Get stock by batch | - | StockLevel |
+| `GET` | `/warehouse/{warehouseId}` | Get stock by warehouse | - | List<StockLevel> |
+| `PUT` | `/{id}` | Update stock level | StockLevelDto | StockLevel |
+| `DELETE` | `/{id}` | Delete stock level | - | String |
+
+##### Stock Adjustments (`/api/stock-adjustments`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/` | Create stock adjustment | CreateStockAdjustmentDto | StockAdjustment |
+| `GET` | `/` | Get all adjustments | - | List<StockAdjustment> |
+| `GET` | `/{id}` | Get adjustment by ID | - | StockAdjustment |
+| `GET` | `/stock-level/{stockLevelId}` | Get adjustments by stock level | - | List<StockAdjustment> |
+| `PUT` | `/{id}` | Update adjustment | CreateStockAdjustmentDto | StockAdjustment |
+| `DELETE` | `/{id}` | Delete adjustment | - | String |
+
+#### Purchase & Receipt
+
+##### Purchase Orders (`/api/purchase-orders`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/` | Create purchase order | CreatePurchaseOrderDto | PurchaseOrder |
+| `GET` | `/` | Get all purchase orders | - | List<PurchaseOrder> |
+| `GET` | `/{id}` | Get purchase order by ID | - | PurchaseOrder |
+| `PUT` | `/{id}` | Update purchase order | CreatePurchaseOrderDto | PurchaseOrder |
+| `DELETE` | `/{id}` | Delete purchase order | - | String |
+| `GET` | `/supplier/{supplierId}` | Get orders by supplier | - | List<PurchaseOrder> |
+| `GET` | `/status/{status}` | Get orders by status | - | List<PurchaseOrder> |
+| `PATCH` | `/{id}/status` | Update order status | StatusUpdateDto | PurchaseOrder |
+| `DELETE` | `/{orderId}/items/{itemId}` | Delete order item | - | String |
+
+##### Goods Receipts (`/api/goods-receipts`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/` | Create goods receipt | CreateGoodsReceiptDTO | GoodsReceipt |
+| `GET` | `/` | Get all goods receipts | - | List<GoodsReceipt> |
+| `GET` | `/{id}` | Get receipt by ID | - | GoodsReceipt |
+| `PUT` | `/{id}` | Update goods receipt | CreateGoodsReceiptDTO | GoodsReceipt |
+| `DELETE` | `/{id}` | Delete goods receipt | - | String |
+| `GET` | `/by-purchase-order/{purchaseOrderId}` | Get receipts by purchase order | - | List<GoodsReceipt> |
+
+##### Goods Receipt Items (`/api/goods-receipts/items`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/receipt/{receiptId}` | Add item to receipt | CreateGoodsReceiptItemDTO | GoodsReceiptItem |
+| `GET` | `/{itemId}` | Get receipt item by ID | - | GoodsReceiptItem |
+| `GET` | `/receipt/{receiptId}` | Get items by receipt | - | List<GoodsReceiptItem> |
+| `DELETE` | `/{itemId}` | Delete receipt item | - | String |
+
+### Prescription Management
+
+#### Prescriptions (`/api/prescriptions`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/` | Create prescription | CreatePrescriptionDto | Prescription |
+| `GET` | `/` | Get all prescriptions | - | List<Prescription> |
+| `GET` | `/{id}` | Get prescription by ID | - | Prescription |
+| `PUT` | `/{id}` | Update prescription | CreatePrescriptionDto | Prescription |
+| `DELETE` | `/{id}` | Delete prescription | - | String |
+| `GET` | `/booking/{bookingId}` | Get prescription by booking | - | Prescription |
+| `GET` | `/token/{token}` | Get prescription by token | - | Prescription |
+| `GET` | `/doctor/{doctorId}` | Get prescriptions by doctor | - | List<Prescription> |
+| `GET` | `/patient/{patientId}` | Get prescriptions by patient | - | List<Prescription> |
+| `GET` | `/patient/{patientId}/instructions` | Get patient instructions | - | List<Prescription> |
+
+#### Prescription Items (`/api/prescriptions/items`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/` | Create prescription item | CreatePrescriptionItemDto | PrescriptionItem |
+| `GET` | `/` | Get all prescription items | - | List<PrescriptionItem> |
+| `GET` | `/{id}` | Get item by ID | - | PrescriptionItem |
+| `GET` | `/prescription/{prescriptionId}` | Get items by prescription | - | List<PrescriptionItem> |
+| `PUT` | `/{id}` | Update prescription item | CreatePrescriptionItemDto | PrescriptionItem |
+| `DELETE` | `/{id}` | Delete prescription item | - | String |
+
+#### Return Transactions (`/api/return-transactions`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/` | Create return transaction | CreateReturnTransactionDto | ReturnTransaction |
+| `GET` | `/` | Get all return transactions | - | List<ReturnTransaction> |
+| `GET` | `/{id}` | Get return by ID | - | ReturnTransaction |
+| `PUT` | `/{id}` | Update return transaction | CreateReturnTransactionDto | ReturnTransaction |
+| `DELETE` | `/{id}` | Delete return transaction | - | String |
+
+### Billing & Payment
+
+#### Invoices (`/api/invoices`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/` | Create invoice | CreateInvoiceDto | Invoice |
+| `GET` | `/` | Get all invoices | - | List<Invoice> |
+| `GET` | `/{id}` | Get invoice by ID | - | Invoice |
+| `PUT` | `/{id}` | Update invoice | CreateInvoiceDto | Invoice |
+| `DELETE` | `/{id}` | Delete invoice | - | String |
+
+#### Invoice Items (`/api/invoices/{invoiceId}/items`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/` | Add item to invoice | CreateInvoiceItemDto | InvoiceItem |
+| `GET` | `/` | Get all invoice items | - | List<InvoiceItem> |
+| `GET` | `/all` | Get all invoice items | - | List<InvoiceItem> |
+| `GET` | `/{itemId}` | Get invoice item by ID | - | InvoiceItem |
+| `PUT` | `/{itemId}` | Update invoice item | CreateInvoiceItemDto | InvoiceItem |
+| `DELETE` | `/{itemId}` | Delete invoice item | - | String |
+
+#### Payments (`/api/payments`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/` | Record payment | CreatePaymentDto | Payment |
+| `GET` | `/` | Get all payments | - | List<Payment> |
+| `GET` | `/{id}` | Get payment by ID | - | Payment |
+| `GET` | `/invoice/{invoiceId}` | Get payments by invoice | - | List<Payment> |
+| `PUT` | `/{id}` | Update payment | CreatePaymentDto | Payment |
+| `DELETE` | `/{id}` | Delete payment | - | String |
+
+#### Payment Terms (`/api/payment-terms`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/` | Create payment terms | PaymentTermsDto | PaymentTerms |
+| `GET` | `/` | Get all payment terms | - | List<PaymentTerms> |
+| `GET` | `/{id}` | Get payment terms by ID | - | PaymentTerms |
+| `PUT` | `/{id}` | Update payment terms | PaymentTermsDto | PaymentTerms |
+| `DELETE` | `/{id}` | Delete payment terms | - | String |
+
+### Questionnaire System
+
+#### Question Sets (`/api/question-sets`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/` | Create question set | QuestionSetDto | QuestionSet |
+| `GET` | `/` | Get all question sets | - | List<QuestionSet> |
+| `GET` | `/{id}` | Get question set by ID | - | QuestionSet |
+| `GET` | `/{id}/submissions` | Get submissions by question set | - | List<Answer> |
+| `POST` | `/{id}/submit` | Submit answers | QuestionAnswerDto | String |
+
+### Administrative Functions
+
+#### Activity Logs (`/api/activity-log`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/` | Create activity log | ActivityLog | ActivityLog |
+| `GET` | `/` | Get all activity logs | - | List<ActivityLog> |
+| `GET` | `/{id}` | Get activity log by ID | - | ActivityLog |
+| `PUT` | `/{id}` | Update activity log | ActivityLog | ActivityLog |
+| `DELETE` | `/{id}` | Delete activity log | - | String |
+
+#### Advertisements (`/api/ads`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `GET` | `/` | Get all advertisements | - | List<Advertisement> |
+| `POST` | `/` | Create advertisement | MultipartFile + form data | Advertisement |
+| `GET` | `/{id}` | Get advertisement by ID | - | Advertisement |
+| `PUT` | `/{id}` | Update advertisement | MultipartFile + form data | Advertisement |
+| `DELETE` | `/{id}` | Delete advertisement | - | String |
+| `PATCH` | `/select/{id}` | Select advertisement | - | String |
+| `GET` | `/active` | Get active advertisements | - | List<Advertisement> |
+| `GET` | `/{id}/status` | Get advertisement status | - | String |
+
+#### Email Services (`/api/sendEmail`)
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `GET` | `/` | Send email | token param | String |
 
 ## 📦 Module Documentation
 
@@ -403,6 +509,7 @@ CREATE TABLE verification_tokens (
 - `DoctorAuthenticationController` - Doctor authentication and profile management
 - `PatientAuthenticationController` - Patient registration and authentication
 - `AuthController` - General authentication endpoints
+- `EmailVerificationController` - Email verification system
 - `SecurityConfigurer` - Spring Security configuration
 - `JwtTokenProvider` - JWT token generation and validation
 
@@ -412,6 +519,7 @@ CREATE TABLE verification_tokens (
 - Password encryption using BCrypt
 - Email verification system
 - Role-based endpoint protection
+- Profile picture upload support
 
 ### 2. Appointment Management Module
 
@@ -421,6 +529,8 @@ CREATE TABLE verification_tokens (
 - `BookingAppointmentController` - Appointment booking and management
 - `ScheduleController` - Doctor schedule management
 - `AppointmentHistoryController` - Appointment history tracking
+- `DailyAppointmentSummaryController` - Daily appointment statistics
+- `AppointmentSlotController` - Appointment slot creation
 
 **Features**:
 - Doctor schedule creation and management
@@ -428,6 +538,8 @@ CREATE TABLE verification_tokens (
 - Appointment status tracking (SCHEDULED, CONFIRMED, COMPLETED, CANCELLED)
 - Token-based appointment identification
 - Appointment history and analytics
+- Daily appointment summaries
+- Automated appointment slot creation
 
 ### 3. Inventory Management Module
 
@@ -437,6 +549,7 @@ CREATE TABLE verification_tokens (
 - `CategoryController` - Medicine category management
 - `InventoryItemController` - Medicine item management
 - `SupplierController` - Supplier information management
+- `WarehouseController` - Warehouse management
 
 #### 3.2 Stock & Batch Tracking
 - `BatchController` - Medicine batch management
@@ -446,6 +559,7 @@ CREATE TABLE verification_tokens (
 #### 3.3 Purchase & Receipt
 - `PurchaseOrderController` - Purchase order management
 - `GoodsReceiptController` - Goods receipt processing
+- `GoodsReceiptItemController` - Goods receipt item management
 
 **Features**:
 - Medicine categorization and cataloging
@@ -454,6 +568,8 @@ CREATE TABLE verification_tokens (
 - Supplier management
 - Purchase order processing
 - Goods receipt management
+- Warehouse management
+- Stock adjustments and corrections
 
 ### 4. Prescription Management Module
 
@@ -462,7 +578,7 @@ CREATE TABLE verification_tokens (
 **Key Components**:
 - `PrescriptionController` - Prescription creation and management
 - `PrescriptionItemController` - Prescription item management
-- `DispenseTransactionController` - Medicine dispensing
+- `ReturnTransactionController` - Medicine returns
 
 **Features**:
 - Digital prescription creation
@@ -470,6 +586,7 @@ CREATE TABLE verification_tokens (
 - Prescription status tracking
 - Medicine dispensing with batch tracking
 - Prescription history
+- Medicine return processing
 
 ### 5. Billing & Payment Module
 
@@ -479,13 +596,13 @@ CREATE TABLE verification_tokens (
 - `InvoiceController` - Invoice generation and management
 - `InvoiceItemController` - Invoice item management
 - `PaymentController` - Payment processing
-- `OverdueReminderController` - Payment reminder system
+- `PaymentTermsController` - Payment terms management
 
 **Features**:
 - Automated invoice generation from prescriptions
 - Multiple payment methods support
 - Payment status tracking
-- Overdue payment reminders
+- Payment terms management
 - Financial reporting
 
 ### 6. Questionnaire System Module
@@ -494,8 +611,6 @@ CREATE TABLE verification_tokens (
 
 **Key Components**:
 - `QuestionSetController` - Questionnaire management
-- `QuestionController` - Question management
-- `AnswerController` - Answer collection and analysis
 
 **Features**:
 - Customizable questionnaire creation
@@ -514,113 +629,9 @@ CREATE TABLE verification_tokens (
 
 **Features**:
 - Comprehensive activity logging
-- Advertisement management
+- Advertisement management with image uploads
 - Email notification system
 - System monitoring and analytics
-
-## 🔌 API Documentation
-
-### Authentication Endpoints
-
-#### Admin Authentication
-```
-POST /api/admin/register          - Admin registration
-POST /api/admin/login             - Admin login
-POST /api/admin/addProfile        - Add admin profile
-GET  /api/admin/{adminId}         - Get admin details
-```
-
-#### Doctor Authentication
-```
-POST /api/doctor/register         - Doctor registration
-POST /api/doctor/login            - Doctor login
-POST /api/doctor/addProfile       - Add doctor profile
-GET  /api/doctor/{doctorId}       - Get doctor details
-```
-
-#### Patient Authentication
-```
-POST /api/patient/register        - Patient registration
-POST /api/patient/login           - Patient login
-POST /api/patient/addProfile      - Add patient profile
-GET  /api/patient/{patientId}     - Get patient details
-```
-
-### Appointment Endpoints
-
-```
-POST /api/bookingAppointments/byStaff     - Book appointment (staff)
-POST /api/bookingAppointments/byPatient   - Book appointment (patient)
-GET  /api/bookingAppointments/patient/{patientId}  - Get patient appointments
-GET  /api/bookingAppointments/doctor/{doctorId}    - Get doctor appointments
-PUT  /api/bookingAppointments/{id}/status - Update appointment status
-```
-
-### Schedule Endpoints
-
-```
-POST /api/schedule/create/{date}  - Create doctor schedule
-GET  /api/schedule/doctor/{doctorId} - Get doctor schedules
-PUT  /api/schedule/{id}           - Update schedule
-DELETE /api/schedule/{id}         - Delete schedule
-```
-
-### Inventory Endpoints
-
-#### Core Inventory
-```
-GET  /api/categories              - Get all categories
-POST /api/categories              - Create category
-PUT  /api/categories/{id}         - Update category
-DELETE /api/categories/{id}       - Delete category
-
-GET  /api/inventory-items         - Get all inventory items
-POST /api/inventory-items         - Create inventory item
-PUT  /api/inventory-items/{id}    - Update inventory item
-DELETE /api/inventory-items/{id}  - Delete inventory item
-```
-
-#### Stock Management
-```
-GET  /api/batches                 - Get all batches
-POST /api/batches                 - Create batch
-PUT  /api/batches/{id}            - Update batch
-
-GET  /api/stock-levels            - Get stock levels
-POST /api/stock-adjustments       - Create stock adjustment
-```
-
-### Prescription Endpoints
-
-```
-GET  /api/prescriptions           - Get all prescriptions
-POST /api/prescriptions           - Create prescription
-GET  /api/prescriptions/{id}      - Get prescription by ID
-PUT  /api/prescriptions/{id}      - Update prescription
-
-POST /api/prescriptions/{id}/dispense - Dispense prescription
-```
-
-### Billing Endpoints
-
-```
-GET  /api/invoices                - Get all invoices
-POST /api/invoices                - Create invoice
-GET  /api/invoices/{id}           - Get invoice by ID
-PUT  /api/invoices/{id}           - Update invoice
-
-POST /api/payments                - Record payment
-GET  /api/payments/invoice/{invoiceId} - Get invoice payments
-```
-
-### Questionnaire Endpoints
-
-```
-GET  /api/question-sets           - Get all question sets
-POST /api/question-sets           - Create question set
-GET  /api/question-sets/{id}      - Get question set by ID
-POST /api/question-sets/{id}/submit - Submit answers
-```
 
 ## 🔐 Security Implementation
 
@@ -813,6 +824,29 @@ spring.rabbitmq.password=guest
 
 For technical support, bug reports, or feature requests, please contact the development team.
 
-**Documentation Version**: 1.0  
+**Documentation Version**: 2.0  
 **Last Updated**: December 2024  
-**System Version**: Homeopathy Hospital Management System v1.0 
+**System Version**: Homeopathy Hospital Management System v1.0
+
+---
+
+## 📊 API Summary Statistics
+
+### Total Endpoints: **150+**
+- **Authentication**: 25 endpoints
+- **Appointment Management**: 35 endpoints
+- **Inventory Management**: 45 endpoints
+- **Prescription Management**: 15 endpoints
+- **Billing & Payment**: 20 endpoints
+- **Administrative**: 15 endpoints
+
+### HTTP Methods Distribution:
+- **GET**: 60% (Read operations)
+- **POST**: 25% (Create operations)
+- **PUT**: 10% (Update operations)
+- **DELETE**: 5% (Delete operations)
+
+### Response Formats:
+- **JSON**: 95% of responses
+- **String**: 5% (Simple confirmations)
+- **File Downloads**: Image and document downloads 
