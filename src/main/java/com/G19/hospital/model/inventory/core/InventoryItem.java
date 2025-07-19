@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 public class InventoryItem extends AuditableBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by_id", updatable = false)
+    @JoinColumn(name = "created_by_id", updatable = false, nullable = true)
     private User createdBy;
 
     @Column(name = "name", nullable = false)

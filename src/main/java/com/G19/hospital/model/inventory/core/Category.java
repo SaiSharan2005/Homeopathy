@@ -23,7 +23,7 @@ public class Category extends AuditableBaseEntity {
     
 
     @ManyToOne
-    @JoinColumn(name = "created_by_id", updatable = false)
+    @JoinColumn(name = "created_by_id", updatable = false, nullable = true)
     private User createdBy;
     
     // One Category can have many InventoryItems
