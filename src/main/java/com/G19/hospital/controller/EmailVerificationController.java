@@ -38,10 +38,10 @@ public class EmailVerificationController {
                               @RequestParam String code) {
         boolean valid = verificationService.verifyCode(email, code);
         if (valid) {
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String username = authentication.getName(); // assuming username is the unique identifier
-        User user = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new CustomSecurityException("User not found with username: " + username));
+            //     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            // String username = authentication.getName(); // assuming username is the unique identifier
+        User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new CustomSecurityException("User not found with username: " + email));
         user.setVerified(true);
             // <-- here you can create the user or perform your “task”
             return "Email verified successfully!";

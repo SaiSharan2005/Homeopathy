@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import com.G19.hospital.model.inventory.core.AuditableBaseEntity;
 import com.G19.hospital.model.inventory.core.Supplier;
@@ -38,6 +39,7 @@ public class PurchaseOrder extends AuditableBaseEntity {
     
     // One PurchaseOrder includes many PurchaseOrderItems
     @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private Set<PurchaseOrderItem> purchaseOrderItems = new HashSet<>();
     
     // Calculate the total amount based on the order items

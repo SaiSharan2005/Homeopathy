@@ -38,6 +38,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     @Override
     public PurchaseOrder createPurchaseOrder(PurchaseOrderDto dto) {
+        // Validate required fields
+        if (dto.getSupplierId() == null) {
+            throw new CustomSecurityException("Supplier ID is required", HttpStatus.BAD_REQUEST);
+        }
+        
+
         Supplier sup = supplierRepo.findById(dto.getSupplierId())
                 .orElseThrow(() -> new CustomSecurityException("Supplier not found", HttpStatus.NOT_FOUND));
 
@@ -72,7 +78,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         if (dto.getStatus() != null)     po.setStatus(dto.getStatus());
 
         if (dto.getItems() != null) {
-            // Replace existing items
+            if (dto.getItems().isEmpty()) {
+                throw new CustomSecurityException("Items list cannot be empty", HttpStatus.BAD_REQUEST);
+            }
             itemRepo.deleteAll(po.getPurchaseOrderItems());
             Set<PurchaseOrderItem> newItems = dto.getItems().stream().map(i -> {
                 PurchaseOrderItem p = new PurchaseOrderItem();
@@ -131,7 +139,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     public PurchaseOrder getPurchaseOrderFullDetail(Long orderId) {
         PurchaseOrder po = getPurchaseOrderById(orderId);
         // if you have LAZY, initialize items:
-        po.getPurchaseOrderItems().size();
+        if (po.getPurchaseOrderItems() != null) {
+            po.getPurchaseOrderItems().size();
+        }
         return po;
     }
 
@@ -143,13 +153,22 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         if (!itm.getPurchaseOrder().getOrderId().equals(orderId)) {
             throw new CustomSecurityException("Item not part of this PO", HttpStatus.BAD_REQUEST);
         }
-        po.getPurchaseOrderItems().remove(itm);
+        
+        if (po.getPurchaseOrderItems() != null) {
+            po.getPurchaseOrderItems().remove(itm);
+        }
+        
         computeTotals(po);
         orderRepo.save(po);
         itemRepo.delete(itm);
     }
 
     private void computeTotals(PurchaseOrder po) {
+        if (po.getPurchaseOrderItems() == null || po.getPurchaseOrderItems().isEmpty()) {
+            po.setTotalAmount(BigDecimal.ZERO);
+            return;
+        }
+        
         BigDecimal total = po.getPurchaseOrderItems().stream()
             .map(i -> i.getUnitPrice().multiply(BigDecimal.valueOf(i.getQuantityOrdered())))
             .reduce(BigDecimal.ZERO, BigDecimal::add);

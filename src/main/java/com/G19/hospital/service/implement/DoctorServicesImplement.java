@@ -45,6 +45,10 @@ public class DoctorServicesImplement implements DoctorServices {
 
     @Override
     public User registerDoctor(DoctorRegisterDTO doctorRegisterDTO) throws Exception {
+
+        if (doctorRegisterDTO.getUsername() == null || doctorRegisterDTO.getUsername().trim().isEmpty()) {
+            throw new CustomSecurityException("Username is required", HttpStatus.BAD_REQUEST);
+        }
         if (userRepository.existsByUsername(doctorRegisterDTO.getPhoneNumber())) {
             throw new CustomSecurityException(ApiMessages.USER_ALREADY_EXISTS, HttpStatus.BAD_REQUEST);
         }

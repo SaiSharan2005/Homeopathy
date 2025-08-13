@@ -6,6 +6,7 @@ import com.G19.hospital.DTO.inventory.PurchaseOrderDto;
 import com.G19.hospital.model.inventory.PurchaseAndReceipt.PurchaseOrder;
 import com.G19.hospital.model.inventory.PurchaseAndReceipt.PurchaseOrderStatus;
 import com.G19.hospital.service.inventory.PurchaseAndReceipt.PurchaseOrderService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,7 +20,7 @@ public class PurchaseOrderController {
     @Autowired private PurchaseOrderService service;
 
     @PostMapping
-    public ResponseEntity<PurchaseOrder> create(@RequestBody PurchaseOrderDto dto) {
+    public ResponseEntity<PurchaseOrder> create(@Valid @RequestBody PurchaseOrderDto dto) {
         return new ResponseEntity<>(service.createPurchaseOrder(dto), HttpStatus.CREATED);
     }
 
@@ -30,7 +31,7 @@ public class PurchaseOrderController {
 
     @PutMapping("/{id}")
     public ResponseEntity<PurchaseOrder> update(
-        @PathVariable Long id, @RequestBody PurchaseOrderDto dto) 
+        @PathVariable Long id, @Valid @RequestBody PurchaseOrderDto dto) 
     {
         return ResponseEntity.ok(service.updatePurchaseOrder(id, dto));
     }

@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 
 import com.G19.hospital.model.inventory.core.AuditableBaseEntity;
 import com.G19.hospital.model.inventory.core.InventoryItem;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Getter
 @Setter
@@ -27,6 +28,7 @@ public class PurchaseOrderItem extends AuditableBaseEntity {
     // Many PurchaseOrderItems belong to one PurchaseOrder
     @ManyToOne
     @JoinColumn(name = "purchase_order_id")
+    @JsonBackReference
     private PurchaseOrder purchaseOrder;
     
     // The InventoryItem that is being ordered
